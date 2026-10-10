@@ -1,0 +1,34 @@
+{
+  "name": "logicatlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Repository-owned application flow contracts for LogicAtlas (working name).",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./node": {
+      "types": "./dist/src/load.d.ts",
+      "import": "./dist/src/load.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "validate": "node dist/src/cli.js",
+    "validate:examples": "npm run build && node dist/src/cli.js examples/reference/before && node dist/src/cli.js examples/reference/after",
+    "check": "npm test && npm run validate:examples"
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "5.9.3"
+  }
+}

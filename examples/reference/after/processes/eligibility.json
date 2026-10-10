@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "eligibility",
+  "title": "Check discount eligibility",
+  "purpose": "Reuse the same subscription rule used by chat.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "eligibility"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic eligibility behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "eligibility.start",
+  "nodes": [
+    {
+      "id": "eligibility.start",
+      "kind": "start",
+      "title": "Begin check discount eligibility",
+      "description": "Start the requested check.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "eligibility"
+          }
+        ]
+      }
+    },
+    {
+      "id": "eligibility.check",
+      "kind": "subprocess",
+      "title": "Check discount eligibility",
+      "description": "Call the shared subscription process.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "eligibility"
+          }
+        ]
+      },
+      "processId": "subscription"
+    },
+    {
+      "id": "eligibility.result",
+      "kind": "decision",
+      "title": "Is the check successful?",
+      "description": "Use the result returned by the shared process.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "eligibility"
+          }
+        ]
+      }
+    },
+    {
+      "id": "eligibility.yes",
+      "kind": "end",
+      "title": "Eligible",
+      "description": "Return a successful result to the caller.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "eligibility"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "eligibility.no",
+      "kind": "end",
+      "title": "Not eligible",
+      "description": "Return an unsuccessful result to the caller.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "eligibility"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "eligibility.check-result",
+      "from": "eligibility.check",
+      "to": "eligibility.result",
+      "label": "Receive the check result",
+      "kind": "normal"
+    },
+    {
+      "id": "eligibility.start-check",
+      "from": "eligibility.start",
+      "to": "eligibility.check",
+      "label": "Perform the check",
+      "kind": "normal"
+    },
+    {
+      "id": "eligibility.result-yes",
+      "from": "eligibility.result",
+      "to": "eligibility.yes",
+      "label": "Eligible",
+      "kind": "success",
+      "condition": "The check returns true"
+    },
+    {
+      "id": "eligibility.result-no",
+      "from": "eligibility.result",
+      "to": "eligibility.no",
+      "label": "Not eligible",
+      "kind": "error",
+      "condition": "The check returns false"
+    }
+  ]
+}

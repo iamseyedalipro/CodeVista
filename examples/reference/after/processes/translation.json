@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "translation",
+  "title": "Translate a reply (planned)",
+  "purpose": "Record a future idea separately from implemented response delivery.",
+  "behavior": "planned",
+  "evidence": {
+    "kind": "unspecified",
+    "references": [],
+    "reason": "This feature is planned only; the reference application does not implement it."
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic translation behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "translation.start",
+  "nodes": [
+    {
+      "id": "translation.start",
+      "kind": "start",
+      "title": "Receive a translation request",
+      "description": "Planned input; no current route calls this process.",
+      "behavior": "planned",
+      "evidence": {
+        "kind": "unspecified",
+        "references": [],
+        "reason": "This feature is planned only; the reference application does not implement it."
+      }
+    },
+    {
+      "id": "translation.end",
+      "kind": "end",
+      "title": "Return a translated reply",
+      "description": "Planned outcome; no implementation exists.",
+      "behavior": "planned",
+      "evidence": {
+        "kind": "unspecified",
+        "references": [],
+        "reason": "This feature is planned only; the reference application does not implement it."
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "translation.start-end",
+      "from": "translation.start",
+      "to": "translation.end",
+      "label": "Planned translation",
+      "kind": "normal"
+    }
+  ]
+}

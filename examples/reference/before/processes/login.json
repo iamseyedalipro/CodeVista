@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "login",
+  "title": "Sign in",
+  "purpose": "Authenticate a synthetic account with at most three attempts and an explicit cancellation path.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "loginBefore"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic login behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "login.start",
+  "nodes": [
+    {
+      "id": "login.start",
+      "kind": "start",
+      "title": "Start sign-in",
+      "description": "Begin with the supplied sequence of at most three attempts.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "login.remaining",
+      "kind": "decision",
+      "title": "Is an attempt available?",
+      "description": "Stop when no further attempt is available or three attempts have been processed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "login.cancelled",
+      "kind": "decision",
+      "title": "Was sign-in cancelled?",
+      "description": "Read cancellation before checking credentials.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "login.credentials",
+      "kind": "decision",
+      "title": "Are credentials valid?",
+      "description": "Check the supplied credential result.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "login.retry",
+      "kind": "action",
+      "title": "Try another attempt",
+      "description": "Advance to the next attempt; do not reset the attempt counter.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "login.success",
+      "kind": "end",
+      "title": "Signed in",
+      "description": "Return an authenticated result for this synthetic example.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "login.error",
+      "kind": "end",
+      "title": "Attempts exhausted",
+      "description": "Return an error after no valid attempt remains.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "login.cancel",
+      "kind": "end",
+      "title": "Sign-in cancelled",
+      "description": "End without signing in.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "loginBefore"
+          }
+        ]
+      },
+      "outcome": "cancel"
+    }
+  ],
+  "edges": [
+    {
+      "id": "login.start-remaining",
+      "from": "login.start",
+      "to": "login.remaining",
+      "label": "Check available attempts",
+      "kind": "normal"
+    },
+    {
+      "id": "login.remaining-cancelled",
+      "from": "login.remaining",
+      "to": "login.cancelled",
+      "label": "Attempt available",
+      "kind": "normal",
+      "condition": "Another supplied attempt remains and fewer than three attempts were processed"
+    },
+    {
+      "id": "login.remaining-error",
+      "from": "login.remaining",
+      "to": "login.error",
+      "label": "No attempt available",
+      "kind": "error",
+      "condition": "No supplied attempt remains or three attempts were processed"
+    },
+    {
+      "id": "login.cancelled-cancel",
+      "from": "login.cancelled",
+      "to": "login.cancel",
+      "label": "User cancelled",
+      "kind": "cancel",
+      "condition": "The current attempt has cancelled set to true"
+    },
+    {
+      "id": "login.cancelled-credentials",
+      "from": "login.cancelled",
+      "to": "login.credentials",
+      "label": "Continue sign-in",
+      "kind": "normal",
+      "condition": "The current attempt has cancelled set to false"
+    },
+    {
+      "id": "login.credentials-retry",
+      "from": "login.credentials",
+      "to": "login.retry",
+      "label": "Invalid credentials",
+      "kind": "retry",
+      "condition": "Credentials are invalid"
+    },
+    {
+      "id": "login.retry-remaining",
+      "from": "login.retry",
+      "to": "login.remaining",
+      "label": "Advance the attempt counter",
+      "kind": "retry"
+    },
+    {
+      "id": "login.credentials-accepted",
+      "from": "login.credentials",
+      "to": "login.success",
+      "label": "Valid credentials",
+      "kind": "success",
+      "condition": "Credentials are valid"
+    }
+  ]
+}

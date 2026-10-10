@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "chat",
+  "title": "Respond to a message",
+  "purpose": "Require a subscription and distinguish response completion from background work.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "chatAfter"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic chat behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "chat.start",
+  "nodes": [
+    {
+      "id": "chat.start",
+      "kind": "start",
+      "title": "Receive message",
+      "description": "Start the synthetic response request.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat.subscription",
+      "kind": "subprocess",
+      "title": "Check subscription",
+      "description": "Reuse the same subscription process used by discount eligibility.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      },
+      "processId": "subscription"
+    },
+    {
+      "id": "chat.allowed",
+      "kind": "decision",
+      "title": "Can the request continue?",
+      "description": "Require an active subscription.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat.denied",
+      "kind": "end",
+      "title": "Subscription required",
+      "description": "Stop without producing a response.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "chat.service",
+      "kind": "external",
+      "title": "Response service boundary",
+      "description": "Use a supplied result from the example application. No AI API is called and provider internals are not described.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat.result",
+      "kind": "decision",
+      "title": "Is the reply ready?",
+      "description": "A ready result is required before delivering a response.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat.success",
+      "kind": "end",
+      "title": "Reply delivered",
+      "description": "Return the generated response result.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "chat.error",
+      "kind": "end",
+      "title": "Response failed",
+      "description": "Return an error without claiming a reply was delivered.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "chat.enqueue",
+      "kind": "action",
+      "title": "Queue response work",
+      "description": "Hand the request to the simulated job-results sequence; queuing is not completion.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat.wait",
+      "kind": "wait",
+      "title": "Wait for job completion",
+      "description": "Stay pending while the job has no ready or failed result.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "chatAfter"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "chat.start-subscription",
+      "from": "chat.start",
+      "to": "chat.subscription",
+      "label": "Check access",
+      "kind": "normal"
+    },
+    {
+      "id": "chat.subscription-allowed",
+      "from": "chat.subscription",
+      "to": "chat.allowed",
+      "label": "Use the subscription result",
+      "kind": "normal"
+    },
+    {
+      "id": "chat.allowed-denied",
+      "from": "chat.allowed",
+      "to": "chat.denied",
+      "label": "Subscription inactive",
+      "kind": "error",
+      "condition": "Subscription is inactive"
+    },
+    {
+      "id": "chat.allowed-access",
+      "from": "chat.allowed",
+      "to": "chat.enqueue",
+      "label": "Subscription active",
+      "kind": "normal",
+      "condition": "Subscription is active"
+    },
+    {
+      "id": "chat.enqueue-service",
+      "from": "chat.enqueue",
+      "to": "chat.service",
+      "label": "Observe the job result",
+      "kind": "normal"
+    },
+    {
+      "id": "chat.result-wait",
+      "from": "chat.result",
+      "to": "chat.wait",
+      "label": "Job pending",
+      "kind": "normal",
+      "condition": "Job is pending or no further result is available"
+    },
+    {
+      "id": "chat.wait-service",
+      "from": "chat.wait",
+      "to": "chat.service",
+      "label": "Receive another job result",
+      "kind": "normal"
+    },
+    {
+      "id": "chat.service-result",
+      "from": "chat.service",
+      "to": "chat.result",
+      "label": "Inspect the response status",
+      "kind": "normal"
+    },
+    {
+      "id": "chat.result-success",
+      "from": "chat.result",
+      "to": "chat.success",
+      "label": "Reply ready",
+      "kind": "success",
+      "condition": "Result is ready"
+    },
+    {
+      "id": "chat.result-error",
+      "from": "chat.result",
+      "to": "chat.error",
+      "label": "Response failed",
+      "kind": "error",
+      "condition": "Result is failed"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "subscription",
+  "title": "Check subscription",
+  "purpose": "Return whether the synthetic account has an active subscription.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "subscription"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic subscription behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "subscription.start",
+  "nodes": [
+    {
+      "id": "subscription.start",
+      "kind": "start",
+      "title": "Begin check subscription",
+      "description": "Start the requested check.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "subscription.check",
+      "kind": "decision",
+      "title": "Check subscription",
+      "description": "Read the provided active-subscription flag.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "subscription.yes",
+      "kind": "end",
+      "title": "Subscription active",
+      "description": "Return a successful result to the caller.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "subscription"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "subscription.no",
+      "kind": "end",
+      "title": "Subscription inactive",
+      "description": "Return an unsuccessful result to the caller.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "subscription"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "subscription.start-check",
+      "from": "subscription.start",
+      "to": "subscription.check",
+      "label": "Perform the check",
+      "kind": "normal"
+    },
+    {
+      "id": "subscription.check-yes",
+      "from": "subscription.check",
+      "to": "subscription.yes",
+      "label": "Subscription active",
+      "kind": "success",
+      "condition": "The check returns true"
+    },
+    {
+      "id": "subscription.check-no",
+      "from": "subscription.check",
+      "to": "subscription.no",
+      "label": "Subscription inactive",
+      "kind": "error",
+      "condition": "The check returns false"
+    }
+  ]
+}
