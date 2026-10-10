@@ -1,3 +1,5 @@
+> Historical Phase 1 evidence. For the expanded implementation and current release gates, see [acceptance.md](acceptance.md).
+
 # Phase 1 acceptance record
 
 ## Implementation status

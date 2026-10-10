@@ -44,7 +44,7 @@ records implementation scope; it does not replace or reduce the attached require
 | Product plan phase | Implementation plan phase | Required predecessors and retained scope |
 | --- | --- | --- |
 | 0 — Scope and reference scenarios | 0 | No predecessor. Define users, roles, business flows, before/after examples, public fixture, and owner-approved private pilot. |
-| 1 — Content and maintenance contract | 1 | Phase 0 scope. Stable identities, conditions, outcomes, sources, uncertainty, reusable children, arbitrary depth, format versioning, and async/external boundaries. Implemented in this change. |
+| 1 — Content and maintenance contract | 1 | Phase 0 scope. Stable identities, conditions, outcomes, sources, uncertainty, reusable children, arbitrary depth, format versioning, and async/external boundaries. Implemented; see the Phase 1 acceptance record. |
 | 2 — Sample-data viewer | 2 | Phase 1. Overview, drill-down, detail panel separate from navigation, breadcrumbs/back/browser history, search with location, deep links, zoom/pan/fit, path highlighting, stable layout, responsive and multilingual text, accessible non-color statuses, and empty/error states. |
 | 3 — Existing-agent generation and updates | 4 and 5 (agent portions) | Product phases 1 and 2. Initial inspection, saved non-destructive rules, targeted dependent updates, deletion/rename/no-op review, same-branch output, recovery prompts, failure disclosure, and a fresh agent-session trial. Product plan gates integration expansion on this proof. |
 | 4 — Authorized GitHub connection | 3 | Sample viewer and content rules; respect the product plan's agent-proof gate before expanding integrations. Read-only selected repositories, personal/organization cases, separate login and repository permission, per-user access, informative safe errors, and effective revocation/disconnect. |
@@ -56,13 +56,15 @@ records implementation scope; it does not replace or reduce the attached require
 | 10 — Real end-to-end trials | 9 | Product phases 0–9. Public and approved private repositories; startup, feature, bug fix, delete/rename, no-op, forgotten/failed map, new agent session, concurrent PRs, merge/close, revocation, and provider outage trials. Independent user comprehension and recorded pass/fail/not-run evidence. |
 | 11 — Open-source release | 10 | All required trials resolved. Chosen license, user/contributor/security guidance, public safe demo, exact tested agent environment, compatibility/migration notes, independent self-hosting, portability, and honest costs/status. |
 
-The implementation plan lists GitHub connection before initial agent generation;
-the product plan proves agent generation before expanding integrations. No decision
-about that later sequencing is hidden in this Phase 1 change. Before Phase 3 work,
-reconcile the scheduling with the owner while retaining both capability sets. Phase 2
-is the agreed next scope in both documents. Security and quality apply throughout.
+Implementation follows the product-plan capability order: sample viewer, local
+agent-tool contract and reproducible tool trials, GitHub access/onboarding, then
+snapshot/comparison and quality/privacy work. Local tool trials do not satisfy the
+external agent-proof gate. Later-phase code is an implementation candidate while
+that gate remains open; it is not evidence that the gate passed. Do not release or
+advertise supported-agent integration until the required external trial is recorded.
+See [the current acceptance ledger](acceptance.md) for all pending phase gates.
 
-For later scale testing, retain **both** plans' criteria: at least 10 overview
+Scale testing retains **both** plans' criteria: at least 10 overview
 processes and 200 nodes overall, plus a process with more than 30 internal steps,
 shared children, retry loops, and multiple levels. These are test fixtures, not
 product size ceilings. Desktop is primary; small screens must retain usable
@@ -72,7 +74,7 @@ navigation and details.
 
 The target user is a developer or product owner working with a repository-capable
 web coding agent. The user requests work; the agent edits code and maps; GitHub
-stores versions; the site will display maps and assess only what it can verify.
+stores versions; the site displays maps and assess only what it can verify.
 The synthetic reference application covers existing-project setup, adding discounts,
 and a sign-in bug fix, along with multi-step chat behavior. Its content is safe for
 public review. No private user repository was copied or chosen without permission.
@@ -81,7 +83,7 @@ The plans intend the initial supported agent route to be a Claude web environmen
 that can actually read repositories and publish branch/PR changes. This repository
 does not claim ordinary chat has that capability, or that any Claude/Codex route
 has been tested. Agent-neutral data is implemented; cloud integration certification
-remains future work. The private-pilot selection and independent comprehension trial
+remains an open acceptance gate. The private-pilot selection and independent comprehension trial
 are open acceptance gates, not silently completed prerequisites.
 
 ## Outside the initial release

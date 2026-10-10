@@ -15,5 +15,10 @@
     "rootDir": ".",
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "schemas/**/*.json", "examples/reference/application.ts"]
+  "include": [
+    "src/**/*.ts",
+    "schemas/**/*.json",
+    "examples/reference/application.ts",
+    "server/**/*.ts"
+  ]
 }
