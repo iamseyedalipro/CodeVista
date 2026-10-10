@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": {
+    "id": "reference-app",
+    "name": "Synthetic reference application",
+    "description": "Public synthetic behavior fixtures for the LogicAtlas format; this is not a deployed application.",
+    "contentLanguage": "en",
+    "repository": {
+      "host": "github.com",
+      "owner": "iamseyedalipro",
+      "name": "CodeVista"
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Only the reference application scenarios, not the LogicAtlas repository as a whole.",
+    "gaps": [
+      "Usage reporting is unreviewed.",
+      "Payment provider internals are outside the fixture.",
+      "Translation is planned only."
+    ]
+  },
+  "rootProcessIds": [
+    "login",
+    "payment",
+    "chat",
+    "analytics",
+    "translation"
+  ],
+  "processes": [
+    {
+      "id": "login",
+      "file": "processes/login.json"
+    },
+    {
+      "id": "payment",
+      "file": "processes/payment.json"
+    },
+    {
+      "id": "chat",
+      "file": "processes/chat.json"
+    },
+    {
+      "id": "subscription",
+      "file": "processes/subscription.json"
+    },
+    {
+      "id": "analytics",
+      "file": "processes/analytics.json"
+    },
+    {
+      "id": "translation",
+      "file": "processes/translation.json"
+    },
+    {
+      "id": "discount",
+      "file": "processes/discount.json"
+    },
+    {
+      "id": "eligibility",
+      "file": "processes/eligibility.json"
+    }
+  ],
+  "relationships": []
+}

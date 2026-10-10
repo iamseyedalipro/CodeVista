@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "discount",
+  "title": "Evaluate discount",
+  "purpose": "Return a reduced price or reject a discount without changing unrelated flows.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "discount"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Synthetic discount behavior in the reference application; external service internals are excluded.",
+    "gaps": []
+  },
+  "entryNodeId": "discount.start",
+  "nodes": [
+    {
+      "id": "discount.start",
+      "kind": "start",
+      "title": "Receive discount",
+      "description": "Read the requested percentage and original price.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      }
+    },
+    {
+      "id": "discount.eligibility",
+      "kind": "subprocess",
+      "title": "Check eligibility",
+      "description": "Reuse subscription eligibility without copying its definition.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      },
+      "processId": "eligibility"
+    },
+    {
+      "id": "discount.valid",
+      "kind": "decision",
+      "title": "Is the discount allowed?",
+      "description": "Require eligibility and an integer percentage from 0 through 100.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      }
+    },
+    {
+      "id": "discount.calculate",
+      "kind": "action",
+      "title": "Calculate amount due",
+      "description": "Round original price times (100 minus percentage) divided by 100.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      }
+    },
+    {
+      "id": "discount.success",
+      "kind": "end",
+      "title": "Return discounted amount",
+      "description": "The caller decides whether payment is needed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "discount.error",
+      "kind": "end",
+      "title": "Reject discount",
+      "description": "Return no amount; the caller must not silently charge the original price.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "discount"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "discount.start-eligibility",
+      "from": "discount.start",
+      "to": "discount.eligibility",
+      "label": "Check eligibility",
+      "kind": "normal"
+    },
+    {
+      "id": "discount.eligibility-valid",
+      "from": "discount.eligibility",
+      "to": "discount.valid",
+      "label": "Combine eligibility and percentage rules",
+      "kind": "normal"
+    },
+    {
+      "id": "discount.valid-calculate",
+      "from": "discount.valid",
+      "to": "discount.calculate",
+      "label": "Discount accepted",
+      "kind": "success",
+      "condition": "Eligible and percentage is an integer between 0 and 100"
+    },
+    {
+      "id": "discount.valid-error",
+      "from": "discount.valid",
+      "to": "discount.error",
+      "label": "Discount rejected",
+      "kind": "error",
+      "condition": "Not eligible or percentage is not an integer between 0 and 100"
+    },
+    {
+      "id": "discount.calculate-success",
+      "from": "discount.calculate",
+      "to": "discount.success",
+      "label": "Return the amount",
+      "kind": "normal"
+    }
+  ]
+}

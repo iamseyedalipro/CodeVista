@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "analytics",
+  "title": "Usage reporting",
+  "purpose": "Keep the unreviewed area visible without inventing its behavior.",
+  "behavior": "unknown",
+  "evidence": {
+    "kind": "unspecified",
+    "references": [],
+    "reason": "No usage-reporting implementation has been reviewed."
+  },
+  "coverage": {
+    "status": "unreviewed",
+    "scope": "Usage reporting.",
+    "gaps": [
+      "All usage-reporting behavior remains unreviewed."
+    ]
+  },
+  "entryNodeId": null,
+  "nodes": [],
+  "edges": []
+}

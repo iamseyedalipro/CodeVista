@@ -1,0 +1,59 @@
+{
+  "name": "logicatlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Explore repository-owned application flows with your existing coding agent.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./node": {
+      "types": "./dist/src/load.d.ts",
+      "import": "./dist/src/load.js"
+    }
+  },
+  "scripts": {
+    "build": "npm run build:core && npm run build:kit && npm run build:web",
+    "test": "npm run build:core && npm run build:kit && node --test tests/*.test.mjs",
+    "validate": "node dist/src/cli.js",
+    "validate:examples": "node dist/src/cli.js examples/reference/before && node dist/src/cli.js examples/reference/after",
+    "check": "npm test && npm run build:web && npm run validate:examples",
+    "build:core": "tsc -p tsconfig.json",
+    "build:web": "tsc -p tsconfig.web.json && vite build",
+    "dev": "vite --host 0.0.0.0",
+    "start": "node dist/server/main.js",
+    "test:e2e": "playwright test",
+    "build:kit": "node scripts/build-kit.mjs",
+    "dev:server": "node --watch dist/server/main.js"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "1.1.8",
+    "@fastify/cookie": "11.1.3",
+    "@fastify/helmet": "13.1.2",
+    "@fastify/static": "10.1.6",
+    "@xyflow/react": "12.12.0",
+    "ajv": "8.20.0",
+    "fastify": "5.12.5",
+    "fflate": "0.8.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/dagre": "0.7.54",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "5.2.0",
+    "esbuild": "0.28.2",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "vite": "7.3.7"
+  },
+  "license": "MIT"
+}

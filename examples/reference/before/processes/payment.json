@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "payment",
+  "title": "Purchase access",
+  "purpose": "Validate a price, optionally apply a discount, and distinguish pending, failed, cancelled, and verified payment outcomes.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "examples/reference/application.ts",
+        "symbol": "paymentBefore"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Synthetic payment behavior in the reference application; external service internals are excluded.",
+    "gaps": [
+      "The fixture supplies provider results and verification as inputs; the provider implementation is not inspected."
+    ]
+  },
+  "entryNodeId": "payment.start",
+  "nodes": [
+    {
+      "id": "payment.start",
+      "kind": "start",
+      "title": "Receive purchase request",
+      "description": "Read the synthetic purchase input.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "payment.price",
+      "kind": "decision",
+      "title": "Is the original price valid?",
+      "description": "Require a positive safe integer price.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "payment.invalid-price",
+      "kind": "end",
+      "title": "Invalid price",
+      "description": "Stop before contacting the gateway.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "payment.gateway",
+      "kind": "external",
+      "title": "Payment gateway boundary",
+      "description": "Consume a supplied gateway result. The actual provider and its internal behavior are outside this fixture.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "inference",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ],
+        "reason": "The fixture models this boundary using supplied results; a real provider implementation has not been inspected."
+      }
+    },
+    {
+      "id": "payment.status",
+      "kind": "decision",
+      "title": "What did the gateway return?",
+      "description": "Distinguish pending, timeout, cancellation, decline, and reported payment.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "payment.wait",
+      "kind": "wait",
+      "title": "Wait for a payment result",
+      "description": "A pending response is not successful payment. Continue when another result is available.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "payment.verify",
+      "kind": "decision",
+      "title": "Is the payment verified?",
+      "description": "Use the separate verification result before granting access.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      }
+    },
+    {
+      "id": "payment.success",
+      "kind": "end",
+      "title": "Payment accepted",
+      "description": "Grant access only after verification succeeds.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "payment.error",
+      "kind": "end",
+      "title": "Payment failed",
+      "description": "Return failure after decline or failed verification.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "payment.cancel",
+      "kind": "end",
+      "title": "Payment cancelled",
+      "description": "Return cancellation without granting access.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "examples/reference/application.ts",
+            "symbol": "paymentBefore"
+          }
+        ]
+      },
+      "outcome": "cancel"
+    }
+  ],
+  "edges": [
+    {
+      "id": "payment.start-price",
+      "from": "payment.start",
+      "to": "payment.price",
+      "label": "Check original price",
+      "kind": "normal"
+    },
+    {
+      "id": "payment.price-invalid-price",
+      "from": "payment.price",
+      "to": "payment.invalid-price",
+      "label": "Invalid price",
+      "kind": "error",
+      "condition": "Price is not a positive safe integer"
+    },
+    {
+      "id": "payment.price-valid",
+      "from": "payment.price",
+      "to": "payment.gateway",
+      "label": "Valid price",
+      "kind": "normal",
+      "condition": "Price is a positive safe integer"
+    },
+    {
+      "id": "payment.gateway-status",
+      "from": "payment.gateway",
+      "to": "payment.status",
+      "label": "Read the supplied result",
+      "kind": "normal"
+    },
+    {
+      "id": "payment.status-wait",
+      "from": "payment.status",
+      "to": "payment.wait",
+      "label": "Still pending",
+      "kind": "normal",
+      "condition": "The result is pending or no further result is available"
+    },
+    {
+      "id": "payment.wait-gateway",
+      "from": "payment.wait",
+      "to": "payment.gateway",
+      "label": "Receive another result",
+      "kind": "normal"
+    },
+    {
+      "id": "payment.status-gateway",
+      "from": "payment.status",
+      "to": "payment.gateway",
+      "label": "Retry after timeout",
+      "kind": "retry",
+      "condition": "The result is timeout and another result is available"
+    },
+    {
+      "id": "payment.status-cancel",
+      "from": "payment.status",
+      "to": "payment.cancel",
+      "label": "Cancelled",
+      "kind": "cancel",
+      "condition": "The result is cancelled"
+    },
+    {
+      "id": "payment.status-error",
+      "from": "payment.status",
+      "to": "payment.error",
+      "label": "Declined",
+      "kind": "error",
+      "condition": "The result is declined"
+    },
+    {
+      "id": "payment.status-verify",
+      "from": "payment.status",
+      "to": "payment.verify",
+      "label": "Reported as paid",
+      "kind": "normal",
+      "condition": "The result is paid"
+    },
+    {
+      "id": "payment.verify-success",
+      "from": "payment.verify",
+      "to": "payment.success",
+      "label": "Verified",
+      "kind": "success",
+      "condition": "Verification succeeded"
+    },
+    {
+      "id": "payment.verify-error",
+      "from": "payment.verify",
+      "to": "payment.error",
+      "label": "Not verified",
+      "kind": "error",
+      "condition": "Verification failed"
+    }
+  ]
+}
