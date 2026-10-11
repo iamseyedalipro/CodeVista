@@ -3,14 +3,15 @@ ARG NODE_IMAGE=node:24-bookworm-slim
 FROM ${NODE_IMAGE} AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci
+# Keep independent installs from deleting or mutating one another's cache.
+RUN --mount=type=cache,id=codevista-npm-build,target=/root/.npm,sharing=locked npm ci
 COPY . .
 RUN npm run build
 
 FROM ${NODE_IMAGE} AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev && npm cache clean --force
+RUN --mount=type=cache,id=codevista-npm-production,target=/root/.npm,sharing=locked npm ci --omit=dev
 
 FROM ${NODE_IMAGE} AS runtime
 ENV NODE_ENV=production LISTEN_HOST=0.0.0.0 PORT=3000 DATABASE_PATH=/app/data/codevista.sqlite
