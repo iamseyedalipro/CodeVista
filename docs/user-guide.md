@@ -1,26 +1,8 @@
 # User guide
 
-## Explore the public reference project
-
-Open the demo without signing in. Start with Purchase access. Select a step to read
-its explanation and outgoing paths; selecting it does not enter a subprocess.
-Open subprocess explicitly to drill into discount evaluation and eligibility.
-Use breadcrumbs, Back one level, or browser Back to return.
-
-Search finds both processes and steps and opens their exact location, including
-deep/shared subprocesses. Drag the canvas to pan, use the mouse wheel or controls
-to zoom, and use Fit View for the whole process. The current step and neighboring
-paths are emphasized. Details include written conditions and outcomes, so meaning
-does not rely only on color.
-
-Choose Preview reference changes to inspect the synthetic before/after change.
-Previous and proposed locations remain available, including deleted steps. The
-scale fixture contains ten root processes, shared children, a retry loop, and 413
-steps. It is a performance sample, not a real application's map.
-
 ## Connect a repository
 
-On a configured host, choose Projects and Sign in with GitHub. Install the host's
+The landing page shows Projects. On a configured host, choose Connect GitHub. Install the host's
 GitHub App and select repositories. For an organization, obtain owner/SSO approval
 if required. Every viewer needs their own repository permission as well as the
 app's permission. Public repositories also require explicit app access when opened
@@ -30,6 +12,15 @@ Refresh Projects after installing. Open the project and choose the intended bran
 it need not be named `main`. Your selected branch is saved for return visits. Check
 map on a project card fetches its actual current status; Not checked makes no
 claim about map availability. Disconnected projects can be reconnected.
+
+## Explore your project's flows
+
+Select a process, then a step to read its explanation and outgoing paths. Open
+subprocess explicitly to drill down. Use breadcrumbs, Back one level, or browser
+Back to return. Search finds exact process and step locations. Pan, zoom and Fit
+View help explore the chart; conditions and outcomes also appear as text.
+Only the selected repository's published map is displayed. Missing maps show setup
+guidance instead of an example. Old demo links return to Projects.
 
 ## Create the first map with Claude web or your existing agent
 

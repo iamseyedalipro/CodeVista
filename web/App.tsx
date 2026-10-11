@@ -1,8 +1,5 @@
 import { ThemePicker } from "./theme";
-import { DemoComparison } from "./DemoComparison";
 import { useEffect, useState } from "react";
-import { Viewer } from "./Viewer";
-import { sample } from "./samples";
 import { Projects } from "./Projects";
 import { Project } from "./Project";
 import { Help } from "./Help";
@@ -116,30 +113,15 @@ export default function App() {
       setError(message(error));
     }
   }
-  const [path, query = ""] = hash.replace(/^#/, "").split("?");
-  const params = new URLSearchParams(query);
-  const variant =
-    path === "/demo/scale"
-      ? "scale"
-      : path === "/demo/before"
-        ? "before"
-        : "after";
+  const path = hash.replace(/^#/, "").split("?")[0];
   const project = /^\/project\/([A-Za-z0-9-]+\/[A-Za-z0-9_.-]+)$/.exec(
     path ?? "",
   );
-  const isPrivate = !!project || path === "/projects";
-  const demo = !isPrivate && path !== "/help";
-  function navigate(next: string[], node?: string) {
-    const search = new URLSearchParams();
-    if (params.has("compare")) search.set("compare", "1");
-    if (next.length) search.set("trail", next.join(","));
-    if (node) search.set("node", node);
-    location.hash = `/demo/${variant}${search.size ? `?${search}` : ""}`;
-  }
+  const isPrivate = path !== "/help";
   return (
     <>
       <header className="app-header">
-        <a className="brand" href="#/demo/after">
+        <a className="brand" href="#/projects">
           <span className="brand-mark">C</span>CodeVista
           <span className="brand-tag">APPLICATION INTELLIGENCE</span>
         </a>
@@ -147,19 +129,6 @@ export default function App() {
           <ThemePicker />
           <a href="#/projects">Projects</a>
           <a href="#/help">Guide & privacy</a>
-          {demo && (
-            <select
-              aria-label="Example version"
-              value={variant}
-              onChange={(event) => {
-                location.hash = `/demo/${event.target.value}`;
-              }}
-            >
-              <option value="after">After changes</option>
-              <option value="before">Before changes</option>
-              <option value="scale">Scale fixture · 413 steps</option>
-            </select>
-          )}
           {session?.user && (
             <>
               <button onClick={() => void remove(false)}>Sign out</button>
@@ -198,46 +167,19 @@ export default function App() {
       )}
       {path === "/help" ? (
         <Help />
-      ) : isPrivate ? (
-        !session || locked ? (
-          <div className="empty" role="status">
-            <h2>Verifying your session…</h2>
-          </div>
-        ) : project && session.user ? (
-          <Project
-            key={`${session.user.login}:${project[1]}`}
-            repository={project[1]!}
-            hash={hash}
-            session={session}
-          />
-        ) : (
-          <Projects
-            key={session.user?.login ?? "anonymous"}
-            session={session}
-          />
-        )
+      ) : !session || locked ? (
+        <div className="empty" role="status">
+          <h2>Verifying your session…</h2>
+        </div>
+      ) : project && session.user ? (
+        <Project
+          key={`${session.user.login}:${project[1]}`}
+          repository={project[1]!}
+          hash={hash}
+          session={session}
+        />
       ) : (
-        <>
-          <div className="version-strip">
-            <span className="status-dot" />
-            <strong>Synthetic reference application</strong>
-            <span>Example / {variant}</span>
-            <a
-              href={`#/demo/${variant === "scale" ? "after" : variant}?compare=1`}
-            >
-              Preview reference changes
-            </a>
-            <span className="version-note">No GitHub connection required</span>
-          </div>
-          {params.has("compare") && variant !== "scale" && <DemoComparison />}
-          <Viewer
-            bundle={sample(variant)}
-            scope={`demo:${variant}`}
-            trail={params.get("trail")?.split(",").filter(Boolean) ?? []}
-            selectedId={params.get("node")}
-            navigate={navigate}
-          />
-        </>
+        <Projects key={session.user?.login ?? "anonymous"} session={session} />
       )}
     </>
   );

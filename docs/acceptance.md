@@ -232,3 +232,29 @@ successful corrected Docker build or Docker Hub publication is claimed here.
   with the existing two partial-coverage warnings. Live GitHub App, multiple real
   accounts and hosting/deployment remain unverified; existing map coverage gaps
   remain explicit.
+
+## Project-first landing page — 2026-10-11
+
+The root page, brand link, old demo links and unknown routes now open the project
+workspace. Configured hosts offer Connect GitHub to anonymous visitors. Connected
+users see only their authorized repository cards and choose Open project; empty
+lists retain GitHub App installation guidance. Unconfigured hosts explain setup.
+The public example selector, viewer route, comparison component and sample loader
+were removed. Synthetic maps remain test/validation fixtures and are not bundled
+by the panel. Server setup messages and operator/user documentation match this
+behavior.
+
+`npm run check` passed: 106 core tests, web build and reference-map validation.
+All 25 Playwright tests passed, including root/legacy/unknown route connection
+states, multiple project selection, empty lists, unconfigured hosts, logout,
+private deep links, viewer/search/fullscreen/mobile behavior and themes. Browser
+execution used temporary `@sparticuz/chromium` because the matching Playwright
+browser download returned an invalid archive. This is not a project dependency
+or browser certification. Live GitHub OAuth, installation approval and deployment
+were not exercised.
+
+Updated process IDs: `project-workspace`, `browser-session-lifecycle`,
+`github-sign-in` and `host-startup`; the obsolete `public-demo` definition was
+removed with its manifest entry. Standalone map validation passed with the two
+existing partial-coverage warnings. Existing external-provider and agent coverage
+gaps remain explicit.

@@ -1,11 +1,16 @@
 import { test, expect } from "@playwright/test";
+import { mock } from "./fixtures";
+
+test.beforeEach(async ({ page }) => {
+  await mock(page);
+});
 
 test("theme follows system, persists an override, and synchronizes tabs", async ({
   page,
   context,
 }) => {
   await page.emulateMedia({ colorScheme: "dark" });
-  await page.goto("/#/demo/after");
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator(".app-header")).toHaveCSS(
     "background-color",

@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "id": "project-workspace",
   "title": "List and check projects",
-  "purpose": "Show installed repositories, selected branches, last visits and per-project map status.",
+  "purpose": "Show GitHub connection or authorized repository selection on the landing page, with selected branches, last visits and per-project map status.",
   "behavior": "implemented",
   "evidence": {
     "kind": "code",
@@ -12,12 +12,15 @@
       },
       {
         "path": "server/app.ts"
+      },
+      {
+        "path": "web/App.tsx"
       }
     ]
   },
   "coverage": {
     "status": "complete",
-    "scope": "Show installed repositories, selected branches, last visits and per-project map status.",
+    "scope": "Show GitHub connection or authorized repository selection on the landing page, with selected branches, last visits and per-project map status.",
     "gaps": []
   },
   "entryNodeId": "project-workspace.start",
@@ -26,7 +29,7 @@
       "id": "project-workspace.start",
       "kind": "start",
       "title": "Open Projects",
-      "description": "The Projects page receives session info.",
+      "description": "The landing page, Projects link, brand link, old demo links and unknown routes receive session info. Authorized project deep links open their selected repository; Help remains available.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -44,7 +47,7 @@
       "id": "project-workspace.signed",
       "kind": "decision",
       "title": "Is a user signed in?",
-      "description": "Anonymous users see configured sign-in or host setup guidance and a public demo link.",
+      "description": "Anonymous users see Connect GitHub on configured hosts, or GitHub App setup guidance. Connected users see their authorized repository cards; no example flows are displayed.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -61,8 +64,8 @@
     {
       "id": "project-workspace.anonymous",
       "kind": "end",
-      "title": "Offer sign-in or demo",
-      "description": "No private repository list is fetched.",
+      "title": "Offer GitHub connection or setup guidance",
+      "description": "Link to /auth/github on configured hosts; otherwise explain that the host needs GitHub App configuration. No repository list is fetched.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -119,7 +122,7 @@
       "id": "project-workspace.display",
       "kind": "action",
       "title": "Show project cards",
-      "description": "Decorate with account preferences/disconnected flags, sort recent visits first, initially show twelve cards and expand by twelve.",
+      "description": "Decorate authorized repositories with account preferences/disconnected flags, sort recent visits first, initially show twelve cards and expand by twelve. Users select Open project to view that repository; an empty list shows installation guidance.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

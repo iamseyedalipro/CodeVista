@@ -71,7 +71,7 @@
       "id": "github-sign-in.unavailable",
       "kind": "end",
       "title": "Sign-in unavailable",
-      "description": "Return 503 NOT_CONFIGURED; the demo remains available.",
+      "description": "Return 503 NOT_CONFIGURED; the panel shows GitHub App configuration guidance.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

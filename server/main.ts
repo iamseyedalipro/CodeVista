@@ -11,7 +11,7 @@ await app.listen({
   port: config.port,
 });
 console.log(
-  `CodeVista is listening on port ${config.port}. GitHub integration ${config.githubClientId ? "configured" : "not configured; public demo available"}.`,
+  `CodeVista is listening on port ${config.port}. GitHub integration ${config.githubClientId ? "configured" : "not configured; setup required"}.`,
 );
 for (const signal of ["SIGINT", "SIGTERM"] as const)
   process.once(signal, () => {
