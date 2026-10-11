@@ -173,7 +173,7 @@
       "id": "project-version-selection.display",
       "kind": "action",
       "title": "Display selected version",
-      "description": "Show selected/displayed SHAs, check time, diagnostics, review/coverage and base/head tabs. Save branch preference after non-PR loads.",
+      "description": "Show selected/displayed SHAs, check time and base/head tabs. Review, coverage, diagnostics and recovery controls are in Map status and review below the viewer, collapsed for ordinary maps and expanded for fallback or invalid maps. Save branch preference after non-PR loads.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

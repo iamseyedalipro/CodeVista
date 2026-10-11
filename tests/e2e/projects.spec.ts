@@ -403,3 +403,53 @@ test("unconfigured hosts explain how to enable GitHub connections", async ({
   );
   await expect(page.locator(".viewer")).toHaveCount(0);
 });
+
+test("map review details are collapsed below the viewer and recovery is opt-in", async ({
+  page,
+}) => {
+  await mock(page);
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
+  const status = page.locator("details.snapshot-notices");
+  await expect(page.locator(".viewer")).toBeVisible();
+  await expect(status).not.toHaveAttribute("open", "");
+  await expect(
+    status.getByText("Structure: valid", { exact: true }),
+  ).not.toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Get recovery prompt" }),
+  ).not.toBeVisible();
+  expect(
+    await page
+      .locator(".viewer")
+      .evaluate(
+        (viewer) =>
+          !!(
+            viewer.compareDocumentPosition(
+              document.querySelector(".snapshot-notices")!,
+            ) & Node.DOCUMENT_POSITION_FOLLOWING
+          ),
+      ),
+  ).toBe(true);
+  await status.getByText("Map status and review", { exact: true }).click();
+  await expect(
+    status.getByText("Structure: valid", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Get recovery prompt" }).click();
+  await expect(page.getByLabel("Agent prompt")).toBeVisible();
+});
+
+test("fallback maps expand their status and retain the previous-map warning", async ({
+  page,
+}) => {
+  const data = snapshot(await reference());
+  data.fallback = true;
+  await mock(page, data);
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
+  await expect(page.locator("details.snapshot-notices")).toHaveAttribute(
+    "open",
+    "",
+  );
+  await expect(
+    page.getByText("Showing a previous valid map", { exact: true }),
+  ).toBeVisible();
+});
