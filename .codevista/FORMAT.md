@@ -6,8 +6,8 @@ document shape; the semantic validator adds cross-document and graph rules.
 
 ## Storage and ownership
 
-Store a map at `.logicatlas/manifest.json` and one file per process at
-`.logicatlas/processes/<stable-process-id>.json`. The CLI accepts the map directory
+Store a map at `.codevista/manifest.json` and one file per process at
+`.codevista/processes/<stable-process-id>.json`. The CLI accepts the map directory
 as an argument; examples use separate `before` and `after` directories. The manifest
 declares all process files. Undeclared files are not read, displayed, or deleted.
 

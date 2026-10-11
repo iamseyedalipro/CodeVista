@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:logicatlas:schema:process:1.0.0",
-  "title": "LogicAtlas process 1.0.0",
+  "$id": "urn:codevista:schema:process:1.0.0",
+  "title": "CodeVista process 1.0.0",
   "type": "object",
   "properties": {
     "schemaVersion": {
       "const": "1.0.0"
     },
     "id": {
-      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+      "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
     },
     "title": {
       "type": "string",
@@ -23,18 +23,18 @@
       "pattern": "\\S"
     },
     "behavior": {
-      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+      "$ref": "urn:codevista:schema:common:1.0.0#/$defs/behavior"
     },
     "evidence": {
-      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+      "$ref": "urn:codevista:schema:common:1.0.0#/$defs/evidence"
     },
     "coverage": {
-      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/coverage"
+      "$ref": "urn:codevista:schema:common:1.0.0#/$defs/coverage"
     },
     "entryNodeId": {
       "anyOf": [
         {
-          "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
         },
         {
           "type": "null"
@@ -47,7 +47,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           "title": {
             "type": "string",
@@ -73,13 +73,13 @@
             ]
           },
           "behavior": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/behavior"
           },
           "evidence": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/evidence"
           },
           "processId": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           "outcome": {
             "enum": [
@@ -165,13 +165,13 @@
         "type": "object",
         "properties": {
           "id": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           "from": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           "to": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           "label": {
             "type": "string",

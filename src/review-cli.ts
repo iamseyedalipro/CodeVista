@@ -17,7 +17,7 @@ try {
     note.length > 8000
   )
     throw new Error(
-      "Usage: node .logicatlas/tools/review.mjs --result updated|no-flow-change --note 'What was reviewed'",
+      "Usage: node .codevista/tools/review.mjs --result updated|no-flow-change --note 'What was reviewed'",
     );
   const root = execFileSync("git", ["rev-parse", "--show-toplevel"], {
     encoding: "utf8",
@@ -29,11 +29,11 @@ try {
   })
     .split("\0")
     .filter(Boolean);
-  if (status.some((line) => !line.slice(3).startsWith(".logicatlas/")))
+  if (status.some((line) => !line.slice(3).startsWith(".codevista/")))
     throw new Error(
-      "Commit final code and instructions before recording a review. Changes outside .logicatlas remain uncommitted.",
+      "Commit final code and instructions before recording a review. Changes outside .codevista remain uncommitted.",
     );
-  const loaded = await loadFlowDirectory(".logicatlas");
+  const loaded = await loadFlowDirectory(".codevista");
   if (!loaded.valid)
     throw new Error(
       "The flow map is invalid. Run the validator and fix its errors before recording a review.",
@@ -64,7 +64,7 @@ try {
     result,
     note,
   };
-  const path = ".logicatlas/review.json";
+  const path = ".codevista/review.json";
   try {
     if ((await lstat(path)).isSymbolicLink())
       throw new Error("The review receipt cannot be a symbolic link.");

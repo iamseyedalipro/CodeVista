@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:logicatlas:schema:common:1.0.0",
-  "title": "LogicAtlas common 1.0.0",
+  "$id": "urn:codevista:schema:common:1.0.0",
+  "title": "CodeVista common 1.0.0",
   "$defs": {
     "id": {
       "type": "string",
@@ -130,7 +130,7 @@
         "references": {
           "type": "array",
           "items": {
-            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/codeReference"
+            "$ref": "urn:codevista:schema:common:1.0.0#/$defs/codeReference"
           },
           "maxItems": 100
         },

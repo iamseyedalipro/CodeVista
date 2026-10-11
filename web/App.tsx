@@ -1,3 +1,4 @@
+import { ThemePicker } from "./theme";
 import { DemoComparison } from "./DemoComparison";
 import { useEffect, useState } from "react";
 import { Viewer } from "./Viewer";
@@ -64,14 +65,14 @@ export default function App() {
     const channel =
       typeof BroadcastChannel === "undefined"
         ? null
-        : new BroadcastChannel("logicatlas-session");
+        : new BroadcastChannel("codevista-session");
     if (channel)
       channel.onmessage = () => {
         end();
         refresh();
       };
     window.addEventListener("hashchange", update);
-    window.addEventListener("logicatlas-session-ended", end);
+    window.addEventListener("codevista-session-ended", end);
     window.addEventListener("pageshow", refresh);
     window.addEventListener("pagehide", pagehide);
     document.addEventListener("visibilitychange", visibility);
@@ -84,7 +85,7 @@ export default function App() {
       clearInterval(timer);
       channel?.close();
       window.removeEventListener("hashchange", update);
-      window.removeEventListener("logicatlas-session-ended", end);
+      window.removeEventListener("codevista-session-ended", end);
       window.removeEventListener("pageshow", refresh);
       window.removeEventListener("pagehide", pagehide);
       document.removeEventListener("visibilitychange", visibility);
@@ -105,7 +106,7 @@ export default function App() {
       setConfirmDelete(false);
       location.hash = "/projects";
       if (typeof BroadcastChannel !== "undefined") {
-        const channel = new BroadcastChannel("logicatlas-session");
+        const channel = new BroadcastChannel("codevista-session");
         channel.postMessage("ended");
         channel.close();
       }
@@ -137,10 +138,11 @@ export default function App() {
     <>
       <header className="app-header">
         <a className="brand" href="#/demo/after">
-          <span className="brand-mark">L</span>LogicAtlas
+          <span className="brand-mark">C</span>CodeVista
           <span className="brand-tag">APPLICATION INTELLIGENCE</span>
         </a>
         <div className="header-right">
+          <ThemePicker />
           <a href="#/projects">Projects</a>
           <a href="#/help">Guide & privacy</a>
           {demo && (

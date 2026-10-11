@@ -17,7 +17,7 @@ export function Help() {
         <p>
           Select a repository and branch, copy the setup prompt, and give it to
           the coding agent you already use. The agent inspects your code and
-          saves portable JSON definitions under .logicatlas. Downloadable tools
+          saves portable JSON definitions under .codevista. Downloadable tools
           validate those files and record a review receipt. This application
           does not call an AI service or require an AI API key.
         </p>
@@ -48,7 +48,7 @@ export function Help() {
         <h2>Privacy and removal</h2>
         <p>
           GitHub grants read access to repository contents and pull requests;
-          its permission model cannot restrict access to one folder. LogicAtlas
+          its permission model cannot restrict access to one folder. CodeVista
           reads Git tree metadata and map JSON files. It never executes
           repository code, fetches complete source files, or sends repository
           content to an AI service. Source links open GitHub at the displayed
@@ -77,7 +77,7 @@ export function Help() {
         <h2>Self-hosting and contribution</h2>
         <p>
           Deploy your own host and GitHub App. The portable format, validator,
-          and viewer do not depend on a central LogicAtlas service.
+          and viewer do not depend on a central CodeVista service.
         </p>
         <div className="help-links">
           <a

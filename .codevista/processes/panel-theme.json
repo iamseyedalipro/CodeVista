@@ -1,0 +1,339 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "panel-theme",
+  "title": "Choose the panel appearance",
+  "purpose": "Apply system, light or dark appearance without storing repository data.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/theme.tsx"
+      },
+      {
+        "path": "web/main.tsx"
+      },
+      {
+        "path": "web/App.tsx"
+      },
+      {
+        "path": "web/styles.css"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Theme initialization, explicit choice, blocked storage, OS changes and cross-tab preference updates.",
+    "gaps": []
+  },
+  "entryNodeId": "panel-theme.start",
+  "nodes": [
+    {
+      "id": "panel-theme.start",
+      "kind": "start",
+      "title": "Initialize browser theme",
+      "description": "Initialize before React rendering; default to system preference.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.read",
+      "kind": "action",
+      "title": "Read saved preference",
+      "description": "Read codevista-theme from localStorage; use system for missing/invalid values or a storage exception.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.resolve",
+      "kind": "decision",
+      "title": "Follow the operating system?",
+      "description": "Only system preference follows matchMedia; explicit light/dark overrides it.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.system",
+      "kind": "action",
+      "title": "Resolve current OS appearance",
+      "description": "Choose dark when prefers-color-scheme: dark matches, otherwise light.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.explicit",
+      "kind": "action",
+      "title": "Use explicit choice",
+      "description": "Keep the selected light or dark mode independently of OS appearance.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.apply",
+      "kind": "action",
+      "title": "Apply theme to the panel",
+      "description": "Set the root data-theme attribute; CSS tokens update panel, forms, graph labels, nodes and controls. Notify subscribed selectors.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.wait",
+      "kind": "wait",
+      "title": "Wait for appearance changes",
+      "description": "Listen for user selection, OS media changes and cross-tab storage events.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.save",
+      "kind": "action",
+      "title": "Store user choice if allowed",
+      "description": "Set preference and attempt localStorage write. If blocked, keep the choice in this page and continue.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel-theme.sync",
+      "kind": "action",
+      "title": "Read cross-tab preference",
+      "description": "Normalize the new value for the theme key; a storage clear resets to system.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/theme.tsx"
+          },
+          {
+            "path": "web/main.tsx"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/styles.css"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "panel-theme.edge-1",
+      "from": "panel-theme.start",
+      "to": "panel-theme.read",
+      "label": "Load choice",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-2",
+      "from": "panel-theme.read",
+      "to": "panel-theme.resolve",
+      "label": "Resolve theme",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-3",
+      "from": "panel-theme.resolve",
+      "to": "panel-theme.system",
+      "label": "System",
+      "kind": "normal",
+      "condition": "Preference is system"
+    },
+    {
+      "id": "panel-theme.edge-4",
+      "from": "panel-theme.resolve",
+      "to": "panel-theme.explicit",
+      "label": "Override",
+      "kind": "normal",
+      "condition": "Preference is light or dark"
+    },
+    {
+      "id": "panel-theme.edge-5",
+      "from": "panel-theme.system",
+      "to": "panel-theme.apply",
+      "label": "OS appearance",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-6",
+      "from": "panel-theme.explicit",
+      "to": "panel-theme.apply",
+      "label": "Selected appearance",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-7",
+      "from": "panel-theme.apply",
+      "to": "panel-theme.wait",
+      "label": "Listen",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-8",
+      "from": "panel-theme.wait",
+      "to": "panel-theme.save",
+      "label": "User selects theme",
+      "kind": "normal",
+      "condition": "User changes Color theme selector"
+    },
+    {
+      "id": "panel-theme.edge-9",
+      "from": "panel-theme.wait",
+      "to": "panel-theme.resolve",
+      "label": "OS changes",
+      "kind": "normal",
+      "condition": "Media query change event"
+    },
+    {
+      "id": "panel-theme.edge-10",
+      "from": "panel-theme.wait",
+      "to": "panel-theme.sync",
+      "label": "Another tab changes preference",
+      "kind": "normal",
+      "condition": "Storage event key is codevista-theme or null"
+    },
+    {
+      "id": "panel-theme.edge-11",
+      "from": "panel-theme.save",
+      "to": "panel-theme.resolve",
+      "label": "Continue with choice",
+      "kind": "normal"
+    },
+    {
+      "id": "panel-theme.edge-12",
+      "from": "panel-theme.sync",
+      "to": "panel-theme.resolve",
+      "label": "Apply synchronized choice",
+      "kind": "normal"
+    }
+  ]
+}

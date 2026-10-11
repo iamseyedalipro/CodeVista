@@ -67,7 +67,7 @@ export function configFromEnv(env = process.env): Config {
   return {
     origin: origin.origin,
     port,
-    database: env.DATABASE_PATH ?? "data/logicatlas.sqlite",
+    database: env.DATABASE_PATH ?? "data/codevista.sqlite",
     encryptionKey,
     githubClientId: env.GITHUB_CLIENT_ID ?? "",
     githubClientSecret: env.GITHUB_CLIENT_SECRET ?? "",

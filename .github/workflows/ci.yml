@@ -1,4 +1,4 @@
-name: Verify LogicAtlas
+name: Verify CodeVista
 
 on:
   pull_request:

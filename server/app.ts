@@ -34,10 +34,10 @@ export async function createApp(
   const github = dependencies.github ?? new GitHub(config);
   const store =
     dependencies.store ?? new Store(config.database, config.encryptionKey);
-  const cookieName = config.secureCookies ? "__Host-logicatlas" : "logicatlas";
+  const cookieName = config.secureCookies ? "__Host-codevista" : "codevista";
   const oauthCookie = config.secureCookies
-    ? "__Host-logicatlas-oauth"
-    : "logicatlas-oauth";
+    ? "__Host-codevista-oauth"
+    : "codevista-oauth";
   const cookieOptions = {
     httpOnly: true,
     secure: config.secureCookies,
@@ -506,7 +506,7 @@ export async function createApp(
       repository: auth.repository.full_name,
       branch: ref,
       language,
-      kitUrl: `${config.origin}/agent/logicatlas-kit.zip`,
+      kitUrl: `${config.origin}/agent/codevista-kit.zip`,
     };
     return {
       prompt:

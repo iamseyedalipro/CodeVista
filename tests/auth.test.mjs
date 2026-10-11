@@ -52,14 +52,14 @@ export async function harness(t, overrides = {}) {
   const value = sessionValue();
   const id = store.create(value);
   const headers = {
-    cookie: `logicatlas=${id}`,
+    cookie: `codevista=${id}`,
     origin: config.origin,
     "x-csrf-token": value.csrf,
   };
   return { ...service, id, headers, value };
 }
 test("sessions encrypt credentials on disk and account preferences survive new sessions", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "logicatlas-store-"));
+  const directory = await mkdtemp(join(tmpdir(), "codevista-store-"));
   try {
     const path = join(directory, "sessions.sqlite");
     const store = new Store(path, Buffer.alloc(32, 2));
@@ -335,8 +335,8 @@ test("concurrent expired-token requests share one refresh and preserve account s
     refreshToken: "old-refresh",
     refreshExpiresAt: Date.now() + 360000,
   });
-  const first = h.sessionFor({ logicatlas: h.id });
-  const second = h.sessionFor({ logicatlas: h.id });
+  const first = h.sessionFor({ codevista: h.id });
+  const second = h.sessionFor({ codevista: h.id });
   const account = h.store.get(h.id);
   account.disconnected = [10];
   h.store.saveAccount(account);
@@ -349,7 +349,7 @@ test("concurrent expired-token requests share one refresh and preserve account s
   assert.deepEqual(h.store.get(h.id).disconnected, [10]);
 });
 test("encrypted sessions cannot be read using a different host key", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "logicatlas-key-"));
+  const directory = await mkdtemp(join(tmpdir(), "codevista-key-"));
   try {
     const path = join(directory, "sessions.sqlite");
     const first = new Store(path, Buffer.alloc(32, 1));
@@ -366,7 +366,7 @@ test("static routes do not serve repository source, database, or encoded travers
   const h = await harness(t);
   for (const url of [
     "/server/app.ts",
-    "/data/logicatlas.sqlite",
+    "/data/codevista.sqlite",
     "/%2e%2e/server/app.ts",
     "/..%2f.env",
     "/%2fapi/repositories",

@@ -7,7 +7,7 @@ import test from "node:test";
 import { FILE_LIMITS, loadFlowDirectory } from "../dist/src/load.js";
 
 async function temporaryMap(t) {
-  const directory = await mkdtemp(join(tmpdir(), "logicatlas-test-"));
+  const directory = await mkdtemp(join(tmpdir(), "codevista-test-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const root = join(directory, "map");
   await cp(new URL("../examples/reference/after", import.meta.url), root, { recursive: true });

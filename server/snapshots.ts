@@ -203,13 +203,13 @@ export class SnapshotService {
         message: error.message,
       });
     };
-    if (!entries.has(".logicatlas/manifest.json")) {
+    if (!entries.has(".codevista/manifest.json")) {
       snapshot.status = "missing";
       return snapshot;
     }
     let raw: unknown;
     try {
-      raw = await read(".logicatlas/manifest.json");
+      raw = await read(".codevista/manifest.json");
     } catch (error) {
       issue(error, "/manifest");
       return snapshot;
@@ -258,7 +258,7 @@ export class SnapshotService {
             const current = index++;
             const entry = manifest.processes[current]!;
             try {
-              const value = await read(`.logicatlas/${entry.file}`);
+              const value = await read(`.codevista/${entry.file}`);
               const result = validateProcess(value, `/processes/${current}`);
               if (!result.valid || (value as FlowProcess).id !== entry.id) {
                 snapshot.diagnostics.push(...result.diagnostics, {
@@ -353,9 +353,9 @@ export class SnapshotService {
       ),
     ];
     let receipt: unknown = null;
-    if (entries.has(".logicatlas/review.json")) {
+    if (entries.has(".codevista/review.json")) {
       try {
-        receipt = await read(".logicatlas/review.json");
+        receipt = await read(".codevista/review.json");
       } catch (error) {
         issue(error, "/review");
         receipt = {};

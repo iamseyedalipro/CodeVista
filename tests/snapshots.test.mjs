@@ -28,9 +28,9 @@ async function setup() {
     entries.push({ path, mode: "100644", type: "blob", sha: id });
     return id;
   };
-  add(".logicatlas/manifest.json", bundle.manifest);
+  add(".codevista/manifest.json", bundle.manifest);
   for (const process of bundle.processes)
-    add(`.logicatlas/processes/${process.id}.json`, process);
+    add(`.codevista/processes/${process.id}.json`, process);
   for (const path of new Set(
     bundle.processes
       .flatMap((process) => [
@@ -81,7 +81,7 @@ test("snapshots pin every document and source link to one immutable revision", a
 });
 test("review freshness is independent of partial coverage and binds the loaded tree", async () => {
   const h = await setup();
-  h.add(".logicatlas/review.json", {
+  h.add(".codevista/review.json", {
     schemaVersion: "1.0.0",
     sourceDigest: sourceDigest(h.entries),
     mapDigest: mapDigest(h.bundle),
@@ -92,7 +92,7 @@ test("review freshness is independent of partial coverage and binds the loaded t
   const result = await h.service.load(h.auth, "develop");
   assert.equal(result.freshness.status, "reviewed");
   assert.equal(result.bundle.manifest.coverage.status, "partial");
-  h.entries.find((entry) => !entry.path.startsWith(".logicatlas/")).sha =
+  h.entries.find((entry) => !entry.path.startsWith(".codevista/")).sha =
     sha("d");
   assert.equal(
     (await h.service.load(h.auth, "develop")).freshness.status,
@@ -175,7 +175,7 @@ test("repository mismatch, link objects, and canonical map paths fail safely", a
 test("missing source files disable links without claiming validated source behavior", async () => {
   const h = await setup();
   h.github.tree = async () => ({
-    entries: h.entries.filter((entry) => entry.path.startsWith(".logicatlas/")),
+    entries: h.entries.filter((entry) => entry.path.startsWith(".codevista/")),
     truncated: false,
   });
   const result = await h.service.load(h.auth, "develop");
@@ -244,7 +244,7 @@ test("every cached fallback route reauthorizes before looking up private data", 
   });
   const options = {
     url: "/api/repositories/sample/project/snapshot?ref=develop",
-    cookies: { logicatlas: id },
+    cookies: { codevista: id },
   };
   assert.equal((await service.app.inject(options)).json().status, "valid");
   allowed = false;
@@ -346,7 +346,7 @@ test("PR routes authorize forks, pin base/head, and never infer deletions from a
   });
   const options = {
     url: "/api/repositories/sample/project/comparison/7",
-    cookies: { logicatlas: id },
+    cookies: { codevista: id },
   };
   let response = await service.app.inject(options);
   assert.equal(response.statusCode, 200);
@@ -402,7 +402,7 @@ test("logout during an in-flight snapshot prevents a private response", async (t
   });
   const pending = service.app.inject({
     url: "/api/repositories/sample/project/snapshot",
-    cookies: { logicatlas: id },
+    cookies: { codevista: id },
   });
   for (let attempt = 0; attempt < 100 && !release; attempt++)
     await new Promise((resolve) => setTimeout(resolve, 1));

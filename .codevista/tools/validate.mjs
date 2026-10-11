@@ -86,23 +86,23 @@ var require_code = __commonJS({
     };
     exports._Code = _Code;
     exports.nil = new _Code("");
-    function _(strs, ...args) {
+    function _(strs, ...args2) {
       const code = [strs[0]];
       let i = 0;
-      while (i < args.length) {
-        addCodeArg(code, args[i]);
+      while (i < args2.length) {
+        addCodeArg(code, args2[i]);
         code.push(strs[++i]);
       }
       return new _Code(code);
     }
     exports._ = _;
     var plus = new _Code("+");
-    function str(strs, ...args) {
+    function str(strs, ...args2) {
       const expr = [safeStringify(strs[0])];
       let i = 0;
-      while (i < args.length) {
+      while (i < args2.length) {
         expr.push(plus);
-        addCodeArg(expr, args[i]);
+        addCodeArg(expr, args2[i]);
         expr.push(plus, safeStringify(strs[++i]));
       }
       optimize(expr);
@@ -406,11 +406,11 @@ var require_codegen = __commonJS({
         const rhs = this.rhs === void 0 ? "" : ` = ${this.rhs}`;
         return `${varKind} ${this.name}${rhs};` + _n;
       }
-      optimizeNames(names, constants3) {
+      optimizeNames(names, constants2) {
         if (!names[this.name.str])
           return;
         if (this.rhs)
-          this.rhs = optimizeExpr(this.rhs, names, constants3);
+          this.rhs = optimizeExpr(this.rhs, names, constants2);
         return this;
       }
       get names() {
@@ -427,10 +427,10 @@ var require_codegen = __commonJS({
       render({ _n }) {
         return `${this.lhs} = ${this.rhs};` + _n;
       }
-      optimizeNames(names, constants3) {
+      optimizeNames(names, constants2) {
         if (this.lhs instanceof code_1.Name && !names[this.lhs.str] && !this.sideEffects)
           return;
-        this.rhs = optimizeExpr(this.rhs, names, constants3);
+        this.rhs = optimizeExpr(this.rhs, names, constants2);
         return this;
       }
       get names() {
@@ -491,8 +491,8 @@ var require_codegen = __commonJS({
       optimizeNodes() {
         return `${this.code}` ? this : void 0;
       }
-      optimizeNames(names, constants3) {
-        this.code = optimizeExpr(this.code, names, constants3);
+      optimizeNames(names, constants2) {
+        this.code = optimizeExpr(this.code, names, constants2);
         return this;
       }
       get names() {
@@ -521,12 +521,12 @@ var require_codegen = __commonJS({
         }
         return nodes.length > 0 ? this : void 0;
       }
-      optimizeNames(names, constants3) {
+      optimizeNames(names, constants2) {
         const { nodes } = this;
         let i = nodes.length;
         while (i--) {
           const n = nodes[i];
-          if (n.optimizeNames(names, constants3))
+          if (n.optimizeNames(names, constants2))
             continue;
           subtractNames(names, n.names);
           nodes.splice(i, 1);
@@ -579,12 +579,12 @@ var require_codegen = __commonJS({
           return void 0;
         return this;
       }
-      optimizeNames(names, constants3) {
+      optimizeNames(names, constants2) {
         var _a;
-        this.else = (_a = this.else) === null || _a === void 0 ? void 0 : _a.optimizeNames(names, constants3);
-        if (!(super.optimizeNames(names, constants3) || this.else))
+        this.else = (_a = this.else) === null || _a === void 0 ? void 0 : _a.optimizeNames(names, constants2);
+        if (!(super.optimizeNames(names, constants2) || this.else))
           return;
-        this.condition = optimizeExpr(this.condition, names, constants3);
+        this.condition = optimizeExpr(this.condition, names, constants2);
         return this;
       }
       get names() {
@@ -607,10 +607,10 @@ var require_codegen = __commonJS({
       render(opts) {
         return `for(${this.iteration})` + super.render(opts);
       }
-      optimizeNames(names, constants3) {
-        if (!super.optimizeNames(names, constants3))
+      optimizeNames(names, constants2) {
+        if (!super.optimizeNames(names, constants2))
           return;
-        this.iteration = optimizeExpr(this.iteration, names, constants3);
+        this.iteration = optimizeExpr(this.iteration, names, constants2);
         return this;
       }
       get names() {
@@ -646,10 +646,10 @@ var require_codegen = __commonJS({
       render(opts) {
         return `for(${this.varKind} ${this.name} ${this.loop} ${this.iterable})` + super.render(opts);
       }
-      optimizeNames(names, constants3) {
-        if (!super.optimizeNames(names, constants3))
+      optimizeNames(names, constants2) {
+        if (!super.optimizeNames(names, constants2))
           return;
-        this.iterable = optimizeExpr(this.iterable, names, constants3);
+        this.iterable = optimizeExpr(this.iterable, names, constants2);
         return this;
       }
       get names() {
@@ -657,10 +657,10 @@ var require_codegen = __commonJS({
       }
     };
     var Func = class extends BlockNode {
-      constructor(name, args, async) {
+      constructor(name, args2, async) {
         super();
         this.name = name;
-        this.args = args;
+        this.args = args2;
         this.async = async;
       }
       render(opts) {
@@ -691,11 +691,11 @@ var require_codegen = __commonJS({
         (_b = this.finally) === null || _b === void 0 ? void 0 : _b.optimizeNodes();
         return this;
       }
-      optimizeNames(names, constants3) {
+      optimizeNames(names, constants2) {
         var _a, _b;
-        super.optimizeNames(names, constants3);
-        (_a = this.catch) === null || _a === void 0 ? void 0 : _a.optimizeNames(names, constants3);
-        (_b = this.finally) === null || _b === void 0 ? void 0 : _b.optimizeNames(names, constants3);
+        super.optimizeNames(names, constants2);
+        (_a = this.catch) === null || _a === void 0 ? void 0 : _a.optimizeNames(names, constants2);
+        (_b = this.finally) === null || _b === void 0 ? void 0 : _b.optimizeNames(names, constants2);
         return this;
       }
       get names() {
@@ -935,8 +935,8 @@ var require_codegen = __commonJS({
         return this;
       }
       // `function` heading (or definition if funcBody is passed)
-      func(name, args = code_1.nil, async, funcBody) {
-        this._blockNode(new Func(name, args, async));
+      func(name, args2 = code_1.nil, async, funcBody) {
+        this._blockNode(new Func(name, args2, async));
         if (funcBody)
           this.code(funcBody).endFunc();
         return this;
@@ -996,7 +996,7 @@ var require_codegen = __commonJS({
     function addExprNames(names, from) {
       return from instanceof code_1._CodeOrName ? addNames(names, from.names) : names;
     }
-    function optimizeExpr(expr, names, constants3) {
+    function optimizeExpr(expr, names, constants2) {
       if (expr instanceof code_1.Name)
         return replaceName(expr);
       if (!canOptimize(expr))
@@ -1011,14 +1011,14 @@ var require_codegen = __commonJS({
         return items;
       }, []));
       function replaceName(n) {
-        const c = constants3[n.str];
+        const c = constants2[n.str];
         if (c === void 0 || names[n.str] !== 1)
           return n;
         delete names[n.str];
         return c;
       }
       function canOptimize(e) {
-        return e instanceof code_1._Code && e._items.some((c) => c instanceof code_1.Name && names[c.str] === 1 && constants3[c.str] !== void 0);
+        return e instanceof code_1._Code && e._items.some((c) => c instanceof code_1.Name && names[c.str] === 1 && constants2[c.str] !== void 0);
       }
     }
     function subtractNames(names, from) {
@@ -1030,13 +1030,13 @@ var require_codegen = __commonJS({
     }
     exports.not = not;
     var andCode = mappend(exports.operators.AND);
-    function and(...args) {
-      return args.reduce(andCode);
+    function and(...args2) {
+      return args2.reduce(andCode);
     }
     exports.and = and;
     var orCode = mappend(exports.operators.OR);
-    function or(...args) {
-      return args.reduce(orCode);
+    function or(...args2) {
+      return args2.reduce(orCode);
     }
     exports.or = or;
     function mappend(op) {
@@ -1769,8 +1769,8 @@ var require_code2 = __commonJS({
       ];
       if (it.opts.dynamicRef)
         valCxt.push([names_1.default.dynamicAnchors, names_1.default.dynamicAnchors]);
-      const args = (0, codegen_1._)`${dataAndSchema}, ${gen.object(...valCxt)}`;
-      return context !== codegen_1.nil ? (0, codegen_1._)`${func}.call(${context}, ${args})` : (0, codegen_1._)`${func}(${args})`;
+      const args2 = (0, codegen_1._)`${dataAndSchema}, ${gen.object(...valCxt)}`;
+      return context !== codegen_1.nil ? (0, codegen_1._)`${func}.call(${context}, ${args2})` : (0, codegen_1._)`${func}(${args2})`;
     }
     exports.callValidateCode = callValidateCode;
     var newRegExp = (0, codegen_1._)`new RegExp`;
@@ -7453,11 +7453,6 @@ var require__ = __commonJS({
   }
 });
 
-// src/review-cli.ts
-import { execFileSync } from "node:child_process";
-import { lstat as lstat2, writeFile } from "node:fs/promises";
-import { constants as constants2 } from "node:fs";
-
 // src/load.ts
 import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
@@ -7469,8 +7464,8 @@ var import__ = __toESM(require__(), 1);
 // schemas/common.schema.json
 var common_schema_default = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "urn:logicatlas:schema:common:1.0.0",
-  title: "LogicAtlas common 1.0.0",
+  $id: "urn:codevista:schema:common:1.0.0",
+  title: "CodeVista common 1.0.0",
   $defs: {
     id: {
       type: "string",
@@ -7599,7 +7594,7 @@ var common_schema_default = {
         references: {
           type: "array",
           items: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/codeReference"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/codeReference"
           },
           maxItems: 100
         },
@@ -7702,8 +7697,8 @@ var common_schema_default = {
 // schemas/manifest.schema.json
 var manifest_schema_default = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "urn:logicatlas:schema:manifest:1.0.0",
-  title: "LogicAtlas manifest 1.0.0",
+  $id: "urn:codevista:schema:manifest:1.0.0",
+  title: "CodeVista manifest 1.0.0",
   type: "object",
   properties: {
     schemaVersion: {
@@ -7713,7 +7708,7 @@ var manifest_schema_default = {
       type: "object",
       properties: {
         id: {
-          $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
         },
         name: {
           type: "string",
@@ -7732,7 +7727,7 @@ var manifest_schema_default = {
           pattern: "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
         },
         repository: {
-          $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/repository"
+          $ref: "urn:codevista:schema:common:1.0.0#/$defs/repository"
         }
       },
       required: [
@@ -7745,12 +7740,12 @@ var manifest_schema_default = {
       additionalProperties: false
     },
     coverage: {
-      $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/coverage"
+      $ref: "urn:codevista:schema:common:1.0.0#/$defs/coverage"
     },
     rootProcessIds: {
       type: "array",
       items: {
-        $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+        $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
       },
       minItems: 1,
       maxItems: 1e3,
@@ -7762,7 +7757,7 @@ var manifest_schema_default = {
         type: "object",
         properties: {
           id: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           file: {
             type: "string",
@@ -7784,13 +7779,13 @@ var manifest_schema_default = {
         type: "object",
         properties: {
           id: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           from: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           to: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           label: {
             type: "string",
@@ -7831,15 +7826,15 @@ var manifest_schema_default = {
 // schemas/process.schema.json
 var process_schema_default = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "urn:logicatlas:schema:process:1.0.0",
-  title: "LogicAtlas process 1.0.0",
+  $id: "urn:codevista:schema:process:1.0.0",
+  title: "CodeVista process 1.0.0",
   type: "object",
   properties: {
     schemaVersion: {
       const: "1.0.0"
     },
     id: {
-      $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+      $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
     },
     title: {
       type: "string",
@@ -7854,18 +7849,18 @@ var process_schema_default = {
       pattern: "\\S"
     },
     behavior: {
-      $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+      $ref: "urn:codevista:schema:common:1.0.0#/$defs/behavior"
     },
     evidence: {
-      $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+      $ref: "urn:codevista:schema:common:1.0.0#/$defs/evidence"
     },
     coverage: {
-      $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/coverage"
+      $ref: "urn:codevista:schema:common:1.0.0#/$defs/coverage"
     },
     entryNodeId: {
       anyOf: [
         {
-          $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
         },
         {
           type: "null"
@@ -7878,7 +7873,7 @@ var process_schema_default = {
         type: "object",
         properties: {
           id: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           title: {
             type: "string",
@@ -7904,13 +7899,13 @@ var process_schema_default = {
             ]
           },
           behavior: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/behavior"
           },
           evidence: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/evidence"
           },
           processId: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           outcome: {
             enum: [
@@ -7996,13 +7991,13 @@ var process_schema_default = {
         type: "object",
         properties: {
           id: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           from: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           to: {
-            $ref: "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+            $ref: "urn:codevista:schema:common:1.0.0#/$defs/id"
           },
           label: {
             type: "string",
@@ -8381,104 +8376,26 @@ async function loadFlowDirectory(directory) {
   }
 }
 
-// src/review.ts
-import { createHash } from "node:crypto";
-function sourceDigest(entries) {
-  const lines = entries.filter(
-    (entry) => (entry.type === "blob" || entry.type === "commit") && !entry.path.startsWith(".logicatlas/")
-  ).sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(
-    (entry) => `${entry.path}\0${entry.mode}\0${entry.type}\0${entry.sha}
-`
-  ).join("");
-  return createHash("sha256").update(lines).digest("hex");
-}
-function canonical(value) {
-  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
-  if (value !== null && typeof value === "object")
-    return `{${Object.keys(value).sort().map(
-      (key) => `${JSON.stringify(key)}:${canonical(value[key])}`
-    ).join(",")}}`;
-  return JSON.stringify(value);
-}
-function mapDigest(bundle) {
-  return createHash("sha256").update(
-    canonical({
-      manifest: bundle.manifest,
-      processes: [...bundle.processes].sort(
-        (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0
-      )
-    })
-  ).digest("hex");
-}
-
-// src/review-cli.ts
-try {
-  const args = process.argv.slice(2);
-  const result = args[args.indexOf("--result") + 1];
-  const note = args[args.indexOf("--note") + 1];
-  if (args.length !== 4 || !args.includes("--result") || !args.includes("--note") || !["updated", "no-flow-change"].includes(result ?? "") || !note?.trim() || note.length > 8e3)
-    throw new Error(
-      "Usage: node .logicatlas/tools/review.mjs --result updated|no-flow-change --note 'What was reviewed'"
-    );
-  const root = execFileSync("git", ["rev-parse", "--show-toplevel"], {
-    encoding: "utf8"
-  }).trim();
-  if (root !== process.cwd())
-    throw new Error("Run the review tool from the repository root.");
-  const status = execFileSync("git", ["status", "--porcelain", "-z"], {
-    encoding: "utf8"
-  }).split("\0").filter(Boolean);
-  if (status.some((line) => !line.slice(3).startsWith(".logicatlas/")))
-    throw new Error(
-      "Commit final code and instructions before recording a review. Changes outside .logicatlas remain uncommitted."
-    );
-  const loaded = await loadFlowDirectory(".logicatlas");
-  if (!loaded.valid)
-    throw new Error(
-      "The flow map is invalid. Run the validator and fix its errors before recording a review."
-    );
-  const raw = execFileSync(
-    "git",
-    ["ls-tree", "-r", "-z", "--full-tree", "HEAD"],
-    { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 }
-  );
-  const entries = raw.split("\0").filter(Boolean).map((record) => {
-    const tab = record.indexOf("	");
-    const [mode, type, sha] = record.slice(0, tab).split(" ");
-    return {
-      mode,
-      type,
-      sha,
-      path: record.slice(tab + 1)
-    };
-  });
-  const receipt = {
-    schemaVersion: "1.0.0",
-    sourceDigest: sourceDigest(entries),
-    mapDigest: mapDigest(loaded.bundle),
-    reviewedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    result,
-    note
+// src/cli.ts
+var args = process.argv.slice(2);
+if (args.includes("--help")) {
+  console.log("Usage: npm run validate -- [map-directory] [--json]\nDefault directory: .codevista\nChecks structure only; does not establish freshness, authorization, or behavioral accuracy.");
+} else if (args.filter((arg) => arg === "--json").length > 1 || args.some((arg) => arg.startsWith("-") && arg !== "--json") || args.filter((arg) => arg !== "--json").length > 1) {
+  console.error("Usage: npm run validate -- [map-directory] [--json]");
+  process.exitCode = 2;
+} else {
+  const directory = args.find((arg) => arg !== "--json") ?? ".codevista";
+  const result = await loadFlowDirectory(directory);
+  const summary = {
+    valid: result.valid,
+    assurance: "structure-only",
+    processCount: result.valid ? result.bundle.processes.length : null,
+    diagnostics: result.diagnostics
   };
-  const path = ".logicatlas/review.json";
-  try {
-    if ((await lstat2(path)).isSymbolicLink())
-      throw new Error("The review receipt cannot be a symbolic link.");
-  } catch (error) {
-    if (!(error && typeof error === "object" && "code" in error && error.code === "ENOENT"))
-      throw error;
+  if (args.includes("--json")) console.log(JSON.stringify(summary, null, 2));
+  else {
+    console.log(result.valid ? "Map structure is valid. Behavioral accuracy, source existence, and freshness have not been verified." : "Map validation failed. No files were changed.");
+    for (const item of result.diagnostics) console.log(`${item.severity.toUpperCase()} ${item.code} ${item.path}: ${item.message}`);
   }
-  await writeFile(path, `${JSON.stringify(receipt, null, 2)}
-`, {
-    flag: constants2.O_WRONLY | constants2.O_CREAT | constants2.O_TRUNC | constants2.O_NOFOLLOW,
-    mode: 384
-  });
-  console.log(
-    "Review receipt recorded for the current source tree and flow content. Commit it on the same branch. This is a review claim, not proof of semantic accuracy."
-  );
-} catch (error) {
-  console.error(
-    error instanceof Error ? error.message : "Could not record the review."
-  );
-  process.exitCode = 1;
+  if (!result.valid) process.exitCode = 1;
 }

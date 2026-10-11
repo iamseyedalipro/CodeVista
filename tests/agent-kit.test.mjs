@@ -17,7 +17,7 @@ import { assessFreshness } from "../dist/src/review.js";
 import { loadFlowDirectory } from "../dist/src/load.js";
 
 test("downloaded agent kit validates and records update/no-op reviews without package installation", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "logicatlas-agent-"));
+  const directory = await mkdtemp(join(tmpdir(), "codevista-agent-"));
   const git = (...args) =>
     execFileSync("git", args, {
       cwd: directory,
@@ -38,17 +38,17 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
   try {
     await cp(
       resolve("examples/reference/after"),
-      join(directory, ".logicatlas"),
+      join(directory, ".codevista"),
       { recursive: true },
     );
-    const zip = unzipSync(await readFile("public/agent/logicatlas-kit.zip"));
+    const zip = unzipSync(await readFile("public/agent/codevista-kit.zip"));
     for (const [path, bytes] of Object.entries(zip)) {
-      const target = join(directory, ".logicatlas", path);
+      const target = join(directory, ".codevista", path);
       await mkdir(dirname(target), { recursive: true });
       await writeFile(target, bytes);
     }
     git("init", "-b", "agent-review");
-    git("config", "user.name", "LogicAtlas Test");
+    git("config", "user.name", "CodeVista Test");
     git("config", "user.email", "test@example.invalid");
     await writeFile(
       join(directory, "source.ts"),
@@ -56,29 +56,29 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
     );
     git("add", ".");
     git("commit", "-m", "Add source and initial map");
-    const validation = run(".logicatlas/tools/validate.mjs", ".logicatlas");
+    const validation = run(".codevista/tools/validate.mjs", ".codevista");
     assert.equal(validation.status, 0, validation.stderr);
     const review = run(
-      ".logicatlas/tools/review.mjs",
+      ".codevista/tools/review.mjs",
       "--result",
       "updated",
       "--note",
       "Reviewed the implemented feature.",
     );
     assert.equal(review.status, 0, review.stderr);
-    git("add", ".logicatlas/review.json");
+    git("add", ".codevista/review.json");
     git("commit", "-m", "Record map review");
-    const bundle = (await loadFlowDirectory(join(directory, ".logicatlas")))
+    const bundle = (await loadFlowDirectory(join(directory, ".codevista")))
       .bundle;
     let receipt = JSON.parse(
-      await readFile(join(directory, ".logicatlas/review.json")),
+      await readFile(join(directory, ".codevista/review.json")),
     );
     assert.equal(
       assessFreshness(receipt, bundle, entries()).status,
       "reviewed",
     );
     const untouched = await readFile(
-      join(directory, ".logicatlas/processes/payment.json"),
+      join(directory, ".codevista/processes/payment.json"),
       "utf8",
     );
     await writeFile(
@@ -87,7 +87,7 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
     );
     assert.equal(
       run(
-        ".logicatlas/tools/review.mjs",
+        ".codevista/tools/review.mjs",
         "--result",
         "no-flow-change",
         "--note",
@@ -103,7 +103,7 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
     );
     assert.equal(
       run(
-        ".logicatlas/tools/review.mjs",
+        ".codevista/tools/review.mjs",
         "--result",
         "no-flow-change",
         "--note",
@@ -112,7 +112,7 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
       0,
     );
     receipt = JSON.parse(
-      await readFile(join(directory, ".logicatlas/review.json")),
+      await readFile(join(directory, ".codevista/review.json")),
     );
     assert.equal(
       assessFreshness(receipt, bundle, entries()).status,
@@ -121,22 +121,22 @@ test("downloaded agent kit validates and records update/no-op reviews without pa
     assert.equal(receipt.result, "no-flow-change");
     assert.equal(
       await readFile(
-        join(directory, ".logicatlas/processes/payment.json"),
+        join(directory, ".codevista/processes/payment.json"),
         "utf8",
       ),
       untouched,
     );
-    await rm(join(directory, ".logicatlas/review.json"));
+    await rm(join(directory, ".codevista/review.json"));
     await writeFile(join(directory, "outside.json"), "DO NOT CHANGE");
     git("add", "outside.json");
     git("commit", "-m", "Add protected test file");
     await symlink(
       "../outside.json",
-      join(directory, ".logicatlas/review.json"),
+      join(directory, ".codevista/review.json"),
     );
     assert.equal(
       run(
-        ".logicatlas/tools/review.mjs",
+        ".codevista/tools/review.mjs",
         "--result",
         "updated",
         "--note",

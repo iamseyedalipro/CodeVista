@@ -137,7 +137,7 @@
       "id": "review-freshness.digest",
       "kind": "decision",
       "title": "Do exact digests match?",
-      "description": "Source digest excludes all .logicatlas files; map digest canonicalizes manifest/process content.",
+      "description": "Source digest excludes all .codevista files; map digest canonicalizes manifest/process content.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

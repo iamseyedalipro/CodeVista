@@ -64,7 +64,7 @@ claim, not a verified source badge.
 
 A review receipt binds two digests:
 
-- Source digest: sorted Git entries outside `.logicatlas/`, including path, mode,
+- Source digest: sorted Git entries outside `.codevista/`, including path, mode,
   object type, and object ID. Submodules are included by commit ID.
 - Map digest: canonical manifest plus process values ordered by stable process ID.
 

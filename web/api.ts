@@ -30,7 +30,7 @@ export async function api<T>(
   const value = await response.json();
   if (!response.ok) {
     if (response.status === 401)
-      window.dispatchEvent(new Event("logicatlas-session-ended"));
+      window.dispatchEvent(new Event("codevista-session-ended"));
     throw new RequestError(
       response.status,
       value.error?.code ?? "REQUEST_FAILED",

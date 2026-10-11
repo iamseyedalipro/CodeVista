@@ -71,7 +71,7 @@ results enter Wait for job completion. Only a ready result delivers a reply; a
 failed result ends in an error. Queueing never means the response has completed.
 
 The response-service boundary belongs to the synthetic user's application. It does
-not introduce an AI provider or API requirement into LogicAtlas.
+not introduce an AI provider or API requirement into CodeVista.
 
 ## Honest gaps and preserved content
 

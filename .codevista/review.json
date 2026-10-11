@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceDigest": "96b0366c699e8d8347610e397e41684158bc045414afa3930da2a8feda31dbc3",
+  "mapDigest": "244143d3e16874de741f8e6178b83279b0546b266982ae3de679cec1a9e02c3f",
+  "reviewedAt": "2026-10-11T10:39:24.644Z",
+  "result": "updated",
+  "note": "Reviewed CodeVista naming/path migration across existing flows and added panel-theme for system, explicit, storage-failure and cross-tab behavior. Refreshed bundled kit. 106 unit/integration and 17 Chromium browser tests pass; map validates with existing coverage gaps. Live GitHub and independent deployment trials remain unverified."
+}

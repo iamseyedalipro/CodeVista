@@ -1,6 +1,6 @@
 # Existing-agent workflow
 
-LogicAtlas supplies instructions and local tools; it does not supply a new coding
+CodeVista supplies instructions and local tools; it does not supply a new coding
 agent or call an AI model. The intended initial route is a repository-capable Claude
 web environment. **That external environment has not been tested in this change.**
 Ordinary chat access is not sufficient: the agent must actually read files, run
@@ -14,7 +14,7 @@ your existing coding agent. The prompt includes the exact repository, branch,
 chosen map language, and a public URL for the versioned host's agent kit.
 
 The agent should download and inspect the ZIP, then extract its tools and schemas
-under `.logicatlas` without overwriting existing map documents. Preserve existing
+under `.codevista` without overwriting existing map documents. Preserve existing
 AGENTS.md/CLAUDE.md instructions; append the maintenance rules once in the file the
 actual environment reads. The marker makes appending idempotent. A saved instruction
 is not a guarantee that every future agent session will follow it.
@@ -44,17 +44,17 @@ environment, not in the hosted user's browser.
 Commands run by the agent at the repository root:
 
 ```sh
-node .logicatlas/tools/validate.mjs .logicatlas
-node .logicatlas/tools/review.mjs --result updated --note 'Reviewed payment and its dependent discount process.'
+node .codevista/tools/validate.mjs .codevista
+node .codevista/tools/review.mjs --result updated --note 'Reviewed payment and its dependent discount process.'
 ```
 
 For an inspected change with no flow impact:
 
 ```sh
-node .logicatlas/tools/review.mjs --result no-flow-change --note 'Only explanatory comments changed; the documented behavior is unchanged.'
+node .codevista/tools/review.mjs --result no-flow-change --note 'Only explanatory comments changed; the documented behavior is unchanged.'
 ```
 
-The review tool refuses uncommitted files outside `.logicatlas`. Commit code and
+The review tool refuses uncommitted files outside `.codevista`. Commit code and
 instructions first. The receipt itself is excluded from the source digest, so its
 commit does not invalidate its own review. It does not read a hosted API or upload
 anything. Review is a claim tied to content, not proof of semantic accuracy.

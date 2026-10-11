@@ -44,7 +44,7 @@
       "id": "map-review-recording.preconditions",
       "kind": "decision",
       "title": "Are review preconditions satisfied?",
-      "description": "Require Git repository root as cwd and no uncommitted files outside .logicatlas.",
+      "description": "Require Git repository root as cwd and no uncommitted files outside .codevista.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -81,7 +81,7 @@
       "id": "map-review-recording.tree",
       "kind": "action",
       "title": "Digest committed source and map",
-      "description": "Read HEAD git tree; SHA-256 digest sorted non-.logicatlas blob/submodule paths, modes, types and object SHAs. Canonical map digest sorts processes by ID.",
+      "description": "Read HEAD git tree; SHA-256 digest sorted non-.codevista blob/submodule paths, modes, types and object SHAs. Canonical map digest sorts processes by ID.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -166,7 +166,7 @@
       "to": "map-review-recording.error",
       "label": "Precondition fails",
       "kind": "error",
-      "condition": "Arguments invalid, wrong cwd, Git fails or dirty source outside .logicatlas"
+      "condition": "Arguments invalid, wrong cwd, Git fails or dirty source outside .codevista"
     },
     {
       "id": "map-review-recording.edge-3",

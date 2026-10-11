@@ -124,7 +124,7 @@ local analogue is useful evidence, not a substitute for the required trial.
 
 ## Repository map generation — 2026-10-11
 
-CodeVista's own application map was created in `.logicatlas` from inspected
+CodeVista's own application map was created in `.codevista` from inspected
 `master` source, with 28 processes and 263 documented nodes. The
 [process index](repository-flows.md) records scope, shared definitions and gaps.
 The official standalone kit was built from the checked-out kit builder and its
@@ -144,3 +144,22 @@ for this task are **BLOCKED**, not passed. Existing historical browser evidence
 above is unchanged. No live GitHub App or external-agent acceptance trial was
 claimed by this mapping task. An exact source/map review receipt is generated
 after committing final instructions and documentation, then committed separately.
+
+## CodeVista branding and theme update — 2026-10-11
+
+- Renamed product-owned runtime identifiers, kit URL, schema URNs and map directory
+  to CodeVista / `.codevista`. Existing data requires the explicit migration in
+  `docs/migration.md`; stable flow IDs and JSON document shapes are preserved.
+- `npm run check`: **106 unit/integration tests passed**, web build and both
+  reference-map validations passed. Expected partial/planned evidence warnings remain.
+- `npm run test:e2e`: **17 browser tests passed**, including system theme, saved
+  overrides, cross-tab synchronization, graph styling and blocked localStorage.
+  The matching Playwright browser download failed in this environment. Tests ran
+  with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` pointing to a temporary Chromium 153
+  binary from `@sparticuz/chromium`; this is not a project dependency. CI still
+  installs the browser matching the lockfile.
+- The standalone repository map validator passes with its existing coverage gaps;
+  the added `panel-theme` process records appearance preference behavior.
+- README covers capability-based CLI, IDE and web setup; deployment and migration
+  guides are source-reviewed instructions, not evidence of a live deployment.
+  No new real-provider, external-agent or independent hosting trial is claimed.

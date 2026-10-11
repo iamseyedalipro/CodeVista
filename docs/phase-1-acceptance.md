@@ -13,7 +13,7 @@ unselected and is not needed to exercise the portable contract locally.
 Repository baseline: `master` at initial commit
 `22f5f70` contained only `README.md`; there was no application, stack, test suite,
 agent instruction file, or existing map to preserve. Work uses a feature branch.
-The repository name remains CodeVista; LogicAtlas is the requested working name.
+The repository name remains CodeVista; CodeVista is the requested working name.
 
 ## Requirement traceability
 

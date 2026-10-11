@@ -1,7 +1,7 @@
 # Self-hosting
 
-LogicAtlas runs independently with your own host, database, and GitHub App. It does
-not contact a central LogicAtlas service. The static sample viewer works without
+CodeVista runs independently with your own host, database, and GitHub App. It does
+not contact a central CodeVista service. The static sample viewer works without
 GitHub configuration. Live GitHub App provisioning and a separate operator trial
 are not yet certified; record their results in the acceptance report before release.
 
@@ -43,7 +43,7 @@ Create an app that you control in GitHub developer settings:
   installations, follow the organization's owner approval and SSO policies.
 - Generate a client secret and record the app ID, client ID, and app slug.
 
-GitHub permissions cover repository content, not just `.logicatlas`. The server
+GitHub permissions cover repository content, not just `.codevista`. The server
 chooses to read tree metadata and map documents; explain this distinction to users.
 Fork pull requests require explicit access to both repositories, including app
 installation on the fork. The server does not widen permissions to read a fork.
@@ -74,7 +74,7 @@ node --env-file=.env dist/server/main.js
 | `APP_ORIGIN`             | Exact browser origin, without a path; used for callbacks and CSRF checks           |
 | `PORT`                   | Internal listener port; default 3000                                               |
 | `LISTEN_HOST`            | Bind address; default 127.0.0.1; set 0.0.0.0 only in an isolated container/network |
-| `DATABASE_PATH`          | Persistent SQLite file; default `data/logicatlas.sqlite`                           |
+| `DATABASE_PATH`          | Persistent SQLite file; default `data/codevista.sqlite`                           |
 | `SESSION_ENCRYPTION_KEY` | Exactly 32 random bytes, base64 encoded                                            |
 | `GITHUB_APP_ID`          | Numeric ID of this host's GitHub App                                               |
 | `GITHUB_APP_SLUG`        | App URL slug, such as `your-flow-viewer`                                           |
