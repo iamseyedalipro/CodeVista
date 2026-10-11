@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "sourceDigest": "38346c7e3d7edeb4a427791483732c55df091bbe50931c4935704651fd0cf889",
-  "mapDigest": "10e88c2bd93aa6e6cdc9950b6ce3b9e6fa132fde5325f35f801eabf58e6441a5",
-  "reviewedAt": "2026-10-11T12:44:19.283Z",
+  "sourceDigest": "93cd8385510f1686725e68a81058fd72db48550df87bd1524c0e4f1f23eeae08",
+  "mapDigest": "3d3fedaa854ca235115182646b1a62e3224a59883c32034b25348a93301cb272",
+  "reviewedAt": "2026-10-11T13:10:13.970Z",
   "result": "updated",
-  "note": "Reviewed browser session notifications, stable chart access rechecks, manual map refresh, and fullscreen chart navigation. Updated browser-session-lifecycle, project-version-selection, and flow-exploration. Core check and 18 relevant browser tests passed; live provider and hosting trials remain unverified."
+  "note": "Reviewed project-first landing routes, GitHub connection and repository selection. Updated project-workspace, browser-session-lifecycle, github-sign-in and host-startup; removed obsolete public-demo. 106 core tests and 25 mocked browser tests passed; live provider behavior remains unverified."
 }

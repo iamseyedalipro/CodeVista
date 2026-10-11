@@ -32,7 +32,7 @@
       "id": "browser-session-lifecycle.start",
       "kind": "start",
       "title": "Mount the application",
-      "description": "Register hash, pageshow/pagehide, visibility, session-ended and BroadcastChannel listeners; refresh session now.",
+      "description": "Register hash, pageshow/pagehide, visibility, session-ended and BroadcastChannel listeners; refresh session now. The root and unknown routes render the project workspace after verification; Help is public, and project diagrams require a signed-in user.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

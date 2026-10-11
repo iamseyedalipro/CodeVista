@@ -81,8 +81,8 @@ private key is not required. Allow the intended users to install the app, then
 install it for selected repositories. See [self-hosting](self-hosting.md) for
 organization approval, access boundaries and acceptance checks.
 
-Leaving **all four** GitHub variables empty runs only the public demo. That does
-not enable connected repository access. The encryption key is still required.
+Leaving **all four** GitHub variables empty shows GitHub setup guidance. That does
+not enable connected repository access or display example flows. The encryption key is still required.
 
 ## 4. Start
 

@@ -84,7 +84,7 @@ node --env-file=.env dist/server/main.js
 | `GITHUB_CLIENT_SECRET`   | App client secret, server only                                                     |
 
 All four GitHub settings are required together. Without GitHub settings, local
-demo mode creates an ephemeral encryption key. Do not use ephemeral keys for a
+unconfigured local mode creates an ephemeral encryption key. Do not use ephemeral keys for a
 persistent configured host. Rotating the key invalidates existing sessions and
 preferences; users must sign in again. Remove the old database according to your
 retention policy when intentionally resetting the host.

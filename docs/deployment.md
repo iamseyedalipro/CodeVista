@@ -182,7 +182,7 @@ expected user load; do not simply disable limits to add capacity.
 
 ## 7. Connect a user's repository
 
-1. Visit `https://flows.example.com`, verify the public demo, and open **Projects**.
+1. Visit `https://flows.example.com`, verify the **Connect GitHub** landing page.
 2. Sign in with GitHub and install your app for selected repositories. Organization
    owners may need to approve installation or SSO access.
 3. Open the repository and choose the actual branch.
@@ -203,7 +203,7 @@ agent setup and read-only chat limitations.
 
 ## 8. Verify before admitting private projects
 
-- Public demo, guide, theme selection, refresh persistence and mobile layout work.
+- GitHub connection landing page, project selection, guide, theme selection, refresh persistence and mobile layout work.
 - GitHub sign-in returns to the exact HTTPS origin; cookies work over HTTPS.
 - An authorized user can select an installed repository and load its published map.
 - A second account without repository access cannot load that map or a shared deep link.

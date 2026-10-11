@@ -1,102 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
-import type { FlowBundle } from "../../src/types";
-import type { Snapshot, Comparison } from "../../src/snapshot-types";
-
-async function reference(): Promise<FlowBundle> {
-  const root = new URL("../../examples/reference/after/", import.meta.url);
-  const manifest = JSON.parse(
-    await readFile(new URL("manifest.json", root), "utf8"),
-  );
-  manifest.project.repository = {
-    host: "github.com",
-    owner: "private-owner",
-    name: "private-project",
-  };
-  return {
-    manifest,
-    processes: await Promise.all(
-      manifest.processes.map(async (entry: { file: string }) =>
-        JSON.parse(await readFile(new URL(entry.file, root), "utf8")),
-      ),
-    ),
-  };
-}
-function snapshot(bundle: FlowBundle, sha = "a".repeat(40)): Snapshot {
-  return {
-    repository: "private-owner/private-project",
-    ref: "develop",
-    selectedSha: sha,
-    displayedSha: sha,
-    receivedAt: "2026-10-10T10:00:00Z",
-    status: "valid",
-    bundle,
-    source: { repository: bundle.manifest.project.repository, commitSha: sha },
-    freshness: { status: "not-recorded", reason: "No review receipt." },
-    diagnostics: [],
-    unavailable: [],
-    invalidReferences: [],
-    fallback: false,
-  };
-}
-async function mock(page: Page, supplied?: Snapshot, comparison?: Comparison) {
-  const data = supplied ?? snapshot(await reference());
-  let signedIn = true;
-  await page.route("**/api/**", async (route) => {
-    const url = new URL(route.request().url());
-    const path = url.pathname;
-    let body: unknown = {};
-    if (path === "/api/session")
-      body = {
-        user: signedIn ? { login: "reviewer" } : null,
-        configured: true,
-        csrf: "csrf-test",
-        installationUrl: "https://github.com/apps/example/installations/new",
-      };
-    else if (path === "/api/logout" || path === "/api/account") {
-      signedIn = false;
-      body = { deleted: true };
-    } else if (path === "/api/repositories")
-      body = {
-        repositories: [
-          {
-            id: 10,
-            fullName: data.repository,
-            defaultBranch: "develop",
-            selectedBranch: "develop",
-            private: true,
-            disconnected: false,
-            lastVisitedAt: null,
-          },
-        ],
-      };
-    else if (path.endsWith("/snapshot")) body = data;
-    else if (path.endsWith("/branches"))
-      body = {
-        branches: [
-          { name: "develop", sha: data.selectedSha },
-          { name: "release/v1", sha: data.selectedSha },
-        ],
-        hasMore: false,
-      };
-    else if (path.endsWith("/pulls"))
-      body = {
-        pulls: [{ number: 7, title: "Change payment behavior", state: "open" }],
-        hasMore: false,
-      };
-    else if (path.includes("/comparison/")) body = comparison;
-    else if (path.endsWith("/prompt"))
-      body = {
-        prompt: `Review private-owner/private-project on ${url.searchParams.get("ref")}. Preserve existing instructions and unaffected definitions.`,
-      };
-    else if (path.endsWith("/access")) body = { authorized: true };
-    await route.fulfill({
-      json: body,
-      headers: { "cache-control": "no-store" },
-    });
-  });
-  return data;
-}
+import type { Comparison } from "../../src/snapshot-types";
+import { mock, reference, snapshot } from "./fixtures";
 
 test("private deep links load the selected branch, exact step, and immutable source links", async ({
   page,
@@ -182,7 +86,7 @@ test("logout removes private content and a shared deep link cannot bypass sign-i
   await expect(page.locator(".viewer")).toHaveCount(0);
   await page.goto("/#/project/private-owner/private-project?ref=develop");
   await expect(
-    page.getByRole("link", { name: "Sign in with GitHub" }),
+    page.getByRole("link", { name: "Connect GitHub" }),
   ).toBeVisible();
   await expect(page.locator(".viewer")).toHaveCount(0);
 });
@@ -403,4 +307,99 @@ test("session channel initialization and received notifications do not echo", as
   expect(await page.evaluate(() => (window as any).sessionMessages)).toEqual([
     "identity-changed",
   ]);
+});
+
+for (const path of ["/", "/#/demo/after?trail=payment", "/#/unknown"]) {
+  test(`anonymous landing ${path} offers GitHub connection without examples`, async ({
+    page,
+  }) => {
+    let repositoryRequests = 0;
+    await page.route("**/api/**", (route) => {
+      if (new URL(route.request().url()).pathname !== "/api/session")
+        repositoryRequests++;
+      return route.fulfill({
+        json: { user: null, configured: true, installationUrl: null },
+      });
+    });
+    await page.goto(path);
+    await expect(
+      page.getByRole("link", { name: "Connect GitHub" }),
+    ).toHaveAttribute("href", "/auth/github");
+    await expect(page.locator(".viewer, .repo-card")).toHaveCount(0);
+    await expect(page.getByLabel("Example version")).toHaveCount(0);
+    await expect(page.getByText("Synthetic reference application")).toHaveCount(
+      0,
+    );
+    expect(repositoryRequests).toBe(0);
+  });
+}
+
+test("connected landing lists the user's projects and opens their selection", async ({
+  page,
+}) => {
+  await mock(page);
+  await page.route("**/api/repositories", (route) =>
+    route.fulfill({
+      json: {
+        repositories: ["private-project", "second-project"].map(
+          (name, index) => ({
+            id: index + 10,
+            fullName: `private-owner/${name}`,
+            defaultBranch: "develop",
+            selectedBranch: "develop",
+            private: true,
+            disconnected: false,
+            lastVisitedAt: null,
+          }),
+        ),
+      },
+    }),
+  );
+  await page.goto("/");
+  await expect(page.locator(".repo-card")).toHaveCount(2);
+  await expect(page.locator(".viewer")).toHaveCount(0);
+  await page
+    .locator(".repo-card")
+    .filter({ hasText: "private-owner/private-project" })
+    .getByRole("link", { name: "Open project" })
+    .click();
+  await expect(page.locator(".viewer")).toBeVisible();
+  await page.locator(".brand").click();
+  await expect(page.locator(".repo-card")).toHaveCount(2);
+  await expect(page.locator(".viewer")).toHaveCount(0);
+});
+
+test("connected users with no repositories receive setup guidance without an example", async ({
+  page,
+}) => {
+  await mock(page);
+  await page.route("**/api/repositories", (route) =>
+    route.fulfill({ json: { repositories: [] } }),
+  );
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "No authorized repositories yet" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Install or manage/ }),
+  ).toBeVisible();
+  await expect(page.locator(".viewer, .repo-card")).toHaveCount(0);
+});
+
+test("unconfigured hosts explain how to enable GitHub connections", async ({
+  page,
+}) => {
+  await page.route("**/api/session", (route) =>
+    route.fulfill({
+      json: { user: null, configured: false, installationUrl: null },
+    }),
+  );
+  await page.goto("/");
+  await expect(
+    page.getByText(/This host has not configured its GitHub App/),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Connect GitHub" })).toHaveCount(
+    0,
+  );
+  await expect(page.locator(".viewer")).toHaveCount(0);
 });

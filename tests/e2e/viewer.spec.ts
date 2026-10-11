@@ -1,9 +1,15 @@
 import { test, expect } from "@playwright/test";
+import { mock, snapshot } from "./fixtures";
+import { scaleSample } from "../../src/scale";
+
+test.beforeEach(async ({ page }) => {
+  await mock(page);
+});
 
 test("overview, step details, shared subprocesses, and browser history", async ({
   page,
 }) => {
-  await page.goto("/#/demo/after");
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await expect(
     page.getByRole("heading", { name: "Understand what happens." }),
   ).toBeVisible();
@@ -45,7 +51,7 @@ test("overview, step details, shared subprocesses, and browser history", async (
 test("search reaches a deep process and direct links reload the same location", async ({
   page,
 }) => {
-  await page.goto("/#/demo/after");
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await page.getByRole("button", { name: /Find a process/ }).click();
   await page
     .getByPlaceholder("Search processes and steps…")
@@ -73,15 +79,21 @@ test("search reaches a deep process and direct links reload the same location", 
 test("unknown and planned behavior remain explicit; invalid links do not open another map", async ({
   page,
 }) => {
-  await page.goto("/#/demo/after?trail=analytics");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=analytics",
+  );
   await expect(
     page.getByRole("heading", { name: "This area has not been reviewed" }),
   ).toBeVisible();
-  await page.goto("/#/demo/after?trail=missing");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=missing",
+  );
   await expect(
     page.getByRole("heading", { name: "Process unavailable" }),
   ).toBeVisible();
-  await page.goto("/#/demo/after?trail=translation");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=translation",
+  );
   await expect(page.locator(".process-heading .badge")).toHaveText("planned");
 });
 
@@ -89,12 +101,14 @@ test("small screens retain navigation, search, details, and readable text", asyn
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#/demo/after");
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await expect(page.locator(".process-card").first()).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
-  await page.goto("/#/demo/after?trail=login&node=login.credentials");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=login&node=login.credentials",
+  );
   await expect(page.locator(".details h2")).toHaveText(
     "Are credentials valid?",
   );
@@ -108,9 +122,11 @@ test("small screens retain navigation, search, details, and readable text", asyn
 test("reference overview has no browser errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/#/demo/after");
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await page.screenshot({ path: "test-results/overview.png", fullPage: true });
-  await page.goto("/#/demo/after?trail=payment&node=payment.zero");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=payment&node=payment.zero",
+  );
   await expect(page.locator(".details h2")).toHaveText(
     "Is the amount due zero?",
   );
@@ -122,7 +138,8 @@ test("scale fixture stays navigable with ten roots and 413 steps", async ({
   page,
 }) => {
   const started = Date.now();
-  await page.goto("/#/demo/scale");
+  await mock(page, snapshot(scaleSample()));
+  await page.goto("/#/project/private-owner/private-project?ref=develop");
   await expect(page.locator(".process-card")).toHaveCount(10);
   await expect(page.locator(".metric-strip")).toContainText("413");
   await page.locator(".process-card").first().click();
@@ -144,29 +161,12 @@ test("scale fixture stays navigable with ten roots and 413 steps", async ({
   );
 });
 
-test("public reference comparison exposes changed conditions and their exact locations", async ({
-  page,
-}) => {
-  await page.goto("/#/demo/after?compare=1");
-  await expect(
-    page.getByRole("heading", { name: "Reference change preview" }),
-  ).toBeVisible();
-  await page.locator(".changes-panel>details>summary").click();
-  await expect(page.locator(".changes-panel")).toContainText("condition");
-  const added = page
-    .locator(".changes-panel details details")
-    .filter({ hasText: "added node: Is the amount due zero?" });
-  await added.locator("summary").click();
-  await added.getByRole("link", { name: "Inspect proposed location" }).click();
-  await expect(page.locator(".details h2")).toHaveText(
-    "Is the amount due zero?",
-  );
-});
-
 test("fullscreen keeps chart selection and exits with button or Escape", async ({
   page,
 }) => {
-  await page.goto("/#/demo/after?trail=login&node=login.credentials");
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=login&node=login.credentials",
+  );
   const chart = page.locator(".flow-canvas");
   await expect(chart).toBeVisible();
   await chart.evaluate((canvas) =>

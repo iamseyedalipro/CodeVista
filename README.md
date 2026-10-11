@@ -17,7 +17,7 @@ trial, fresh Claude web session, and independent user/self-hosting trials remain
 release gates. See [acceptance evidence](docs/acceptance.md). No hosted deployment,
 GitHub release, or supported-agent certification is claimed.
 
-## Run the public demo
+## Run the viewer
 
 Use Node.js **22.13 or newer** (Node 24 recommended) and npm:
 
@@ -27,13 +27,11 @@ npm run build
 npm start
 ```
 
-Open **http://localhost:3000**. No account or credentials are needed for the public
-sample. Choose Before changes, After changes, or the 413-step scale fixture.
-Preview reference changes to inspect additions, removals, and changed conditions.
-
-The main example contains **Purchase access → Evaluate discount → Check discount
-eligibility → Check subscription**. Chat reuses the subscription process. The
-sample code performs no real authentication, payment, or AI requests.
+Open **http://localhost:3000**. The landing page is Projects. On a configured
+host, choose **Connect GitHub** to sign in, then select one of your authorized
+repositories. Without GitHub configuration, the panel explains the required setup.
+No example flow is displayed. Synthetic maps in `examples/reference` are retained
+only for contract validation and automated tests.
 
 ## Use a connected project
 

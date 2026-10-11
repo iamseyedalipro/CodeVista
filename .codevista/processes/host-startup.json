@@ -153,7 +153,7 @@
       "id": "host-startup.listen",
       "kind": "wait",
       "title": "Listen for requests",
-      "description": "Bind LISTEN_HOST or loopback and configured port; healthz returns ok. Public demo can work without GitHub configuration.",
+      "description": "Bind LISTEN_HOST or loopback and configured port; healthz returns ok. Without GitHub configuration, the panel shows setup guidance instead of example flows.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

@@ -288,7 +288,7 @@ export async function createApp(
       throw new ApiError(
         503,
         "NOT_CONFIGURED",
-        "This host has not configured a GitHub App. The public demo is available.",
+        "This host has not configured a GitHub App. Configure the host to enable GitHub connections.",
       );
     const state = secret();
     const nonce = secret();

@@ -39,7 +39,6 @@ comparison and review processes have one definition used by their callers.
 | `session-and-account-removal` | Sign out or delete host account data | Overview |
 | `browser-session-lifecycle` | Keep private browser views tied to current access | Overview |
 | `encrypted-host-storage` | Persist and expire host identity data | Overview |
-| `public-demo` | Explore the public reference demo | Overview |
 | `host-startup` | Start and stop the self-hosted service | Overview |
 | `github-provider-request` | Call GitHub safely | Overview |
 
