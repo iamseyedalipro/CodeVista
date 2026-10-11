@@ -3,7 +3,7 @@
   "project": {
     "id": "codevista",
     "name": "CodeVista",
-    "description": "Repository-owned maps of the implemented LogicAtlas host, viewer, portable validation and existing-agent workflow.",
+    "description": "Repository-owned maps of the implemented CodeVista host, viewer, portable validation and existing-agent workflow.",
     "contentLanguage": "en",
     "repository": {
       "host": "github.com",
@@ -13,7 +13,7 @@
   },
   "coverage": {
     "status": "partial",
-    "scope": "All implemented product entry points in server/, web/ and src/: authentication, authorization, project lifecycle, version loading/comparison, viewer/search/demo, local validation and review, host startup and encrypted storage. Synthetic example business flows remain in examples/reference and are not presented as CodeVista product features.",
+    "scope": "All implemented product entry points in server/, web/ and src/: authentication, authorization, project lifecycle, version loading/comparison, viewer/search/demo, local validation and review, host startup and encrypted storage. Synthetic example business flows remain in examples/reference and are not presented as CodeVista product features. Browser theme preference and appearance updates are also covered.",
     "gaps": [
       "Live GitHub consent, SSO/installation approval and provider internal behavior are external boundaries, not tested production behavior.",
       "External coding-agent autonomous maintenance acceptance remains unestablished; setup/recovery documents the host handoff only.",
@@ -38,7 +38,8 @@
     "encrypted-host-storage",
     "public-demo",
     "host-startup",
-    "github-provider-request"
+    "github-provider-request",
+    "panel-theme"
   ],
   "processes": [
     {
@@ -152,6 +153,10 @@
     {
       "id": "github-provider-request",
       "file": "processes/github-provider-request.json"
+    },
+    {
+      "id": "panel-theme",
+      "file": "processes/panel-theme.json"
     }
   ],
   "relationships": []

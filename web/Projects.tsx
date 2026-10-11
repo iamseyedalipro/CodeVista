@@ -47,7 +47,7 @@ export function Projects({ session }: { session: SessionInfo }) {
           <h2>Understand your private repositories</h2>
           <p>
             Connect only the repositories you choose. You and the GitHub App
-            must both have access. LogicAtlas uses your existing coding agent
+            must both have access. CodeVista uses your existing coding agent
             and does not charge for an AI API.
           </p>
           {session.configured ? (

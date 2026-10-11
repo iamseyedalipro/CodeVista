@@ -151,21 +151,22 @@ export function FlowCanvas({
     target: edge.to,
     label: edge.label,
     type: "smoothstep",
-    markerEnd: { type: MarkerType.ArrowClosed, color: "#858ea6" },
+    // Marker colors are included in SVG IDs; avoid CSS var() parentheses in URL fragments.
+    markerEnd: { type: MarkerType.ArrowClosed, color: "#8190aa" },
     style: {
       stroke:
         edge.kind === "error"
-          ? "#b85e62"
+          ? "var(--danger)"
           : edge.kind === "retry"
-            ? "#9b7918"
-            : "#858ea6",
+            ? "var(--warning)"
+            : "var(--muted)",
       strokeWidth:
         selected && (edge.from === selected || edge.to === selected) ? 3 : 1.5,
       opacity:
         selected && edge.from !== selected && edge.to !== selected ? 0.18 : 1,
     },
-    labelStyle: { fontSize: 12, fill: "#414c65" },
-    labelBgStyle: { fill: "#f7f8fc", fillOpacity: 0.96 },
+    labelStyle: { fontSize: 12, fill: "var(--text)" },
+    labelBgStyle: { fill: "var(--canvas)", fillOpacity: 0.96 },
     labelBgPadding: [8, 5],
   }));
   const saved = viewports.get(key);
@@ -214,7 +215,7 @@ export function FlowCanvas({
         maxZoom={1.7}
         deleteKeyCode={null}
       >
-        <Background color="#d5daea" gap={22} size={1} />
+        <Background color="var(--border)" gap={22} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
       <div className="canvas-hint">

@@ -42,7 +42,7 @@ files["THIRD-PARTY-NOTICES.txt"] = strToU8(
     (await readFile("node_modules/require-from-string/license", "utf8")),
 );
 await writeFile(
-  "public/agent/logicatlas-kit.zip",
+  "public/agent/codevista-kit.zip",
   zipSync(files, { level: 6 }),
 );
 console.log(

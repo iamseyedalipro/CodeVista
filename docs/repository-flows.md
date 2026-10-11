@@ -1,6 +1,6 @@
 # CodeVista repository flows
 
-The actual CodeVista application map is in `.logicatlas/manifest.json`. The
+The actual CodeVista application map is in `.codevista/manifest.json`. The
 `examples/reference` maps remain synthetic examples; this map documents the
 implemented host, browser viewer, validation library and existing-agent handoff.
 All map content is English. Stable IDs identify behavior rather than filenames.
@@ -61,7 +61,7 @@ review claim. Neither is proof of semantic accuracy or unrestricted coverage.
 ## Local tools and maintenance
 
 No deployed host or kit URL was supplied for this task. Because CodeVista itself
-contains the official kit builder, the installed `.logicatlas` kit was built from
+contains the official kit builder, the installed `.codevista` kit was built from
 this checkout with `npm run build:core` and `npm run build:kit`. The ZIP was
 inspected for unsafe paths and symlinks before extraction. It includes the source
 version's format, schemas, maintenance rules, standalone tools and license notices;
@@ -71,12 +71,18 @@ Existing `AGENTS.md` instructions are preserved, with the maintenance block
 appended once. Future tasks should preserve identities and unrelated process files.
 
 ```sh
-node .logicatlas/tools/validate.mjs .logicatlas
+node .codevista/tools/validate.mjs .codevista
 # After committing final source/instructions/map changes:
-node .logicatlas/tools/review.mjs --result updated --note 'Describe reviewed behavior'
+node .codevista/tools/review.mjs --result updated --note 'Describe reviewed behavior'
 ```
 
 Commit the receipt and publish it with the related map/source changes. A later
-change outside `.logicatlas` requires another review, including documentation
+change outside `.codevista` requires another review, including documentation
 changes. The hosted viewer can only load published files from the selected branch;
 this initial map is absent on `master` until its PR is merged.
+
+## Panel appearance
+
+`panel-theme` covers system/light/dark resolution, optional local preference storage,
+cross-tab updates and live operating-system changes. Styling remains presentation;
+the map describes the preference behavior. Canonical map files now use `.codevista`.

@@ -27,7 +27,7 @@ test("setup and recovery prompts bind repository, branch, language, and existing
     repository: "sample/project",
     branch: "develop",
     language: "English",
-    kitUrl: "https://example.test/agent/logicatlas-kit.zip",
+    kitUrl: "https://example.test/agent/codevista-kit.zip",
   };
   const prompt = setupPrompt(context);
   for (const text of [
@@ -74,7 +74,7 @@ test("map-only and receipt-only commits cannot cause an infinite freshness loop"
     sourceDigest([
       ...entries,
       {
-        path: ".logicatlas/review.json",
+        path: ".codevista/review.json",
         mode: "100644",
         type: "blob",
         sha: "b".repeat(40),

@@ -26,7 +26,7 @@
       "id": "local-map-validation.start",
       "kind": "start",
       "title": "Run validator",
-      "description": "CLI accepts optional map directory and --json, defaults to .logicatlas.",
+      "description": "CLI accepts optional map directory and --json, defaults to .codevista.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

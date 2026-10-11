@@ -3,7 +3,7 @@
   "project": {
     "id": "reference-app",
     "name": "Synthetic reference application",
-    "description": "Public synthetic behavior fixtures for the LogicAtlas format; this is not a deployed application.",
+    "description": "Public synthetic behavior fixtures for the CodeVista format; this is not a deployed application.",
     "contentLanguage": "en",
     "repository": {
       "host": "github.com",
@@ -13,7 +13,7 @@
   },
   "coverage": {
     "status": "partial",
-    "scope": "Only the reference application scenarios, not the LogicAtlas repository as a whole.",
+    "scope": "Only the reference application scenarios, not the CodeVista repository as a whole.",
     "gaps": [
       "Usage reporting is unreviewed.",
       "Payment provider internals are outside the fixture.",

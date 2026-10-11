@@ -9,7 +9,7 @@ export function sourceDigest(entries: TreeEntry[]): string {
     .filter(
       (entry) =>
         (entry.type === "blob" || entry.type === "commit") &&
-        !entry.path.startsWith(".logicatlas/"),
+        !entry.path.startsWith(".codevista/"),
     )
     .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
     .map(

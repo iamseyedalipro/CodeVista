@@ -39,7 +39,7 @@ integration are later deliverables. No agent brand has been certified by this ph
     specific gap, and report that the map needs review. Never mark it fresh because
     a file was touched or the schema passed.
 
-Write all LogicAtlas-owned content in English. User-authored map content may use its
+Write all CodeVista-owned content in English. User-authored map content may use its
 declared language; preserve code symbols and paths exactly. Do not include secrets,
 access tokens, real customer data, or private repository content in public samples.
 Never request an additional AI API key or the user's coding-agent credentials.

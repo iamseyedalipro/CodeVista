@@ -18,3 +18,13 @@
 The map format remains 1.0.0. Unsupported versions fail closed; there is no migration
 that simply changes the version string. Future incompatible changes require an
 explicit migration tool and compatibility notes before release.
+
+## CodeVista branding, appearance and setup
+
+- Standardize the product, runtime identifiers, schema URNs, agent kit and map
+  directory on CodeVista. See `docs/migration.md` before upgrading older hosts/maps.
+- Add persistent Light/Dark/System appearance, live OS changes, cross-tab theme
+  synchronization and themed flowchart controls/labels.
+- Document CLI/IDE/web agent setup and the boundary of read-only chat connectors.
+- Add a complete single-server deployment guide with GitHub App onboarding,
+  HTTPS, persistent storage, service supervision, backups, upgrades and rollback.

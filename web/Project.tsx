@@ -521,7 +521,7 @@ function Setup({
               <option value="fa">Persian</option>
             </select>
           </label>
-          <a href="/agent/logicatlas-kit.zip" download>
+          <a href="/agent/codevista-kit.zip" download>
             Download agent kit
           </a>
         </div>
@@ -560,7 +560,7 @@ function Setup({
           </>
         )}
         <p>
-          Only published GitHub changes can be checked. LogicAtlas cannot
+          Only published GitHub changes can be checked. CodeVista cannot
           observe local work or the progress of your agent session. You can
           leave and return to this branch at any time.
         </p>
