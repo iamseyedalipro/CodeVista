@@ -378,8 +378,42 @@ export function Project({
               )}
             </section>
           )}
+          {(snapshot.status === "missing" ||
+            snapshot.status === "invalid" ||
+            repair) && (
+            <Setup
+              apiRoot={`/repositories/${snapshot.repository}`}
+              branch={
+                current?.comparison
+                  ? side === "base"
+                    ? current.comparison.baseRef
+                    : current.comparison.headRef
+                  : ref || snapshot.ref
+              }
+              recovery={snapshot.status !== "missing"}
+              onRefresh={() => setRevision((value) => value + 1)}
+            />
+          )}
+          {snapshot.bundle && (
+            <Viewer
+              key={`${repository}:${ref}:${pr ?? ""}:${side}`}
+              bundle={snapshot.bundle}
+              scope={`${repository}:${ref}:${pr ?? ""}:${side}`}
+              trail={trail}
+              selectedId={selected}
+              navigate={navigate}
+              source={snapshot.source}
+              unavailable={snapshot.unavailable}
+              invalidReferences={snapshot.invalidReferences}
+            />
+          )}
           {snapshot.status !== "missing" && (
-            <div className="snapshot-notices">
+            <details
+              className="snapshot-notices"
+              key={`${key}:${side}`}
+              open={snapshot.fallback || snapshot.status === "invalid"}
+            >
+              <summary>Map status and review</summary>
               <div className={`notice ${snapshot.fallback ? "error" : ""}`}>
                 <strong>
                   {snapshot.fallback
@@ -430,36 +464,7 @@ export function Project({
                   </button>
                 </details>
               )}
-            </div>
-          )}
-          {(snapshot.status === "missing" ||
-            snapshot.status === "invalid" ||
-            repair) && (
-            <Setup
-              apiRoot={`/repositories/${snapshot.repository}`}
-              branch={
-                current?.comparison
-                  ? side === "base"
-                    ? current.comparison.baseRef
-                    : current.comparison.headRef
-                  : ref || snapshot.ref
-              }
-              recovery={snapshot.status !== "missing"}
-              onRefresh={() => setRevision((value) => value + 1)}
-            />
-          )}
-          {snapshot.bundle && (
-            <Viewer
-              key={`${repository}:${ref}:${pr ?? ""}:${side}`}
-              bundle={snapshot.bundle}
-              scope={`${repository}:${ref}:${pr ?? ""}:${side}`}
-              trail={trail}
-              selectedId={selected}
-              navigate={navigate}
-              source={snapshot.source}
-              unavailable={snapshot.unavailable}
-              invalidReferences={snapshot.invalidReferences}
-            />
+            </details>
           )}
         </>
       )}

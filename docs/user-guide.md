@@ -95,3 +95,7 @@ backups, follow the host's retention policy. Your map files remain portable in G
 For SSO/approval errors, ask the organization owner to authorize the app. For rate
 limits or provider outages, wait and retry. For an expired session, sign in again.
 Do not paste private maps or credentials into public issues.
+
+Map status and review is below the flow viewer and collapsed by default. Open it
+to inspect structure, review, coverage or recovery controls. Fallback and invalid
+maps expand this section automatically.

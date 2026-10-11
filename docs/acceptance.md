@@ -258,3 +258,16 @@ Updated process IDs: `project-workspace`, `browser-session-lifecycle`,
 removed with its manifest entry. Standalone map validation passed with the two
 existing partial-coverage warnings. Existing external-provider and agent coverage
 gaps remain explicit.
+
+## Map status placement — 2026-10-11
+
+Moved structure/review/coverage and recovery controls below the flow viewer into
+Map status and review. Ordinary maps keep this section collapsed; fallback and
+invalid maps expand it. Missing-map setup remains available. Updated the
+project-version-selection process and preserved all stable IDs and coverage gaps.
+
+`npm run check` passed (106 core tests, web build and reference validation).
+All 27 mocked Playwright tests passed, including collapsed placement, opt-in
+recovery and fallback warning visibility. The temporary Chromium fallback noted
+above was reused. Standalone map validation passed with the existing two coverage
+warnings; whitespace checks passed. Live GitHub and deployment were not tested.
