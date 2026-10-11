@@ -1,0 +1,94 @@
+name: codevista
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  app:
+    image: ${CODEVISTA_IMAGE:-iamseyedalipro/codevista:latest}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+    mem_limit: 1g
+    pids_limit: 128
+    environment:
+      NODE_ENV: production
+      LISTEN_HOST: 0.0.0.0
+      PORT: "3000"
+      DATABASE_PATH: /app/data/codevista.sqlite
+      APP_ORIGIN: https://${DOMAIN:?Set DOMAIN in .env}
+      SESSION_ENCRYPTION_KEY: ${SESSION_ENCRYPTION_KEY:?Set a persistent encryption key}
+      GITHUB_APP_ID: ${GITHUB_APP_ID:-}
+      GITHUB_APP_SLUG: ${GITHUB_APP_SLUG:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      VIRTUAL_HOST: ${DOMAIN:?Set DOMAIN in .env}
+      VIRTUAL_PORT: "3000"
+      LETSENCRYPT_HOST: ${DOMAIN:?Set DOMAIN in .env}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:?Set certificate contact email}
+      HTTPS_METHOD: redirect
+    expose: ["3000"]
+    volumes:
+      - app-data:/app/data
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    networks: [web]
+    logging: *logging
+
+  nginx:
+    image: nginxproxy/nginx-proxy:1.11.6-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DISABLE_ACCESS_LOGS: "true"
+    labels:
+      com.github.nginx-proxy.nginx: "true"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certificates:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - challenges:/usr/share/nginx/html
+    configs:
+      - source: private-vhost
+        target: /etc/nginx/vhost.d/default
+    networks: [web]
+    logging: *logging
+
+  acme:
+    image: nginxproxy/acme-companion:2.8.2
+    restart: unless-stopped
+    depends_on: [nginx]
+    environment:
+      DEFAULT_EMAIL: ${LETSENCRYPT_EMAIL:?Set certificate contact email}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certificates:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - challenges:/usr/share/nginx/html
+      - acme-state:/etc/acme.sh
+    networks: [web]
+    logging: *logging
+
+# Do not log OAuth callback codes, cookies or private request URLs.
+configs:
+  private-vhost:
+    content: |
+      access_log off;
+      error_log /dev/null;
+
+networks:
+  web:
+volumes:
+  app-data:
+  certificates:
+  vhost:
+  challenges:
+  acme-state:

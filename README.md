@@ -161,7 +161,11 @@ current page. Theme preferences contain no repository data.
 
 ## Deploy for your users
 
-Follow the complete [deployment guide](docs/deployment.md) for a single-server
+For a pull-and-run server setup with automatic Nginx and HTTPS, use the
+[Docker deployment guide](docs/docker-deployment.md) and [compose.yaml](compose.yaml).
+The manual GitHub workflow publishes public ARM64/AMD64 images to Docker Hub.
+
+For a non-container installation, follow the complete [deployment guide](docs/deployment.md) for a single-server
 Linux deployment with HTTPS, a GitHub App, persistent storage, systemd, backups,
 updates, rollback, and the first-user onboarding checks. The connected viewer
 requires a Node server; uploading `web-dist` to GitHub Pages or Cloudflare Pages
