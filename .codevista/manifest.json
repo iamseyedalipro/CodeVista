@@ -38,7 +38,8 @@
     "encrypted-host-storage",
     "host-startup",
     "github-provider-request",
-    "panel-theme"
+    "panel-theme",
+    "public-landing"
   ],
   "processes": [
     {
@@ -152,6 +153,10 @@
     {
       "id": "panel-theme",
       "file": "processes/panel-theme.json"
+    },
+    {
+      "id": "public-landing",
+      "file": "processes/public-landing.json"
     }
   ],
   "relationships": []

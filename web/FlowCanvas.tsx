@@ -152,7 +152,7 @@ export function FlowCanvas({
     label: edge.label,
     type: "smoothstep",
     // Marker colors are included in SVG IDs; avoid CSS var() parentheses in URL fragments.
-    markerEnd: { type: MarkerType.ArrowClosed, color: "#8190aa" },
+    markerEnd: { type: MarkerType.ArrowClosed, color: "#85827c" },
     style: {
       stroke:
         edge.kind === "error"
@@ -215,7 +215,7 @@ export function FlowCanvas({
         maxZoom={1.7}
         deleteKeyCode={null}
       >
-        <Background color="var(--border)" gap={22} size={1} />
+        <Background color="var(--grid)" gap={22} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
       <div className="canvas-hint">

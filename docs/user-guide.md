@@ -2,7 +2,7 @@
 
 ## Connect a repository
 
-The landing page shows Projects. On a configured host, choose Connect GitHub. Install the host's
+The public landing page introduces CodeVista. Signed-in visitors open Projects by default; Home (`#/home`) always opens the landing page. On a configured host, choose Connect GitHub. Install the host's
 GitHub App and select repositories. For an organization, obtain owner/SSO approval
 if required. Every viewer needs their own repository permission as well as the
 app's permission. Public repositories also require explicit app access when opened

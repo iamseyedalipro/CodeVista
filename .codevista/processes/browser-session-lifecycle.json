@@ -32,7 +32,7 @@
       "id": "browser-session-lifecycle.start",
       "kind": "start",
       "title": "Mount the application",
-      "description": "Register hash, pageshow/pagehide, visibility, session-ended and BroadcastChannel listeners; refresh session now. The root and unknown routes render the project workspace after verification; Help is public, and project diagrams require a signed-in user.",
+      "description": "Register hash, pageshow/pagehide, visibility, session-ended and BroadcastChannel listeners; refresh session now. Home and Help are public. The root displays the public landing while anonymous or awaiting session, then Projects for a signed-in user. Other workspace routes wait for session verification; project diagrams require a signed-in user.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

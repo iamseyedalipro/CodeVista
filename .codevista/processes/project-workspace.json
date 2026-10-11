@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "id": "project-workspace",
   "title": "List and check projects",
-  "purpose": "Show GitHub connection or authorized repository selection on the landing page, with selected branches, last visits and per-project map status.",
+  "purpose": "Show GitHub connection or authorized repository selection in Projects, with selected branches, last visits and per-project map status.",
   "behavior": "implemented",
   "evidence": {
     "kind": "code",
@@ -20,7 +20,7 @@
   },
   "coverage": {
     "status": "complete",
-    "scope": "Show GitHub connection or authorized repository selection on the landing page, with selected branches, last visits and per-project map status.",
+    "scope": "Show GitHub connection or authorized repository selection in Projects, with selected branches, last visits and per-project map status.",
     "gaps": []
   },
   "entryNodeId": "project-workspace.start",
@@ -29,7 +29,7 @@
       "id": "project-workspace.start",
       "kind": "start",
       "title": "Open Projects",
-      "description": "The landing page, Projects link, brand link, old demo links and unknown routes receive session info. Authorized project deep links open their selected repository; Help remains available.",
+      "description": "Projects and brand links, old demo links, unknown routes and the signed-in root receive verified session info. Anonymous root and explicit Home show the public landing page. Authorized project deep links open their selected repository.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

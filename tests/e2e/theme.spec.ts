@@ -14,7 +14,7 @@ test("theme follows system, persists an override, and synchronizes tabs", async 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator(".app-header")).toHaveCSS(
     "background-color",
-    "rgb(25, 33, 50)",
+    "rgb(35, 35, 33)",
   );
   await page.getByLabel("Color theme").selectOption("light");
   await page.reload();
@@ -36,11 +36,11 @@ test("theme follows system, persists an override, and synchronizes tabs", async 
     .click();
   await expect(page.locator(".stage").first()).toHaveCSS(
     "background-color",
-    "rgb(25, 33, 50)",
+    "rgb(35, 35, 33)",
   );
   await expect(page.locator(".react-flow__edge-text").first()).toHaveCSS(
     "fill",
-    "rgb(237, 240, 248)",
+    "rgb(243, 241, 235)",
   );
 });
 
