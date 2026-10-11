@@ -208,3 +208,27 @@ warnings. Application flows and browser behavior are unchanged; no browser rerun
 was required. Docker execution remains unavailable locally; the manual workflow's
 container smoke gate must pass before the corrected image is published. No
 successful corrected Docker build or Docker Hub publication is claimed here.
+
+
+## Stable flow panel and fullscreen — 2026-10-11
+
+- Initial session identity discovery does not broadcast. Cross-tab notifications
+  trigger verification without echoing another notification, preventing a tab loop.
+- Visible projects recheck access every minute while preserving the mounted chart.
+  Step navigation also preserves the chart during checks. Failed checks discard
+  private content; published maps reload through manual Refresh or version selection.
+- Expand flowchart fills the browser viewport and retains selection, details and
+  pan/zoom. Exit fullscreen or Escape restores the normal layout and scrolling.
+  Process changes exit fullscreen; Escape closes an open search first.
+- `npm run check` passed: 106 core tests, web build and reference-map validation.
+  Relevant Playwright project/viewer scenarios passed: 18 tests, including mounted
+  chart preservation across a minute check and navigation, manual refresh, periodic
+  revocation, channel no-echo behavior, fullscreen dimensions/selection/exit and
+  mobile width. Browser execution used temporary `@sparticuz/chromium` because the
+  matching Playwright download returned an invalid archive. This fallback is not
+  a project dependency or browser certification.
+- Updated affected process IDs: `browser-session-lifecycle`,
+  `project-version-selection`, `flow-exploration`. Standalone map validation passed
+  with the existing two partial-coverage warnings. Live GitHub App, multiple real
+  accounts and hosting/deployment remain unverified; existing map coverage gaps
+  remain explicit.

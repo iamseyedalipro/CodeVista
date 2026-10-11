@@ -162,3 +162,37 @@ test("public reference comparison exposes changed conditions and their exact loc
     "Is the amount due zero?",
   );
 });
+
+test("fullscreen keeps chart selection and exits with button or Escape", async ({
+  page,
+}) => {
+  await page.goto("/#/demo/after?trail=login&node=login.credentials");
+  const chart = page.locator(".flow-canvas");
+  await expect(chart).toBeVisible();
+  await chart.evaluate((canvas) =>
+    canvas.setAttribute("data-mount", "original"),
+  );
+  await page.getByRole("button", { name: "Expand flowchart" }).click();
+  await expect(page.locator(".diagram-fullscreen")).toBeVisible();
+  const bounds = await page.locator(".diagram-fullscreen").boundingBox();
+  expect(bounds?.width).toBe(page.viewportSize()!.width);
+  expect(bounds?.height).toBe(page.viewportSize()!.height);
+  await expect(page.getByLabel("Step details")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".diagram-fullscreen")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Expand flowchart" }),
+  ).toBeFocused();
+  await page.getByRole("button", { name: "Expand flowchart" }).click();
+  await page.getByRole("button", { name: "Exit fullscreen" }).click();
+  await expect(chart).toHaveAttribute("data-mount", "original");
+  await expect(page.getByLabel("Step details")).toContainText(
+    "Are credentials valid?",
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Expand flowchart" }).click();
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(390);
+  await page.keyboard.press("Escape");
+});

@@ -20,16 +20,17 @@ export default function App() {
     let generation = 0;
     let knownLogin: string | null | undefined;
     const update = () => setHash(location.hash);
-    const refresh = () => {
+    const refresh = (broadcast = true) => {
       const current = ++generation;
       void api<SessionInfo>("/session")
         .then((value) => {
           if (active && current === generation) {
             const login = value.user?.login ?? null;
             if (login !== knownLogin) {
+              if (knownLogin !== undefined && broadcast)
+                channel?.postMessage("identity-changed");
               knownLogin = login;
               clearViewState();
-              channel?.postMessage("identity-changed");
             }
             setSession(value);
             setLocked(false);
@@ -69,11 +70,12 @@ export default function App() {
     if (channel)
       channel.onmessage = () => {
         end();
-        refresh();
+        refresh(false);
       };
     window.addEventListener("hashchange", update);
     window.addEventListener("codevista-session-ended", end);
-    window.addEventListener("pageshow", refresh);
+    const pageshow = () => refresh();
+    window.addEventListener("pageshow", pageshow);
     window.addEventListener("pagehide", pagehide);
     document.addEventListener("visibilitychange", visibility);
     const timer = setInterval(() => {
@@ -86,7 +88,7 @@ export default function App() {
       channel?.close();
       window.removeEventListener("hashchange", update);
       window.removeEventListener("codevista-session-ended", end);
-      window.removeEventListener("pageshow", refresh);
+      window.removeEventListener("pageshow", pageshow);
       window.removeEventListener("pagehide", pagehide);
       document.removeEventListener("visibilitychange", visibility);
     };

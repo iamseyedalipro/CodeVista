@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FlowBundle, FlowNode, SnapshotContext } from "../src/types";
 import { codeReferenceUrl } from "../src/references";
 import { processPath, searchFlows, validTrail } from "../src/viewer";
@@ -23,6 +23,8 @@ export function Viewer({
   unavailable?: string[];
   invalidReferences?: string[];
 }) {
+  const [fullscreen, setFullscreen] = useState(false);
+  const fullscreenButton = useRef<HTMLButtonElement>(null);
   const [search, setSearch] = useState<string | null>(null);
   const process = bundle.processes.find((item) => item.id === trail.at(-1));
   const selected = process?.nodes.find((node) => node.id === selectedId);
@@ -32,7 +34,13 @@ export function Viewer({
   );
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSearch(null);
+      if (event.key === "Escape") {
+        if (search !== null) setSearch(null);
+        else if (fullscreen) {
+          setFullscreen(false);
+          fullscreenButton.current?.focus();
+        }
+      }
       if (
         event.key === "/" &&
         !(
@@ -46,7 +54,18 @@ export function Viewer({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [search, fullscreen]);
+  useEffect(() => {
+    if (!fullscreen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [fullscreen]);
+  useEffect(() => {
+    setFullscreen(false);
+  }, [scope, trail.join(",")]);
   const missing =
     trail.length > 0 &&
     (!validTrail(bundle, trail) ||
@@ -168,7 +187,17 @@ export function Viewer({
                 </p>
               </div>
             ) : (
-              <div className="diagram-row">
+              <div
+                className={`diagram-row${fullscreen ? " diagram-fullscreen" : ""}`}
+              >
+                <button
+                  ref={fullscreenButton}
+                  className="fullscreen-toggle"
+                  aria-pressed={fullscreen}
+                  onClick={() => setFullscreen((value) => !value)}
+                >
+                  {fullscreen ? "Exit fullscreen" : "Expand flowchart"}
+                </button>
                 {process.nodes.length <= 500 ? (
                   <FlowCanvas
                     process={process}

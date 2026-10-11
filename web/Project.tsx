@@ -27,6 +27,7 @@ export function Project({
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
   const [verified, setVerified] = useState("");
+  const [accessRevision, setAccessRevision] = useState(0);
   const [branches, setBranches] = useState<string[]>([]);
   const [branchPage, setBranchPage] = useState(1);
   const [moreBranches, setMoreBranches] = useState(false);
@@ -74,10 +75,9 @@ export function Project({
   }, [key, apiRoot, ref, pr, session.csrf]);
   useEffect(() => {
     const controller = new AbortController();
-    setVerified("");
     api(`${apiRoot}/access`, { signal: controller.signal })
       .then(() => {
-        if (!controller.signal.aborted) setVerified(hash);
+        if (!controller.signal.aborted) setVerified(key);
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
@@ -86,10 +86,10 @@ export function Project({
         }
       });
     return () => controller.abort();
-  }, [hash, apiRoot, revision]);
+  }, [hash, apiRoot, key, accessRevision, session.csrf]);
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!document.hidden) setRevision((value) => value + 1);
+      if (!document.hidden) setAccessRevision((value) => value + 1);
     }, 60000);
     return () => clearInterval(timer);
   }, []);
@@ -165,7 +165,7 @@ export function Project({
   const snapshot = current?.comparison
     ? current.comparison[side]
     : current?.snapshot;
-  const visible = snapshot && verified === hash;
+  const visible = snapshot && verified === key;
   return (
     <>
       <div className="project-toolbar toolbar">
@@ -560,9 +560,9 @@ function Setup({
           </>
         )}
         <p>
-          Only published GitHub changes can be checked. CodeVista cannot
-          observe local work or the progress of your agent session. You can
-          leave and return to this branch at any time.
+          Only published GitHub changes can be checked. CodeVista cannot observe
+          local work or the progress of your agent session. You can leave and
+          return to this branch at any time.
         </p>
       </div>
     </section>
