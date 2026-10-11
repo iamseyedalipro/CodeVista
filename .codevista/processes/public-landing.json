@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "public-landing",
+  "title": "Discover CodeVista and enter the workspace",
+  "purpose": "Show public product information and offer the appropriate GitHub or workspace entry without exposing repository data.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/App.tsx"
+      },
+      {
+        "path": "web/Landing.tsx"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Public root/Home routing and session-dependent entry links. OAuth and workspace internals are separate processes.",
+    "gaps": []
+  },
+  "entryNodeId": "public-landing.start",
+  "nodes": [
+    {
+      "id": "public-landing.start",
+      "kind": "start",
+      "title": "Open the root or Home",
+      "description": "Visit the empty/root hash or explicit /home hash.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-landing.route",
+      "kind": "decision",
+      "title": "Is this the signed-in root?",
+      "description": "Only the signed-in root defaults to Projects. Explicit Home stays public for all visitors.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-landing.projects",
+      "kind": "end",
+      "title": "Enter Projects",
+      "description": "Render the authenticated workspace after session verification.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      },
+      "outcome": "handed_off"
+    },
+    {
+      "id": "public-landing.page",
+      "kind": "action",
+      "title": "Show public landing",
+      "description": "Render product overview, supplied brand mark, workflow explanation, GitHub and deployment links. Do not fetch repository lists or display example flows.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-landing.session",
+      "kind": "decision",
+      "title": "Which session state is available?",
+      "description": "Session refresh proceeds independently. Rendering updates as the session changes.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-landing.connect",
+      "kind": "end",
+      "title": "Offer Connect GitHub",
+      "description": "Link to /auth/github. OAuth continues in the GitHub sign-in process.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      },
+      "outcome": "handed_off"
+    },
+    {
+      "id": "public-landing.workspace",
+      "kind": "end",
+      "title": "Offer workspace navigation",
+      "description": "Link to /projects. For an unconfigured anonymous host, also explain GitHub App setup. Before session resolves, offer workspace navigation; on session failure keep public content visible and offer Retry connection to reload.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/Landing.tsx"
+          }
+        ]
+      },
+      "outcome": "handed_off"
+    }
+  ],
+  "edges": [
+    {
+      "id": "public-landing.enter",
+      "from": "public-landing.start",
+      "to": "public-landing.route",
+      "label": "Inspect route",
+      "kind": "normal"
+    },
+    {
+      "id": "public-landing.signed-root",
+      "from": "public-landing.route",
+      "to": "public-landing.projects",
+      "label": "Signed-in root",
+      "kind": "normal",
+      "condition": "Root route and session has a user"
+    },
+    {
+      "id": "public-landing.public",
+      "from": "public-landing.route",
+      "to": "public-landing.page",
+      "label": "Public home",
+      "kind": "normal",
+      "condition": "Explicit Home route or root without a resolved user"
+    },
+    {
+      "id": "public-landing.inspect",
+      "from": "public-landing.page",
+      "to": "public-landing.session",
+      "label": "Choose entry link",
+      "kind": "normal"
+    },
+    {
+      "id": "public-landing.oauth",
+      "from": "public-landing.session",
+      "to": "public-landing.connect",
+      "label": "Connect GitHub",
+      "kind": "normal",
+      "condition": "Resolved anonymous session and host configured"
+    },
+    {
+      "id": "public-landing.other",
+      "from": "public-landing.session",
+      "to": "public-landing.workspace",
+      "label": "Open workspace",
+      "kind": "normal",
+      "condition": "Signed-in session, unresolved or failed session, or host unconfigured"
+    }
+  ]
+}

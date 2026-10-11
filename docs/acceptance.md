@@ -271,3 +271,27 @@ All 27 mocked Playwright tests passed, including collapsed placement, opt-in
 recovery and fallback warning visibility. The temporary Chromium fallback noted
 above was reused. Standalone map validation passed with the existing two coverage
 warnings; whitespace checks passed. Live GitHub and deployment were not tested.
+
+
+## Brutalist branding and public landing — 2026-10-11
+
+Integrated the supplied SVG unchanged as the header/footer mark, hero artwork and
+favicon. Replaced the panel palette and rounded surfaces with logo vermilion, ink,
+warm neutrals, square borders and hard shadows in both themes. Updated shared
+project cards, navigation, flow nodes, search, details, notices and controls.
+Anonymous root visitors see a public product landing; authenticated root visitors
+retain Projects. Explicit Home remains public even when session verification fails.
+The landing offers configuration-aware GitHub connection or workspace navigation,
+real repository/documentation links, and no synthetic flow examples.
+
+Validation: `npm run check` passed (106 core tests, production web build and
+reference validation); all 31 Playwright scenarios passed using the available
+`/tmp/chromium` executable. New scenarios cover session failure, Home/workspace
+navigation, supplied logo loading, GitHub entry, theme switching and horizontal
+overflow at 375px and 1440px. Desktop light and mobile dark screenshots were
+visually inspected. Live GitHub OAuth and deployment were not exercised.
+
+Reviewed process IDs: `public-landing` (new), `project-workspace`, and
+`browser-session-lifecycle`. Standalone map validation passed with the two
+pre-existing partial-coverage warnings. No claim of provider or agent acceptance
+is added. Styling does not manufacture changes to other business processes.

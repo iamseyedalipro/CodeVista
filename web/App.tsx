@@ -1,3 +1,4 @@
+import { Landing } from "./Landing";
 import { ThemePicker } from "./theme";
 import { useEffect, useState } from "react";
 import { Projects } from "./Projects";
@@ -117,15 +118,25 @@ export default function App() {
   const project = /^\/project\/([A-Za-z0-9-]+\/[A-Za-z0-9_.-]+)$/.exec(
     path ?? "",
   );
-  const isPrivate = path !== "/help";
+  const isLanding =
+    path === "/home" || ((!path || path === "/") && !session?.user);
+  const isPrivate = path !== "/help" && !isLanding;
   return (
     <>
       <header className="app-header">
         <a className="brand" href="#/projects">
-          <span className="brand-mark">C</span>CodeVista
+          <img
+            className="brand-logo"
+            src="/codevista-logo.svg"
+            alt=""
+            width="44"
+            height="44"
+          />
+          CodeVista
           <span className="brand-tag">APPLICATION INTELLIGENCE</span>
         </a>
         <div className="header-right">
+          <a href="#/home">Home</a>
           <ThemePicker />
           <a href="#/projects">Projects</a>
           <a href="#/help">Guide & privacy</a>
@@ -165,7 +176,9 @@ export default function App() {
           <button onClick={() => location.reload()}>Retry connection</button>
         </div>
       )}
-      {path === "/help" ? (
+      {isLanding ? (
+        <Landing session={session} error={error} />
+      ) : path === "/help" ? (
         <Help />
       ) : !session || locked ? (
         <div className="empty" role="status">

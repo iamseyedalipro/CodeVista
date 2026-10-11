@@ -27,7 +27,7 @@ npm run build
 npm start
 ```
 
-Open **http://localhost:3000**. The landing page is Projects. On a configured
+Open **http://localhost:3000**. Anonymous visitors see the public landing page; signed-in visitors open Projects. Home (`#/home`) is always available. On a configured
 host, choose **Connect GitHub** to sign in, then select one of your authorized
 repositories. Without GitHub configuration, the panel explains the required setup.
 No example flow is displayed. Synthetic maps in `examples/reference` are retained
