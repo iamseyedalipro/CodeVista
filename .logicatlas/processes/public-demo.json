@@ -1,0 +1,296 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "public-demo",
+  "title": "Explore the public reference demo",
+  "purpose": "Explore bundled synthetic before/after or scale maps without requiring GitHub authentication.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/App.tsx"
+      },
+      {
+        "path": "web/samples.ts"
+      },
+      {
+        "path": "web/DemoComparison.tsx"
+      },
+      {
+        "path": "src/scale.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Explore bundled synthetic before/after or scale maps without requiring GitHub authentication.",
+    "gaps": []
+  },
+  "entryNodeId": "public-demo.start",
+  "nodes": [
+    {
+      "id": "public-demo.start",
+      "kind": "start",
+      "title": "Open a demo route",
+      "description": "Any route outside private project/projects and help renders the demo; default is after.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-demo.variant",
+      "kind": "decision",
+      "title": "Which synthetic version is selected?",
+      "description": "Before uses bundled previous manifest/processes, after uses proposed fixtures, scale generates ten roots and 413 steps.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-demo.reference",
+      "kind": "action",
+      "title": "Load bundled reference map",
+      "description": "Read eagerly imported declared JSON documents from selected before/after fixture.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-demo.scale",
+      "kind": "action",
+      "title": "Generate synthetic scale map",
+      "description": "Generate stable synthetic roots/shared child/leaf; no real product behavior is claimed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-demo.compare",
+      "kind": "decision",
+      "title": "Is reference comparison requested?",
+      "description": "compare query is honored only outside scale variant.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-demo.diff",
+      "kind": "subprocess",
+      "title": "Compare synthetic maps",
+      "description": "Compare before/after identities and show expandable records with exact old/new locations.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      },
+      "processId": "flow-comparison"
+    },
+    {
+      "id": "public-demo.viewer",
+      "kind": "subprocess",
+      "title": "Explore map",
+      "description": "Use the common overview, drill-down, search and details viewer.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      },
+      "processId": "flow-exploration"
+    },
+    {
+      "id": "public-demo.done",
+      "kind": "end",
+      "title": "Demo available",
+      "description": "Label content synthetic and no GitHub connection required.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/samples.ts"
+          },
+          {
+            "path": "web/DemoComparison.tsx"
+          },
+          {
+            "path": "src/scale.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "public-demo.edge-1",
+      "from": "public-demo.start",
+      "to": "public-demo.variant",
+      "label": "Select fixture",
+      "kind": "normal"
+    },
+    {
+      "id": "public-demo.edge-2",
+      "from": "public-demo.variant",
+      "to": "public-demo.reference",
+      "label": "Before or after",
+      "kind": "normal",
+      "condition": "Variant is before or after/default"
+    },
+    {
+      "id": "public-demo.edge-3",
+      "from": "public-demo.variant",
+      "to": "public-demo.scale",
+      "label": "Scale",
+      "kind": "normal",
+      "condition": "Route is /demo/scale"
+    },
+    {
+      "id": "public-demo.edge-4",
+      "from": "public-demo.reference",
+      "to": "public-demo.compare",
+      "label": "Reference loaded",
+      "kind": "normal"
+    },
+    {
+      "id": "public-demo.edge-5",
+      "from": "public-demo.scale",
+      "to": "public-demo.viewer",
+      "label": "Scale loaded",
+      "kind": "normal"
+    },
+    {
+      "id": "public-demo.edge-6",
+      "from": "public-demo.compare",
+      "to": "public-demo.diff",
+      "label": "Show comparison",
+      "kind": "normal",
+      "condition": "compare query present and variant not scale"
+    },
+    {
+      "id": "public-demo.edge-7",
+      "from": "public-demo.compare",
+      "to": "public-demo.viewer",
+      "label": "Normal demo",
+      "kind": "normal",
+      "condition": "compare query absent"
+    },
+    {
+      "id": "public-demo.edge-8",
+      "from": "public-demo.diff",
+      "to": "public-demo.viewer",
+      "label": "Show comparison and viewer",
+      "kind": "normal"
+    },
+    {
+      "id": "public-demo.edge-9",
+      "from": "public-demo.viewer",
+      "to": "public-demo.done",
+      "label": "Render demo",
+      "kind": "normal"
+    }
+  ]
+}

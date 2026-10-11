@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "review-freshness",
+  "title": "Assess map review freshness",
+  "purpose": "Compare a receipt against exact source/map content while preserving missing or unverifiable review status.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/review.ts"
+      },
+      {
+        "path": "server/snapshots.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Compare a receipt against exact source/map content while preserving missing or unverifiable review status.",
+    "gaps": []
+  },
+  "entryNodeId": "review-freshness.start",
+  "nodes": [
+    {
+      "id": "review-freshness.start",
+      "kind": "start",
+      "title": "Assess the review",
+      "description": "Receive receipt, bundle and source tree, or unavailable/degraded snapshot context.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "review-freshness.available",
+      "kind": "decision",
+      "title": "Can freshness be assessed?",
+      "description": "An incomplete tree or degraded map cannot establish an exact review.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "review-freshness.unverifiable",
+      "kind": "end",
+      "title": "Review unverifiable",
+      "description": "Show source/map unavailable reason.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "review-freshness.receipt",
+      "kind": "decision",
+      "title": "Is a receipt present and well formed?",
+      "description": "Require version, allowed result, note, timestamp not more than five minutes in future and two 64-character digest strings.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "review-freshness.missing",
+      "kind": "end",
+      "title": "No review recorded",
+      "description": "Receipt null produces not-recorded.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "review-freshness.needs",
+      "kind": "end",
+      "title": "Needs review",
+      "description": "Malformed receipt or different digests produce needs-review.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "review-freshness.digest",
+      "kind": "decision",
+      "title": "Do exact digests match?",
+      "description": "Source digest excludes all .logicatlas files; map digest canonicalizes manifest/process content.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "review-freshness.done",
+      "kind": "end",
+      "title": "Exact content review recorded",
+      "description": "Return reviewed with timestamp and result; it remains a claim, not semantic accuracy/full coverage proof.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "review-freshness.edge-1",
+      "from": "review-freshness.start",
+      "to": "review-freshness.available",
+      "label": "Check availability",
+      "kind": "normal"
+    },
+    {
+      "id": "review-freshness.edge-2",
+      "from": "review-freshness.available",
+      "to": "review-freshness.unverifiable",
+      "label": "Unavailable context",
+      "kind": "normal",
+      "condition": "Tree incomplete/null or snapshot degraded"
+    },
+    {
+      "id": "review-freshness.edge-3",
+      "from": "review-freshness.available",
+      "to": "review-freshness.receipt",
+      "label": "Context usable",
+      "kind": "normal",
+      "condition": "Valid bundle and complete tree"
+    },
+    {
+      "id": "review-freshness.edge-4",
+      "from": "review-freshness.receipt",
+      "to": "review-freshness.missing",
+      "label": "No receipt",
+      "kind": "normal",
+      "condition": "Receipt is null"
+    },
+    {
+      "id": "review-freshness.edge-5",
+      "from": "review-freshness.receipt",
+      "to": "review-freshness.needs",
+      "label": "Malformed receipt",
+      "kind": "normal",
+      "condition": "Receipt present but format/time/digest checks fail"
+    },
+    {
+      "id": "review-freshness.edge-6",
+      "from": "review-freshness.receipt",
+      "to": "review-freshness.digest",
+      "label": "Valid receipt shape",
+      "kind": "normal",
+      "condition": "All receipt shape checks pass"
+    },
+    {
+      "id": "review-freshness.edge-7",
+      "from": "review-freshness.digest",
+      "to": "review-freshness.needs",
+      "label": "Content changed",
+      "kind": "normal",
+      "condition": "Source digest or map digest differs"
+    },
+    {
+      "id": "review-freshness.edge-8",
+      "from": "review-freshness.digest",
+      "to": "review-freshness.done",
+      "label": "Exact match",
+      "kind": "success",
+      "condition": "Both digests match"
+    }
+  ]
+}

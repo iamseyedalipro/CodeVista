@@ -1,0 +1,381 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "snapshot-loading",
+  "title": "Load a repository map",
+  "purpose": "Read repository-owned flow documents at one immutable revision and retain only authorized bounded fallback state.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/snapshots.ts"
+      },
+      {
+        "path": "server/github.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Read repository-owned flow documents at one immutable revision and retain only authorized bounded fallback state.",
+    "gaps": []
+  },
+  "entryNodeId": "snapshot-loading.start",
+  "nodes": [
+    {
+      "id": "snapshot-loading.start",
+      "kind": "start",
+      "title": "Request a snapshot",
+      "description": "Snapshot endpoint receives optional ref, or comparison caller supplies an immutable SHA. Endpoint requests first enter the shared preHandler.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.access",
+      "kind": "subprocess",
+      "title": "Authorize repository",
+      "description": "Protected endpoint checks current access first.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "snapshot-loading.admit",
+      "kind": "action",
+      "title": "Track bounded work",
+      "description": "Before endpoint authorization, the preHandler resolves the session and limits work to sixteen global and four per-session requests; finish/close releases the slot. Direct comparison SnapshotService calls share the already-admitted parent request.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.resolve",
+      "kind": "external",
+      "title": "Resolve selected ref",
+      "description": "Create a session/repository/ref sequence and resolve commit/tree SHAs through GitHub.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.read",
+      "kind": "subprocess",
+      "title": "Read immutable map",
+      "description": "Read tree, validate documents and assess freshness at that revision.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "processId": "immutable-map-read"
+    },
+    {
+      "id": "snapshot-loading.status",
+      "kind": "decision",
+      "title": "How did loading finish?",
+      "description": "Only valid maps can replace retained fallback; missing/invalid/degraded states are distinct.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.retain",
+      "kind": "action",
+      "title": "Retain valid map if allowed",
+      "description": "If latest sequence and fallback enabled, retain for fourteen minutes plus cleanup interval. Bound cache to twenty entries and 64 MiB.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.fallback",
+      "kind": "decision",
+      "title": "Can a previous map be displayed?",
+      "description": "Fallback requires enabled fallback, invalid/degraded selected result and a cached different SHA for the same session/repository/ref.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.old",
+      "kind": "action",
+      "title": "Label previous content explicitly",
+      "description": "Keep displayed SHA from previous map and selected SHA/errors from current result; mark fallback and needs-review.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.recheck",
+      "kind": "decision",
+      "title": "Does the host session/project still exist?",
+      "description": "Endpoint rereads host session and disconnected IDs after work. Sequence cleanup prevents stale in-flight cache writes.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-loading.done",
+      "kind": "end",
+      "title": "Return snapshot",
+      "description": "Return selected/displayed revision, status, bundle if available, references, freshness and diagnostics.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "snapshot-loading.error",
+      "kind": "end",
+      "title": "Snapshot unavailable",
+      "description": "Return capacity/session/provider error. Provider/authorization failures do not substitute cached content.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "snapshot-loading.edge-1",
+      "from": "snapshot-loading.start",
+      "to": "snapshot-loading.admit",
+      "label": "Check session and admission",
+      "kind": "normal"
+    },
+    {
+      "id": "snapshot-loading.edge-2",
+      "from": "snapshot-loading.access",
+      "to": "snapshot-loading.resolve",
+      "label": "Authorized",
+      "kind": "success",
+      "condition": "Access succeeds"
+    },
+    {
+      "id": "snapshot-loading.edge-3",
+      "from": "snapshot-loading.access",
+      "to": "snapshot-loading.error",
+      "label": "Denied",
+      "kind": "error",
+      "condition": "Access throws"
+    },
+    {
+      "id": "snapshot-loading.edge-4",
+      "from": "snapshot-loading.admit",
+      "to": "snapshot-loading.access",
+      "label": "Slot accepted",
+      "kind": "normal",
+      "condition": "Request is within concurrency limit"
+    },
+    {
+      "id": "snapshot-loading.edge-5",
+      "from": "snapshot-loading.admit",
+      "to": "snapshot-loading.error",
+      "label": "Busy",
+      "kind": "error",
+      "condition": "Global or session concurrency limit exceeded"
+    },
+    {
+      "id": "snapshot-loading.edge-6",
+      "from": "snapshot-loading.resolve",
+      "to": "snapshot-loading.read",
+      "label": "Revision resolved",
+      "kind": "success",
+      "condition": "Provider returns commit/tree"
+    },
+    {
+      "id": "snapshot-loading.edge-7",
+      "from": "snapshot-loading.resolve",
+      "to": "snapshot-loading.error",
+      "label": "Resolution failed",
+      "kind": "error",
+      "condition": "Ref/provider failure"
+    },
+    {
+      "id": "snapshot-loading.edge-8",
+      "from": "snapshot-loading.read",
+      "to": "snapshot-loading.status",
+      "label": "Read result",
+      "kind": "success",
+      "condition": "Read returns a snapshot"
+    },
+    {
+      "id": "snapshot-loading.edge-9",
+      "from": "snapshot-loading.read",
+      "to": "snapshot-loading.error",
+      "label": "Unrecoverable read failure",
+      "kind": "error",
+      "condition": "Provider failure or truncated tree throws"
+    },
+    {
+      "id": "snapshot-loading.edge-10",
+      "from": "snapshot-loading.status",
+      "to": "snapshot-loading.retain",
+      "label": "Valid result",
+      "kind": "normal",
+      "condition": "Snapshot status valid"
+    },
+    {
+      "id": "snapshot-loading.edge-11",
+      "from": "snapshot-loading.status",
+      "to": "snapshot-loading.fallback",
+      "label": "Other result",
+      "kind": "normal",
+      "condition": "Snapshot status missing, invalid or degraded"
+    },
+    {
+      "id": "snapshot-loading.edge-12",
+      "from": "snapshot-loading.retain",
+      "to": "snapshot-loading.recheck",
+      "label": "Valid snapshot prepared",
+      "kind": "normal"
+    },
+    {
+      "id": "snapshot-loading.edge-13",
+      "from": "snapshot-loading.fallback",
+      "to": "snapshot-loading.old",
+      "label": "Use previous map",
+      "kind": "normal",
+      "condition": "Fallback enabled, invalid/degraded status and different retained SHA"
+    },
+    {
+      "id": "snapshot-loading.edge-14",
+      "from": "snapshot-loading.fallback",
+      "to": "snapshot-loading.recheck",
+      "label": "Use selected result",
+      "kind": "normal",
+      "condition": "Fallback predicate is false"
+    },
+    {
+      "id": "snapshot-loading.edge-15",
+      "from": "snapshot-loading.old",
+      "to": "snapshot-loading.recheck",
+      "label": "Previous map labeled",
+      "kind": "normal"
+    },
+    {
+      "id": "snapshot-loading.edge-16",
+      "from": "snapshot-loading.recheck",
+      "to": "snapshot-loading.done",
+      "label": "Still active",
+      "kind": "success",
+      "condition": "Session exists and relevant projects connected"
+    },
+    {
+      "id": "snapshot-loading.edge-17",
+      "from": "snapshot-loading.recheck",
+      "to": "snapshot-loading.error",
+      "label": "Access changed",
+      "kind": "error",
+      "condition": "Session missing or project disconnected"
+    }
+  ]
+}

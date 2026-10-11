@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "map-review-recording",
+  "title": "Record an exact map review",
+  "purpose": "Write a review receipt tied to committed source and current validated flow content.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/review-cli.ts"
+      },
+      {
+        "path": "src/review.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Write a review receipt tied to committed source and current validated flow content.",
+    "gaps": []
+  },
+  "entryNodeId": "map-review-recording.start",
+  "nodes": [
+    {
+      "id": "map-review-recording.start",
+      "kind": "start",
+      "title": "Run review tool",
+      "description": "Require exactly --result updated|no-flow-change and a nonempty note up to 8,000 characters.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "map-review-recording.preconditions",
+      "kind": "decision",
+      "title": "Are review preconditions satisfied?",
+      "description": "Require Git repository root as cwd and no uncommitted files outside .logicatlas.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "map-review-recording.load",
+      "kind": "subprocess",
+      "title": "Load and validate local map",
+      "description": "Review refuses invalid maps.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      },
+      "processId": "local-map-read"
+    },
+    {
+      "id": "map-review-recording.tree",
+      "kind": "action",
+      "title": "Digest committed source and map",
+      "description": "Read HEAD git tree; SHA-256 digest sorted non-.logicatlas blob/submodule paths, modes, types and object SHAs. Canonical map digest sorts processes by ID.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "map-review-recording.write",
+      "kind": "action",
+      "title": "Write review.json safely",
+      "description": "Reject receipt symlink and open with NOFOLLOW. Include version, digests, timestamp, result and note.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "map-review-recording.done",
+      "kind": "end",
+      "title": "Receipt ready to commit",
+      "description": "Tool prints review claim; caller must commit receipt on same branch. No host API is called.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "map-review-recording.error",
+      "kind": "end",
+      "title": "Review refused",
+      "description": "Print safe failure and set exit code one; do not claim a receipt was recorded.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/review-cli.ts"
+          },
+          {
+            "path": "src/review.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "map-review-recording.edge-1",
+      "from": "map-review-recording.start",
+      "to": "map-review-recording.preconditions",
+      "label": "Check arguments and Git",
+      "kind": "normal"
+    },
+    {
+      "id": "map-review-recording.edge-2",
+      "from": "map-review-recording.preconditions",
+      "to": "map-review-recording.error",
+      "label": "Precondition fails",
+      "kind": "error",
+      "condition": "Arguments invalid, wrong cwd, Git fails or dirty source outside .logicatlas"
+    },
+    {
+      "id": "map-review-recording.edge-3",
+      "from": "map-review-recording.preconditions",
+      "to": "map-review-recording.load",
+      "label": "Ready",
+      "kind": "normal",
+      "condition": "Arguments/Git/root/clean-source checks pass"
+    },
+    {
+      "id": "map-review-recording.edge-4",
+      "from": "map-review-recording.load",
+      "to": "map-review-recording.tree",
+      "label": "Map valid",
+      "kind": "success",
+      "condition": "Local map load succeeds"
+    },
+    {
+      "id": "map-review-recording.edge-5",
+      "from": "map-review-recording.load",
+      "to": "map-review-recording.error",
+      "label": "Map invalid",
+      "kind": "error",
+      "condition": "Local map load fails"
+    },
+    {
+      "id": "map-review-recording.edge-6",
+      "from": "map-review-recording.tree",
+      "to": "map-review-recording.write",
+      "label": "Digests computed",
+      "kind": "normal"
+    },
+    {
+      "id": "map-review-recording.edge-7",
+      "from": "map-review-recording.write",
+      "to": "map-review-recording.done",
+      "label": "Write succeeds",
+      "kind": "success",
+      "condition": "Safe write succeeds"
+    },
+    {
+      "id": "map-review-recording.edge-8",
+      "from": "map-review-recording.write",
+      "to": "map-review-recording.error",
+      "label": "Write fails",
+      "kind": "error",
+      "condition": "Symlink or filesystem failure"
+    }
+  ]
+}

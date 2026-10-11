@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "flow-comparison",
+  "title": "Compare stable flow identities",
+  "purpose": "Detect changes in content and containment without treating a rename or move as a new identity.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/diff.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Detect changes in content and containment without treating a rename or move as a new identity.",
+    "gaps": []
+  },
+  "entryNodeId": "flow-comparison.start",
+  "nodes": [
+    {
+      "id": "flow-comparison.start",
+      "kind": "start",
+      "title": "Compare two valid bundles",
+      "description": "Caller supplies previous and proposed maps.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.collect",
+      "kind": "action",
+      "title": "Index entities by stable ID",
+      "description": "Collect project metadata/coverage/sorted roots, processes without node/edge arrays, nodes, edges and overview relationships.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.union",
+      "kind": "action",
+      "title": "Visit the sorted union of identities",
+      "description": "Canonical object key ordering makes field comparison independent of JSON object order; array ordering remains significant.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.classify",
+      "kind": "decision",
+      "title": "What changed for this identity?",
+      "description": "Skip identical values in the same containing process.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.added",
+      "kind": "action",
+      "title": "Record addition",
+      "description": "ID exists only in the proposed bundle.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.removed",
+      "kind": "action",
+      "title": "Record removal",
+      "description": "ID exists only in the previous bundle.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.moved",
+      "kind": "action",
+      "title": "Record a move",
+      "description": "ID exists in both but its containing process changed; include changed fields as well.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.changed",
+      "kind": "action",
+      "title": "Record changed fields",
+      "description": "Both entities stay in the same container and at least one field differs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.next",
+      "kind": "decision",
+      "title": "Are more entities left?",
+      "description": "Loop over all five entity categories.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-comparison.done",
+      "kind": "end",
+      "title": "Return change records",
+      "description": "Include available before/after content and previous/current process IDs for exact navigation.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/diff.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "flow-comparison.edge-1",
+      "from": "flow-comparison.start",
+      "to": "flow-comparison.collect",
+      "label": "Index content",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-2",
+      "from": "flow-comparison.collect",
+      "to": "flow-comparison.union",
+      "label": "Visit identities",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-3",
+      "from": "flow-comparison.union",
+      "to": "flow-comparison.classify",
+      "label": "Compare entity",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-4",
+      "from": "flow-comparison.classify",
+      "to": "flow-comparison.added",
+      "label": "New identity",
+      "kind": "normal",
+      "condition": "Only proposed entity exists"
+    },
+    {
+      "id": "flow-comparison.edge-5",
+      "from": "flow-comparison.classify",
+      "to": "flow-comparison.removed",
+      "label": "Deleted identity",
+      "kind": "normal",
+      "condition": "Only previous entity exists"
+    },
+    {
+      "id": "flow-comparison.edge-6",
+      "from": "flow-comparison.classify",
+      "to": "flow-comparison.moved",
+      "label": "New container",
+      "kind": "normal",
+      "condition": "Both exist and process IDs differ"
+    },
+    {
+      "id": "flow-comparison.edge-7",
+      "from": "flow-comparison.classify",
+      "to": "flow-comparison.changed",
+      "label": "Content changed",
+      "kind": "normal",
+      "condition": "Both exist, same process ID and changed fields nonempty"
+    },
+    {
+      "id": "flow-comparison.edge-8",
+      "from": "flow-comparison.classify",
+      "to": "flow-comparison.next",
+      "label": "Unchanged",
+      "kind": "normal",
+      "condition": "Both exist, same container and no field changes"
+    },
+    {
+      "id": "flow-comparison.edge-9",
+      "from": "flow-comparison.added",
+      "to": "flow-comparison.next",
+      "label": "Record added",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-10",
+      "from": "flow-comparison.removed",
+      "to": "flow-comparison.next",
+      "label": "Record removed",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-11",
+      "from": "flow-comparison.moved",
+      "to": "flow-comparison.next",
+      "label": "Record moved",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-12",
+      "from": "flow-comparison.changed",
+      "to": "flow-comparison.next",
+      "label": "Record changed",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-comparison.edge-13",
+      "from": "flow-comparison.next",
+      "to": "flow-comparison.union",
+      "label": "Next identity",
+      "kind": "normal",
+      "condition": "More identities/categories remain"
+    },
+    {
+      "id": "flow-comparison.edge-14",
+      "from": "flow-comparison.next",
+      "to": "flow-comparison.done",
+      "label": "Finished",
+      "kind": "success",
+      "condition": "All identities/categories visited"
+    }
+  ]
+}

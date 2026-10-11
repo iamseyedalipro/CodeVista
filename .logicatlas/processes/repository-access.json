@@ -1,0 +1,263 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "repository-access",
+  "title": "Authorize a repository",
+  "purpose": "Require both user access and this host GitHub App installation access for a selected repository.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/github.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Require both user access and this host GitHub App installation access for a selected repository.",
+    "gaps": []
+  },
+  "entryNodeId": "repository-access.start",
+  "nodes": [
+    {
+      "id": "repository-access.start",
+      "kind": "start",
+      "title": "Request a repository",
+      "description": "A repository route calls authorize.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-access.session",
+      "kind": "subprocess",
+      "title": "Resolve session",
+      "description": "Obtain usable user credentials.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "processId": "session-access"
+    },
+    {
+      "id": "repository-access.identity",
+      "kind": "external",
+      "title": "Fetch repository metadata",
+      "description": "Validate owner/name and request the repository with the user token.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-access.installations",
+      "kind": "subprocess",
+      "title": "Find installed repositories",
+      "description": "List repositories authorized for this user and this configured app.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "processId": "repository-discovery"
+    },
+    {
+      "id": "repository-access.allowed",
+      "kind": "decision",
+      "title": "Is access jointly authorized?",
+      "description": "Match numeric repository ID and case-insensitive full name in the installed repository list.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-access.disconnected",
+      "kind": "decision",
+      "title": "Is the project disconnected?",
+      "description": "Check saved disconnected IDs unless the caller allows reconnect/disconnect.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-access.denied",
+      "kind": "end",
+      "title": "Reject access",
+      "description": "Throw an access, session or DISCONNECTED error; do not substitute another repository.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "repository-access.done",
+      "kind": "end",
+      "title": "Return authorized context",
+      "description": "Return session and provider repository metadata with installation ID.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "repository-access.edge-1",
+      "from": "repository-access.start",
+      "to": "repository-access.session",
+      "label": "Resolve credentials",
+      "kind": "normal"
+    },
+    {
+      "id": "repository-access.edge-2",
+      "from": "repository-access.session",
+      "to": "repository-access.identity",
+      "label": "Session usable",
+      "kind": "success",
+      "condition": "Session subprocess succeeds"
+    },
+    {
+      "id": "repository-access.edge-3",
+      "from": "repository-access.session",
+      "to": "repository-access.denied",
+      "label": "Session rejected",
+      "kind": "error",
+      "condition": "Session subprocess throws"
+    },
+    {
+      "id": "repository-access.edge-4",
+      "from": "repository-access.identity",
+      "to": "repository-access.installations",
+      "label": "Metadata available",
+      "kind": "success",
+      "condition": "GitHub returns repository metadata"
+    },
+    {
+      "id": "repository-access.edge-5",
+      "from": "repository-access.identity",
+      "to": "repository-access.denied",
+      "label": "Metadata unavailable",
+      "kind": "error",
+      "condition": "Repository path invalid or provider request fails"
+    },
+    {
+      "id": "repository-access.edge-6",
+      "from": "repository-access.installations",
+      "to": "repository-access.allowed",
+      "label": "List available",
+      "kind": "success",
+      "condition": "Installed repository enumeration succeeds"
+    },
+    {
+      "id": "repository-access.edge-7",
+      "from": "repository-access.installations",
+      "to": "repository-access.denied",
+      "label": "Enumeration fails",
+      "kind": "error",
+      "condition": "Provider or enumeration limit error"
+    },
+    {
+      "id": "repository-access.edge-8",
+      "from": "repository-access.allowed",
+      "to": "repository-access.denied",
+      "label": "Not installed for this user/app",
+      "kind": "error",
+      "condition": "No matching ID and full name"
+    },
+    {
+      "id": "repository-access.edge-9",
+      "from": "repository-access.allowed",
+      "to": "repository-access.disconnected",
+      "label": "Joint access",
+      "kind": "normal",
+      "condition": "Matching installed repository found"
+    },
+    {
+      "id": "repository-access.edge-10",
+      "from": "repository-access.disconnected",
+      "to": "repository-access.denied",
+      "label": "Disconnected",
+      "kind": "error",
+      "condition": "ID disconnected and allowDisconnected is false"
+    },
+    {
+      "id": "repository-access.edge-11",
+      "from": "repository-access.disconnected",
+      "to": "repository-access.done",
+      "label": "Allowed",
+      "kind": "success",
+      "condition": "ID connected or caller allows disconnected"
+    }
+  ]
+}

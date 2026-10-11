@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "github-provider-request",
+  "title": "Call GitHub safely",
+  "purpose": "Bound outgoing GitHub requests and translate provider failures without leaking private response data.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/github.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Bound outgoing GitHub requests and translate provider failures without leaking private response data.",
+    "gaps": []
+  },
+  "entryNodeId": "github-provider-request.start",
+  "nodes": [
+    {
+      "id": "github-provider-request.start",
+      "kind": "start",
+      "title": "Call GitHub",
+      "description": "Internal caller supplies user token and validated API path or OAuth exchange fields.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-provider-request.fetch",
+      "kind": "external",
+      "title": "Send bounded request",
+      "description": "Reject redirects; use fifteen-second AbortSignal timeout; API requests use bearer authorization and fixed API version.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-provider-request.response",
+      "kind": "decision",
+      "title": "Did a response arrive successfully?",
+      "description": "Network/timeout becomes GITHUB_UNAVAILABLE. API failures cancel body and map 401, rate exhaustion, SSO-required, 403/404 or other status.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-provider-request.error",
+      "kind": "end",
+      "title": "Return safe provider error",
+      "description": "Return reauthenticate, rate-limited, organization approval, not-accessible or unavailable. There is no automatic retry.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "github-provider-request.json",
+      "kind": "action",
+      "title": "Read bounded strict JSON",
+      "description": "Check content-length and streamed bytes; cancel reader finally; reject empty body, malformed JSON or UTF-8. OAuth uses 32 KiB; API defaults eight MiB; tree twenty-four MiB.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-provider-request.contract",
+      "kind": "decision",
+      "title": "Does caller-specific content pass checks?",
+      "description": "Exchange requires bearer token; resolve requires full commit/tree SHA; blob requires base64 and decoded two MiB UTF-8 JSON limits.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-provider-request.done",
+      "kind": "end",
+      "title": "Return provider result",
+      "description": "Return only inspected caller contract; GitHub internal processing is outside the repository.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "github-provider-request.edge-1",
+      "from": "github-provider-request.start",
+      "to": "github-provider-request.fetch",
+      "label": "Send request",
+      "kind": "normal"
+    },
+    {
+      "id": "github-provider-request.edge-2",
+      "from": "github-provider-request.fetch",
+      "to": "github-provider-request.response",
+      "label": "Request settles",
+      "kind": "normal"
+    },
+    {
+      "id": "github-provider-request.edge-3",
+      "from": "github-provider-request.response",
+      "to": "github-provider-request.error",
+      "label": "Unavailable or error response",
+      "kind": "error",
+      "condition": "Fetch fails or relevant provider status unsuccessful"
+    },
+    {
+      "id": "github-provider-request.edge-4",
+      "from": "github-provider-request.response",
+      "to": "github-provider-request.json",
+      "label": "Readable response",
+      "kind": "normal",
+      "condition": "API response successful or OAuth response available for bounded parsing"
+    },
+    {
+      "id": "github-provider-request.edge-5",
+      "from": "github-provider-request.json",
+      "to": "github-provider-request.contract",
+      "label": "JSON parsed",
+      "kind": "success",
+      "condition": "Body/size/UTF-8/JSON checks pass"
+    },
+    {
+      "id": "github-provider-request.edge-6",
+      "from": "github-provider-request.json",
+      "to": "github-provider-request.error",
+      "label": "Unreadable response",
+      "kind": "error",
+      "condition": "Body/size/decode/JSON check fails"
+    },
+    {
+      "id": "github-provider-request.edge-7",
+      "from": "github-provider-request.contract",
+      "to": "github-provider-request.error",
+      "label": "Contract rejected",
+      "kind": "error",
+      "condition": "Caller token/revision/blob validation fails"
+    },
+    {
+      "id": "github-provider-request.edge-8",
+      "from": "github-provider-request.contract",
+      "to": "github-provider-request.done",
+      "label": "Contract accepted",
+      "kind": "success",
+      "condition": "Caller-specific checks pass"
+    }
+  ]
+}

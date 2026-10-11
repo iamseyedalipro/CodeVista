@@ -1,0 +1,297 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "host-startup",
+  "title": "Start and stop the self-hosted service",
+  "purpose": "Validate host configuration, initialize protected routes and serve the built application.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/config.ts"
+      },
+      {
+        "path": "server/main.ts"
+      },
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/snapshots.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Validate host configuration, initialize protected routes and serve the built application.",
+    "gaps": []
+  },
+  "entryNodeId": "host-startup.start",
+  "nodes": [
+    {
+      "id": "host-startup.start",
+      "kind": "start",
+      "title": "Start server",
+      "description": "Read environment through configFromEnv.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.config",
+      "kind": "decision",
+      "title": "Is configuration valid?",
+      "description": "Require HTTP(S) origin without path/credentials/query/fragment; production HTTPS; all-or-none GitHub settings; persistent 32-byte key for configured/production hosts; valid port/app ID/slug.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.failure",
+      "kind": "end",
+      "title": "Startup refused",
+      "description": "Throw configuration/init/listen error; do not claim service ready.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "host-startup.init",
+      "kind": "action",
+      "title": "Initialize store and Fastify",
+      "description": "Open encrypted store; install cookies/helmet, CSP, cache/CSRF/rate guards, OAuth/project routes and pruning timers.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.routes",
+      "kind": "action",
+      "title": "Register snapshots and optional static assets",
+      "description": "Register map/comparison endpoints and retention cleanup. Serve web-dist only if it exists, with no-store headers.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.listen",
+      "kind": "wait",
+      "title": "Listen for requests",
+      "description": "Bind LISTEN_HOST or loopback and configured port; healthz returns ok. Public demo can work without GitHub configuration.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.signal",
+      "kind": "action",
+      "title": "Close on SIGINT or SIGTERM",
+      "description": "Fastify onClose clears timers/store and snapshot caches; then process exits zero.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-startup.done",
+      "kind": "end",
+      "title": "Service stopped",
+      "description": "Shutdown completes after app.close resolves.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/config.ts"
+          },
+          {
+            "path": "server/main.ts"
+          },
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "host-startup.edge-1",
+      "from": "host-startup.start",
+      "to": "host-startup.config",
+      "label": "Read configuration",
+      "kind": "normal"
+    },
+    {
+      "id": "host-startup.edge-2",
+      "from": "host-startup.config",
+      "to": "host-startup.failure",
+      "label": "Configuration rejected",
+      "kind": "error",
+      "condition": "Any environment validation fails"
+    },
+    {
+      "id": "host-startup.edge-3",
+      "from": "host-startup.config",
+      "to": "host-startup.init",
+      "label": "Configuration accepted",
+      "kind": "normal",
+      "condition": "All config checks pass"
+    },
+    {
+      "id": "host-startup.edge-4",
+      "from": "host-startup.init",
+      "to": "host-startup.routes",
+      "label": "Initialization succeeds",
+      "kind": "success",
+      "condition": "Store/plugin initialization succeeds"
+    },
+    {
+      "id": "host-startup.edge-5",
+      "from": "host-startup.init",
+      "to": "host-startup.failure",
+      "label": "Initialization fails",
+      "kind": "error",
+      "condition": "Store/plugin initialization rejects"
+    },
+    {
+      "id": "host-startup.edge-6",
+      "from": "host-startup.routes",
+      "to": "host-startup.listen",
+      "label": "Server ready",
+      "kind": "success",
+      "condition": "Listen succeeds"
+    },
+    {
+      "id": "host-startup.edge-7",
+      "from": "host-startup.routes",
+      "to": "host-startup.failure",
+      "label": "Listen failed",
+      "kind": "error",
+      "condition": "Listen rejects"
+    },
+    {
+      "id": "host-startup.edge-8",
+      "from": "host-startup.listen",
+      "to": "host-startup.signal",
+      "label": "Shutdown signal",
+      "kind": "normal"
+    },
+    {
+      "id": "host-startup.edge-9",
+      "from": "host-startup.signal",
+      "to": "host-startup.done",
+      "label": "Close resolves",
+      "kind": "normal"
+    }
+  ]
+}

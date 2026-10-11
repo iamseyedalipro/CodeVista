@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "api-request-guard",
+  "title": "Protect API requests",
+  "purpose": "Apply request throttling, private cache headers and CSRF protection to API and OAuth routes.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Apply request throttling, private cache headers and CSRF protection to API and OAuth routes.",
+    "gaps": []
+  },
+  "entryNodeId": "api-request-guard.start",
+  "nodes": [
+    {
+      "id": "api-request-guard.start",
+      "kind": "start",
+      "title": "Receive request",
+      "description": "Fastify onRequest hook runs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.route",
+      "kind": "decision",
+      "title": "Is this an API or auth URL?",
+      "description": "Only /api/ and /auth/ enter the guard.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.bypass",
+      "kind": "end",
+      "title": "Continue other routes",
+      "description": "Health/static requests bypass this hook.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "api-request-guard.headers",
+      "kind": "action",
+      "title": "Prevent private caching",
+      "description": "Set no-store/private, Pragma no-cache and Vary Cookie. Bucket by IP and auth/api group.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.limit",
+      "kind": "decision",
+      "title": "Can this request proceed?",
+      "description": "Use one-minute buckets; fail new buckets beyond capacity and requests above 30 auth or 300 API requests.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.method",
+      "kind": "decision",
+      "title": "Does the request mutate state?",
+      "description": "GET, HEAD and OPTIONS need no mutation CSRF check here; protected handlers still authorize.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.csrf",
+      "kind": "decision",
+      "title": "Is origin, session and CSRF valid?",
+      "description": "Require configured origin, non-cross-site fetch metadata, a live session and timing-safe equal x-csrf-token.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-request-guard.error",
+      "kind": "subprocess",
+      "title": "Return guard failure",
+      "description": "Return capacity/rate/CSRF/sign-in error; rate errors include Retry-After 60.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "api-error-response"
+    },
+    {
+      "id": "api-request-guard.denied",
+      "kind": "end",
+      "title": "Request rejected",
+      "description": "The route handler does not run.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "api-request-guard.done",
+      "kind": "end",
+      "title": "Run the route handler",
+      "description": "Continue after the applicable request checks.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "api-request-guard.edge-1",
+      "from": "api-request-guard.start",
+      "to": "api-request-guard.route",
+      "label": "Inspect URL",
+      "kind": "normal"
+    },
+    {
+      "id": "api-request-guard.edge-2",
+      "from": "api-request-guard.route",
+      "to": "api-request-guard.bypass",
+      "label": "Outside API/auth",
+      "kind": "normal",
+      "condition": "URL has neither prefix"
+    },
+    {
+      "id": "api-request-guard.edge-3",
+      "from": "api-request-guard.route",
+      "to": "api-request-guard.headers",
+      "label": "Guarded route",
+      "kind": "normal",
+      "condition": "URL starts /api/ or /auth/"
+    },
+    {
+      "id": "api-request-guard.edge-4",
+      "from": "api-request-guard.headers",
+      "to": "api-request-guard.limit",
+      "label": "Check rate",
+      "kind": "normal"
+    },
+    {
+      "id": "api-request-guard.edge-5",
+      "from": "api-request-guard.limit",
+      "to": "api-request-guard.error",
+      "label": "Throttle or capacity failure",
+      "kind": "error",
+      "condition": "Bucket capacity exceeded or request count above group limit"
+    },
+    {
+      "id": "api-request-guard.edge-6",
+      "from": "api-request-guard.limit",
+      "to": "api-request-guard.method",
+      "label": "Within limit",
+      "kind": "normal",
+      "condition": "Bucket available and count allowed"
+    },
+    {
+      "id": "api-request-guard.edge-7",
+      "from": "api-request-guard.method",
+      "to": "api-request-guard.done",
+      "label": "Read method",
+      "kind": "normal",
+      "condition": "GET, HEAD or OPTIONS"
+    },
+    {
+      "id": "api-request-guard.edge-8",
+      "from": "api-request-guard.method",
+      "to": "api-request-guard.csrf",
+      "label": "Mutation method",
+      "kind": "normal",
+      "condition": "Any other method"
+    },
+    {
+      "id": "api-request-guard.edge-9",
+      "from": "api-request-guard.csrf",
+      "to": "api-request-guard.error",
+      "label": "Failed checks",
+      "kind": "error",
+      "condition": "Origin/fetch-site, session or CSRF check fails"
+    },
+    {
+      "id": "api-request-guard.edge-10",
+      "from": "api-request-guard.csrf",
+      "to": "api-request-guard.done",
+      "label": "Checks passed",
+      "kind": "success",
+      "condition": "Origin, session and CSRF match"
+    },
+    {
+      "id": "api-request-guard.edge-11",
+      "from": "api-request-guard.error",
+      "to": "api-request-guard.denied",
+      "label": "Return response",
+      "kind": "normal"
+    }
+  ]
+}

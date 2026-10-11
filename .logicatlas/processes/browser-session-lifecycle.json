@@ -1,0 +1,380 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "browser-session-lifecycle",
+  "title": "Keep private browser views tied to current access",
+  "purpose": "Recheck identity on page lifecycle events and clear private view state across tabs and unauthorized responses.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/App.tsx"
+      },
+      {
+        "path": "web/api.ts"
+      },
+      {
+        "path": "web/Project.tsx"
+      },
+      {
+        "path": "web/FlowCanvas.tsx"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Recheck identity on page lifecycle events and clear private view state across tabs and unauthorized responses.",
+    "gaps": []
+  },
+  "entryNodeId": "browser-session-lifecycle.start",
+  "nodes": [
+    {
+      "id": "browser-session-lifecycle.start",
+      "kind": "start",
+      "title": "Mount the application",
+      "description": "Register hash, pageshow/pagehide, visibility, session-ended and BroadcastChannel listeners; refresh session now.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.event",
+      "kind": "wait",
+      "title": "Wait for lifecycle or refresh event",
+      "description": "A minute timer checks session while visible. Project component also reloads maps every minute while visible.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.type",
+      "kind": "decision",
+      "title": "Which lifecycle event occurred?",
+      "description": "Generation counters discard older session responses; abort controllers discard stale project requests.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.lock",
+      "kind": "action",
+      "title": "Hide private view",
+      "description": "On hidden/pagehide increment generation, clear positions/viewports and lock private routes pending verification.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.end",
+      "kind": "action",
+      "title": "Clear identity and view state",
+      "description": "Session-ended or channel messages set anonymous state, clear memory view state; channel then triggers refresh.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.refresh",
+      "kind": "external",
+      "title": "Check host session",
+      "description": "GET session returns anonymous configuration or refreshed user/CSRF; server confirms provider user ID matches session.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.result",
+      "kind": "decision",
+      "title": "Did the current refresh succeed?",
+      "description": "Only active/current generation may update state.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.failure",
+      "kind": "action",
+      "title": "Lock private routes and show error",
+      "description": "Clear session and display retry connection on errors.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.success",
+      "kind": "action",
+      "title": "Show current identity",
+      "description": "Clear locks/errors; changed login clears view state and broadcasts identity-changed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "browser-session-lifecycle.cleanup",
+      "kind": "end",
+      "title": "Remove listeners on unmount",
+      "description": "Stop timer, close channel and abort component-specific requests.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "browser-session-lifecycle.edge-1",
+      "from": "browser-session-lifecycle.start",
+      "to": "browser-session-lifecycle.event",
+      "label": "Listen",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-2",
+      "from": "browser-session-lifecycle.event",
+      "to": "browser-session-lifecycle.type",
+      "label": "Event arrives",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-3",
+      "from": "browser-session-lifecycle.type",
+      "to": "browser-session-lifecycle.lock",
+      "label": "Hidden/pagehide",
+      "kind": "normal",
+      "condition": "Document hidden or pagehide fired"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-4",
+      "from": "browser-session-lifecycle.type",
+      "to": "browser-session-lifecycle.end",
+      "label": "Session ended/channel",
+      "kind": "normal",
+      "condition": "Session-ended event or BroadcastChannel message"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-5",
+      "from": "browser-session-lifecycle.type",
+      "to": "browser-session-lifecycle.refresh",
+      "label": "Visible/pageshow/timer",
+      "kind": "normal",
+      "condition": "Refresh event while active/visible"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-6",
+      "from": "browser-session-lifecycle.type",
+      "to": "browser-session-lifecycle.cleanup",
+      "label": "Unmount",
+      "kind": "normal",
+      "condition": "Component unmounts"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-7",
+      "from": "browser-session-lifecycle.lock",
+      "to": "browser-session-lifecycle.event",
+      "label": "Await verification event",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-8",
+      "from": "browser-session-lifecycle.end",
+      "to": "browser-session-lifecycle.event",
+      "label": "Wait or schedule refresh",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-9",
+      "from": "browser-session-lifecycle.refresh",
+      "to": "browser-session-lifecycle.result",
+      "label": "Session request finishes",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-10",
+      "from": "browser-session-lifecycle.result",
+      "to": "browser-session-lifecycle.failure",
+      "label": "Current request failed",
+      "kind": "error",
+      "condition": "Active current-generation request rejects"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-11",
+      "from": "browser-session-lifecycle.result",
+      "to": "browser-session-lifecycle.success",
+      "label": "Current request succeeded",
+      "kind": "success",
+      "condition": "Active current-generation request resolves"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-12",
+      "from": "browser-session-lifecycle.result",
+      "to": "browser-session-lifecycle.event",
+      "label": "Stale result",
+      "kind": "normal",
+      "condition": "Component inactive or generation changed"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-13",
+      "from": "browser-session-lifecycle.failure",
+      "to": "browser-session-lifecycle.event",
+      "label": "Await retry",
+      "kind": "normal"
+    },
+    {
+      "id": "browser-session-lifecycle.edge-14",
+      "from": "browser-session-lifecycle.success",
+      "to": "browser-session-lifecycle.event",
+      "label": "Continue monitoring",
+      "kind": "normal"
+    }
+  ]
+}

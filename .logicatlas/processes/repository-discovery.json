@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "repository-discovery",
+  "title": "Discover authorized repositories",
+  "purpose": "Enumerate user-visible repositories in active installations of this host GitHub App.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/github.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Enumerate user-visible repositories in active installations of this host GitHub App.",
+    "gaps": []
+  },
+  "entryNodeId": "repository-discovery.start",
+  "nodes": [
+    {
+      "id": "repository-discovery.start",
+      "kind": "start",
+      "title": "List installations",
+      "description": "GitHub.repositories receives the user token.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.page",
+      "kind": "external",
+      "title": "Fetch installation page",
+      "description": "Read /user/installations in pages of 100, up to ten pages.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.filter",
+      "kind": "action",
+      "title": "Select this app and active installations",
+      "description": "Skip installations for a different app ID or suspended installations.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.repos",
+      "kind": "external",
+      "title": "Read repository pages",
+      "description": "For each selected installation read pages of 100, at most twenty; attach its installation ID.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.budget",
+      "kind": "decision",
+      "title": "Are enumeration budgets satisfied?",
+      "description": "Fail when results exceed 2,000 or a twentieth repository page is full.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.failure",
+      "kind": "end",
+      "title": "Enumeration failed",
+      "description": "Throw REPOSITORY_LIMIT or propagate provider errors. No partial list is returned.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "repository-discovery.more",
+      "kind": "decision",
+      "title": "Are more installation pages needed?",
+      "description": "A page shorter than 100 ends enumeration; a full tenth page exceeds the installation budget.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.dedup",
+      "kind": "action",
+      "title": "Deduplicate by repository ID",
+      "description": "Keep one record for each provider repository ID.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "repository-discovery.done",
+      "kind": "end",
+      "title": "Return authorized repository list",
+      "description": "Return full names, default branches, privacy and installation IDs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "repository-discovery.edge-1",
+      "from": "repository-discovery.start",
+      "to": "repository-discovery.page",
+      "label": "Request page",
+      "kind": "normal"
+    },
+    {
+      "id": "repository-discovery.edge-2",
+      "from": "repository-discovery.page",
+      "to": "repository-discovery.filter",
+      "label": "Page returned",
+      "kind": "success",
+      "condition": "Provider succeeds"
+    },
+    {
+      "id": "repository-discovery.edge-3",
+      "from": "repository-discovery.page",
+      "to": "repository-discovery.failure",
+      "label": "Provider error",
+      "kind": "error",
+      "condition": "Provider request fails"
+    },
+    {
+      "id": "repository-discovery.edge-4",
+      "from": "repository-discovery.filter",
+      "to": "repository-discovery.repos",
+      "label": "Inspect selected installations",
+      "kind": "normal"
+    },
+    {
+      "id": "repository-discovery.edge-5",
+      "from": "repository-discovery.repos",
+      "to": "repository-discovery.budget",
+      "label": "Repository pages returned",
+      "kind": "success",
+      "condition": "Provider succeeds"
+    },
+    {
+      "id": "repository-discovery.edge-6",
+      "from": "repository-discovery.repos",
+      "to": "repository-discovery.failure",
+      "label": "Provider error",
+      "kind": "error",
+      "condition": "Provider request fails"
+    },
+    {
+      "id": "repository-discovery.edge-7",
+      "from": "repository-discovery.budget",
+      "to": "repository-discovery.failure",
+      "label": "Budget exceeded",
+      "kind": "error",
+      "condition": "More than 2,000 results or twentieth repository page is full"
+    },
+    {
+      "id": "repository-discovery.edge-8",
+      "from": "repository-discovery.budget",
+      "to": "repository-discovery.more",
+      "label": "Within budget",
+      "kind": "normal",
+      "condition": "Repository enumeration stays within limits"
+    },
+    {
+      "id": "repository-discovery.edge-9",
+      "from": "repository-discovery.more",
+      "to": "repository-discovery.page",
+      "label": "Next installation page",
+      "kind": "normal",
+      "condition": "Page has 100 installations and page number is below ten"
+    },
+    {
+      "id": "repository-discovery.edge-10",
+      "from": "repository-discovery.more",
+      "to": "repository-discovery.failure",
+      "label": "Installation budget exhausted",
+      "kind": "error",
+      "condition": "Tenth installation page is full"
+    },
+    {
+      "id": "repository-discovery.edge-11",
+      "from": "repository-discovery.more",
+      "to": "repository-discovery.dedup",
+      "label": "All installations inspected",
+      "kind": "normal",
+      "condition": "Installation page has fewer than 100 entries"
+    },
+    {
+      "id": "repository-discovery.edge-12",
+      "from": "repository-discovery.dedup",
+      "to": "repository-discovery.done",
+      "label": "Return list",
+      "kind": "normal"
+    }
+  ]
+}

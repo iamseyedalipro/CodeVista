@@ -121,3 +121,26 @@ local analogue is useful evidence, not a substitute for the required trial.
   session/cache/rate-limit implementation or public scale claim is made.
 - No GitHub Enterprise hosts, repository code execution, map editing in the viewer,
   automatic PR comments, AI analysis API, billing, or private-map public sharing.
+
+## Repository map generation — 2026-10-11
+
+CodeVista's own application map was created in `.logicatlas` from inspected
+`master` source, with 28 processes and 263 documented nodes. The
+[process index](repository-flows.md) records scope, shared definitions and gaps.
+The official standalone kit was built from the checked-out kit builder and its
+ZIP was inspected before installation. Project instructions were preserved and
+the maintenance block was appended once.
+
+`npm run check` passed, including unit/integration tests, web compilation and
+reference example validation. The standalone validator passed the new map with
+two intentional incomplete-coverage warnings. Every supplied reference path was
+checked against the checkout. No application behavior or synthetic reference map
+was changed.
+
+`npm run test:e2e` was attempted, but all 15 scenarios stopped at browser launch
+because the required Chromium executable was absent. Installing the locked
+Playwright headless browser returned an invalid/truncated ZIP, so browser checks
+for this task are **BLOCKED**, not passed. Existing historical browser evidence
+above is unchanged. No live GitHub App or external-agent acceptance trial was
+claimed by this mapping task. An exact source/map review receipt is generated
+after committing final instructions and documentation, then committed separately.

@@ -1,0 +1,272 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "project-connections",
+  "title": "Disconnect or reconnect a project",
+  "purpose": "Persist per-account project connection choices without modifying GitHub files.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "web/Projects.tsx"
+      },
+      {
+        "path": "server/store.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Persist per-account project connection choices without modifying GitHub files.",
+    "gaps": []
+  },
+  "entryNodeId": "project-connections.start",
+  "nodes": [
+    {
+      "id": "project-connections.start",
+      "kind": "start",
+      "title": "Change project connection",
+      "description": "A card sends POST disconnect or reconnect through the request guard.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-connections.session",
+      "kind": "subprocess",
+      "title": "Resolve the session",
+      "description": "Load current account settings.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "processId": "session-access"
+    },
+    {
+      "id": "project-connections.known",
+      "kind": "decision",
+      "title": "Can disconnect use a known project?",
+      "description": "A disconnect request with a matching saved full name can use its saved ID even if provider access was revoked.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-connections.authorize",
+      "kind": "subprocess",
+      "title": "Check live repository access",
+      "description": "Reconnect and unknown disconnect targets require authorization with allowDisconnected.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "project-connections.change",
+      "kind": "action",
+      "title": "Save connection choice",
+      "description": "Remove the ID from disconnected first; add it for disconnect, remove its saved preference on disconnect, save account data.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-connections.clear",
+      "kind": "action",
+      "title": "Clear private caches",
+      "description": "Clear all server snapshot caches/in-flight sequence identities; cards refresh the project list.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-connections.done",
+      "kind": "end",
+      "title": "Return connection status",
+      "description": "Return disconnected flag and repositoryFilesChanged false.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "project-connections.error",
+      "kind": "end",
+      "title": "Connection change failed",
+      "description": "Surface session/provider/access error; UI displays error.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "project-connections.edge-1",
+      "from": "project-connections.start",
+      "to": "project-connections.session",
+      "label": "Read account",
+      "kind": "normal"
+    },
+    {
+      "id": "project-connections.edge-2",
+      "from": "project-connections.session",
+      "to": "project-connections.known",
+      "label": "Session valid",
+      "kind": "success",
+      "condition": "Session succeeds"
+    },
+    {
+      "id": "project-connections.edge-3",
+      "from": "project-connections.session",
+      "to": "project-connections.error",
+      "label": "Session invalid",
+      "kind": "error",
+      "condition": "Session throws"
+    },
+    {
+      "id": "project-connections.edge-4",
+      "from": "project-connections.known",
+      "to": "project-connections.change",
+      "label": "Known disconnect",
+      "kind": "normal",
+      "condition": "Action is disconnect and saved full name matches"
+    },
+    {
+      "id": "project-connections.edge-5",
+      "from": "project-connections.known",
+      "to": "project-connections.authorize",
+      "label": "Live authorization needed",
+      "kind": "normal",
+      "condition": "Reconnect or no saved matching project"
+    },
+    {
+      "id": "project-connections.edge-6",
+      "from": "project-connections.authorize",
+      "to": "project-connections.change",
+      "label": "Authorized",
+      "kind": "success",
+      "condition": "Repository authorization succeeds"
+    },
+    {
+      "id": "project-connections.edge-7",
+      "from": "project-connections.authorize",
+      "to": "project-connections.error",
+      "label": "Rejected",
+      "kind": "error",
+      "condition": "Repository authorization throws"
+    },
+    {
+      "id": "project-connections.edge-8",
+      "from": "project-connections.change",
+      "to": "project-connections.clear",
+      "label": "Persist settings",
+      "kind": "normal"
+    },
+    {
+      "id": "project-connections.edge-9",
+      "from": "project-connections.clear",
+      "to": "project-connections.done",
+      "label": "Return result",
+      "kind": "normal"
+    }
+  ]
+}

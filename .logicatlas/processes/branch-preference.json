@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "branch-preference",
+  "title": "Remember the selected branch",
+  "purpose": "Validate and save a project branch and last visit for the signed-in account.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/store.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Validate and save a project branch and last visit for the signed-in account.",
+    "gaps": []
+  },
+  "entryNodeId": "branch-preference.start",
+  "nodes": [
+    {
+      "id": "branch-preference.start",
+      "kind": "start",
+      "title": "Save branch preference",
+      "description": "POST preference receives branch from a successful non-PR project load.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "branch-preference.access",
+      "kind": "subprocess",
+      "title": "Authorize project",
+      "description": "Use current session and installation access.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "branch-preference.branch",
+      "kind": "decision",
+      "title": "Is branch a string?",
+      "description": "Reject non-string input with INVALID_REF.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "branch-preference.resolve",
+      "kind": "external",
+      "title": "Resolve the selected ref",
+      "description": "GitHub.resolve validates ref and resolves it to an immutable commit.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "branch-preference.save",
+      "kind": "action",
+      "title": "Update account preference",
+      "description": "Save branch, ISO lastVisitedAt and provider fullName keyed by repository ID; applies to account sessions.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "branch-preference.done",
+      "kind": "end",
+      "title": "Preference saved",
+      "description": "Return saved true.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "branch-preference.error",
+      "kind": "end",
+      "title": "Preference failed",
+      "description": "Throw input/access/provider error. The UI uses controlError.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "branch-preference.edge-1",
+      "from": "branch-preference.start",
+      "to": "branch-preference.access",
+      "label": "Authorize",
+      "kind": "normal"
+    },
+    {
+      "id": "branch-preference.edge-2",
+      "from": "branch-preference.access",
+      "to": "branch-preference.branch",
+      "label": "Authorized",
+      "kind": "success",
+      "condition": "Access succeeds"
+    },
+    {
+      "id": "branch-preference.edge-3",
+      "from": "branch-preference.access",
+      "to": "branch-preference.error",
+      "label": "Access failure",
+      "kind": "error",
+      "condition": "Access throws"
+    },
+    {
+      "id": "branch-preference.edge-4",
+      "from": "branch-preference.branch",
+      "to": "branch-preference.error",
+      "label": "Invalid input",
+      "kind": "error",
+      "condition": "Branch is not a string"
+    },
+    {
+      "id": "branch-preference.edge-5",
+      "from": "branch-preference.branch",
+      "to": "branch-preference.resolve",
+      "label": "Valid input",
+      "kind": "normal",
+      "condition": "Branch is a string"
+    },
+    {
+      "id": "branch-preference.edge-6",
+      "from": "branch-preference.resolve",
+      "to": "branch-preference.save",
+      "label": "Ref resolves",
+      "kind": "success",
+      "condition": "Provider returns valid revision"
+    },
+    {
+      "id": "branch-preference.edge-7",
+      "from": "branch-preference.resolve",
+      "to": "branch-preference.error",
+      "label": "Ref failure",
+      "kind": "error",
+      "condition": "Input or provider resolution fails"
+    },
+    {
+      "id": "branch-preference.edge-8",
+      "from": "branch-preference.save",
+      "to": "branch-preference.done",
+      "label": "Saved",
+      "kind": "normal"
+    }
+  ]
+}

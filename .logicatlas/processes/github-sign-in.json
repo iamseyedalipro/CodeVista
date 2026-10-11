@@ -1,0 +1,408 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "github-sign-in",
+  "title": "Sign in with GitHub",
+  "purpose": "Create a host session through GitHub App OAuth with state, nonce and PKCE.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/store.ts"
+      },
+      {
+        "path": "server/github.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Create a host session through GitHub App OAuth with state, nonce and PKCE.",
+    "gaps": []
+  },
+  "entryNodeId": "github-sign-in.start",
+  "nodes": [
+    {
+      "id": "github-sign-in.start",
+      "kind": "start",
+      "title": "Start sign-in",
+      "description": "The browser opens /auth/github.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.configured",
+      "kind": "decision",
+      "title": "Is the host configured?",
+      "description": "A GitHub client ID is required.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.unavailable",
+      "kind": "end",
+      "title": "Sign-in unavailable",
+      "description": "Return 503 NOT_CONFIGURED; the demo remains available.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "github-sign-in.begin",
+      "kind": "action",
+      "title": "Save a temporary OAuth challenge",
+      "description": "Store hashed state and encrypted nonce hash/verifier for ten minutes; set a nonce cookie.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.provider",
+      "kind": "external",
+      "title": "Ask GitHub for authorization",
+      "description": "Redirect with client ID, callback, state and S256 code challenge. GitHub consent is outside this map.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.callback",
+      "kind": "decision",
+      "title": "Check the callback",
+      "description": "Clear the nonce cookie. Reject provider errors, missing or oversized state/code, missing nonce or a failed one-time state consumption.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.failed",
+      "kind": "end",
+      "title": "Return to Projects with auth failed",
+      "description": "Redirect to /#/projects?auth=failed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "cancel"
+    },
+    {
+      "id": "github-sign-in.exchange",
+      "kind": "external",
+      "title": "Exchange the code and fetch the account",
+      "description": "Send code/verifier to the token endpoint and request /user. Require bearer token, safe integer user ID and login string.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.accepted",
+      "kind": "decision",
+      "title": "Was the provider response accepted?",
+      "description": "Exchange, API requests and token lifetime validation can fail.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.error",
+      "kind": "subprocess",
+      "title": "Report provider failure",
+      "description": "Use the common API error response.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "processId": "api-error-response"
+    },
+    {
+      "id": "github-sign-in.stop",
+      "kind": "end",
+      "title": "Sign-in failed",
+      "description": "No new authenticated session is returned.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "github-sign-in.session",
+      "kind": "action",
+      "title": "Replace the old session",
+      "description": "Delete an old cookie session and its private cache. Create an encrypted eight-hour session with a new CSRF secret; account preferences persist.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "github-sign-in.done",
+      "kind": "end",
+      "title": "Open Projects",
+      "description": "Set the host session cookie and redirect to Projects.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/github.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "github-sign-in.edge-1",
+      "from": "github-sign-in.start",
+      "to": "github-sign-in.configured",
+      "label": "Check configuration",
+      "kind": "normal"
+    },
+    {
+      "id": "github-sign-in.edge-2",
+      "from": "github-sign-in.configured",
+      "to": "github-sign-in.unavailable",
+      "label": "Not configured",
+      "kind": "error",
+      "condition": "No GitHub client ID"
+    },
+    {
+      "id": "github-sign-in.edge-3",
+      "from": "github-sign-in.configured",
+      "to": "github-sign-in.begin",
+      "label": "Configured",
+      "kind": "normal",
+      "condition": "GitHub client ID exists"
+    },
+    {
+      "id": "github-sign-in.edge-4",
+      "from": "github-sign-in.begin",
+      "to": "github-sign-in.provider",
+      "label": "Redirect",
+      "kind": "normal"
+    },
+    {
+      "id": "github-sign-in.edge-5",
+      "from": "github-sign-in.provider",
+      "to": "github-sign-in.callback",
+      "label": "Callback arrives",
+      "kind": "normal"
+    },
+    {
+      "id": "github-sign-in.edge-6",
+      "from": "github-sign-in.callback",
+      "to": "github-sign-in.failed",
+      "label": "Rejected callback",
+      "kind": "cancel",
+      "condition": "Provider error or invalid parameters, nonce, state or expiry"
+    },
+    {
+      "id": "github-sign-in.edge-7",
+      "from": "github-sign-in.callback",
+      "to": "github-sign-in.exchange",
+      "label": "Valid callback",
+      "kind": "normal",
+      "condition": "Parameters valid and state consumed with matching nonce"
+    },
+    {
+      "id": "github-sign-in.edge-8",
+      "from": "github-sign-in.exchange",
+      "to": "github-sign-in.accepted",
+      "label": "Inspect result",
+      "kind": "normal"
+    },
+    {
+      "id": "github-sign-in.edge-9",
+      "from": "github-sign-in.accepted",
+      "to": "github-sign-in.error",
+      "label": "Provider or lifetime error",
+      "kind": "error",
+      "condition": "Token exchange, account request, identity validation or token lifetime fails"
+    },
+    {
+      "id": "github-sign-in.edge-10",
+      "from": "github-sign-in.accepted",
+      "to": "github-sign-in.session",
+      "label": "Accepted",
+      "kind": "success",
+      "condition": "Valid token, account identity and lifetime"
+    },
+    {
+      "id": "github-sign-in.edge-11",
+      "from": "github-sign-in.error",
+      "to": "github-sign-in.stop",
+      "label": "Error returned",
+      "kind": "normal"
+    },
+    {
+      "id": "github-sign-in.edge-12",
+      "from": "github-sign-in.session",
+      "to": "github-sign-in.done",
+      "label": "Session established",
+      "kind": "normal",
+      "condition": "Encrypted session creation succeeds"
+    },
+    {
+      "id": "github-sign-in.session-failure",
+      "from": "github-sign-in.session",
+      "to": "github-sign-in.error",
+      "label": "Session creation fails",
+      "kind": "error",
+      "condition": "Session capacity, encryption or database creation throws"
+    }
+  ]
+}

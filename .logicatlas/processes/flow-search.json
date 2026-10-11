@@ -1,0 +1,225 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "flow-search",
+  "title": "Find a process or step",
+  "purpose": "Search all reachable process and step titles and open an exact hierarchical location.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/viewer.ts"
+      },
+      {
+        "path": "web/Viewer.tsx"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Search all reachable process and step titles and open an exact hierarchical location.",
+    "gaps": []
+  },
+  "entryNodeId": "flow-search.start",
+  "nodes": [
+    {
+      "id": "flow-search.start",
+      "kind": "start",
+      "title": "Open search",
+      "description": "Use the search button or slash outside text inputs; Escape closes the dialog.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.query",
+      "kind": "action",
+      "title": "Normalize title query",
+      "description": "Trim, normalize NFKC and lowercase. Empty input produces guidance rather than results.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.paths",
+      "kind": "action",
+      "title": "Find shortest reachable paths",
+      "description": "Breadth-first search starts at overview roots and traverses subprocess references; shared children can have multiple valid paths, one shortest path is returned.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.matches",
+      "kind": "action",
+      "title": "Collect process and node title matches",
+      "description": "Skip unreachable processes. Search titles and construct breadcrumb location strings.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.show",
+      "kind": "decision",
+      "title": "What can be shown?",
+      "description": "UI limits displayed results to 250 and asks for refinement when more match.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.empty",
+      "kind": "end",
+      "title": "Show no results or query guidance",
+      "description": "No matching navigation is invented.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "flow-search.select",
+      "kind": "action",
+      "title": "Open the selected result",
+      "description": "Navigate with its exact trail and optional node ID, then close search.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-search.done",
+      "kind": "end",
+      "title": "Location opened",
+      "description": "Viewer renders that process/step.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "web/Viewer.tsx"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "flow-search.edge-1",
+      "from": "flow-search.start",
+      "to": "flow-search.query",
+      "label": "Enter query",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-search.edge-2",
+      "from": "flow-search.query",
+      "to": "flow-search.paths",
+      "label": "Search reachable content",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-search.edge-3",
+      "from": "flow-search.paths",
+      "to": "flow-search.matches",
+      "label": "Build locations",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-search.edge-4",
+      "from": "flow-search.matches",
+      "to": "flow-search.show",
+      "label": "Display results",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-search.edge-5",
+      "from": "flow-search.show",
+      "to": "flow-search.empty",
+      "label": "Empty or no matches",
+      "kind": "normal",
+      "condition": "Query empty or result list empty"
+    },
+    {
+      "id": "flow-search.edge-6",
+      "from": "flow-search.show",
+      "to": "flow-search.select",
+      "label": "Matching titles",
+      "kind": "normal",
+      "condition": "Nonempty query and at least one match"
+    },
+    {
+      "id": "flow-search.edge-7",
+      "from": "flow-search.select",
+      "to": "flow-search.done",
+      "label": "Navigate",
+      "kind": "normal"
+    }
+  ]
+}

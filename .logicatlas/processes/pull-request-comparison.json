@@ -1,0 +1,418 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "pull-request-comparison",
+  "title": "Compare a pull request",
+  "purpose": "Compare flow content at the PR base and head commits without changing the target branch or inferring deletions from unreadable maps.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/snapshots.ts"
+      },
+      {
+        "path": "web/Project.tsx"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Compare flow content at the PR base and head commits without changing the target branch or inferring deletions from unreadable maps.",
+    "gaps": []
+  },
+  "entryNodeId": "pull-request-comparison.start",
+  "nodes": [
+    {
+      "id": "pull-request-comparison.start",
+      "kind": "start",
+      "title": "Select a pull request",
+      "description": "Comparison endpoint receives its number.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.access",
+      "kind": "subprocess",
+      "title": "Authorize target repository",
+      "description": "Both user and host app must have current target access.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "pull-request-comparison.number",
+      "kind": "decision",
+      "title": "Is the number valid?",
+      "description": "Require a positive safe integer.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.pr",
+      "kind": "external",
+      "title": "Fetch PR metadata",
+      "description": "Read base/head immutable SHAs, repository identities, refs and state.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.head",
+      "kind": "decision",
+      "title": "Is the head available and authorized?",
+      "description": "Reject deleted source repository; separate fork authorization is required when head repository ID differs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.fork",
+      "kind": "subprocess",
+      "title": "Authorize fork head",
+      "description": "Check its session/installation access independently.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "pull-request-comparison.load",
+      "kind": "action",
+      "title": "Load both immutable maps concurrently",
+      "description": "SnapshotService.load uses base/head SHAs with fallback false; fork may declare target repository metadata.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.read",
+      "kind": "subprocess",
+      "title": "Read each map",
+      "description": "Use immutable tree/documents at each SHA.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "processId": "immutable-map-read"
+    },
+    {
+      "id": "pull-request-comparison.valid",
+      "kind": "decision",
+      "title": "Can a complete comparison be made?",
+      "description": "Recheck session and both disconnected IDs. Compare only when both statuses are valid and both bundles exist.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pull-request-comparison.diff",
+      "kind": "subprocess",
+      "title": "Compare stable flow identities",
+      "description": "Compute documented additions, removals, moves and field changes.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "processId": "flow-comparison"
+    },
+    {
+      "id": "pull-request-comparison.none",
+      "kind": "end",
+      "title": "Comparison unavailable",
+      "description": "Return base/head snapshots with changes null when either map is missing/invalid/degraded; infer no deletions.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "pull-request-comparison.done",
+      "kind": "end",
+      "title": "Return version comparison",
+      "description": "Return PR state, refs, snapshots and changes; UI switches side and offers exact before/after locations.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "pull-request-comparison.error",
+      "kind": "end",
+      "title": "PR view unavailable",
+      "description": "Return invalid number, access, head unavailable, session-changed or provider error.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "pull-request-comparison.edge-1",
+      "from": "pull-request-comparison.start",
+      "to": "pull-request-comparison.access",
+      "label": "Check target access",
+      "kind": "normal"
+    },
+    {
+      "id": "pull-request-comparison.edge-2",
+      "from": "pull-request-comparison.access",
+      "to": "pull-request-comparison.number",
+      "label": "Access valid",
+      "kind": "success",
+      "condition": "Authorization succeeds"
+    },
+    {
+      "id": "pull-request-comparison.edge-3",
+      "from": "pull-request-comparison.access",
+      "to": "pull-request-comparison.error",
+      "label": "Access denied",
+      "kind": "error",
+      "condition": "Authorization throws"
+    },
+    {
+      "id": "pull-request-comparison.edge-4",
+      "from": "pull-request-comparison.number",
+      "to": "pull-request-comparison.error",
+      "label": "Invalid number",
+      "kind": "error",
+      "condition": "Number not a positive safe integer"
+    },
+    {
+      "id": "pull-request-comparison.edge-5",
+      "from": "pull-request-comparison.number",
+      "to": "pull-request-comparison.pr",
+      "label": "Valid number",
+      "kind": "normal",
+      "condition": "Number is a positive safe integer"
+    },
+    {
+      "id": "pull-request-comparison.edge-6",
+      "from": "pull-request-comparison.pr",
+      "to": "pull-request-comparison.head",
+      "label": "Metadata fetched",
+      "kind": "success",
+      "condition": "Provider succeeds"
+    },
+    {
+      "id": "pull-request-comparison.edge-7",
+      "from": "pull-request-comparison.pr",
+      "to": "pull-request-comparison.error",
+      "label": "Provider fails",
+      "kind": "error",
+      "condition": "Provider request fails"
+    },
+    {
+      "id": "pull-request-comparison.edge-8",
+      "from": "pull-request-comparison.head",
+      "to": "pull-request-comparison.error",
+      "label": "Head unavailable",
+      "kind": "error",
+      "condition": "PR head repository is null"
+    },
+    {
+      "id": "pull-request-comparison.edge-9",
+      "from": "pull-request-comparison.head",
+      "to": "pull-request-comparison.fork",
+      "label": "Fork head",
+      "kind": "normal",
+      "condition": "Head ID differs from target ID"
+    },
+    {
+      "id": "pull-request-comparison.edge-10",
+      "from": "pull-request-comparison.head",
+      "to": "pull-request-comparison.load",
+      "label": "Same repository",
+      "kind": "normal",
+      "condition": "Head ID equals target ID"
+    },
+    {
+      "id": "pull-request-comparison.edge-11",
+      "from": "pull-request-comparison.fork",
+      "to": "pull-request-comparison.load",
+      "label": "Fork authorized",
+      "kind": "success",
+      "condition": "Fork access succeeds"
+    },
+    {
+      "id": "pull-request-comparison.edge-12",
+      "from": "pull-request-comparison.fork",
+      "to": "pull-request-comparison.error",
+      "label": "Fork denied",
+      "kind": "error",
+      "condition": "Fork access throws"
+    },
+    {
+      "id": "pull-request-comparison.edge-13",
+      "from": "pull-request-comparison.load",
+      "to": "pull-request-comparison.read",
+      "label": "Read base and head",
+      "kind": "normal"
+    },
+    {
+      "id": "pull-request-comparison.edge-14",
+      "from": "pull-request-comparison.read",
+      "to": "pull-request-comparison.valid",
+      "label": "Both loads return",
+      "kind": "success",
+      "condition": "Both reads return snapshots"
+    },
+    {
+      "id": "pull-request-comparison.edge-15",
+      "from": "pull-request-comparison.read",
+      "to": "pull-request-comparison.error",
+      "label": "Read throws",
+      "kind": "error",
+      "condition": "Either provider read fails"
+    },
+    {
+      "id": "pull-request-comparison.edge-16",
+      "from": "pull-request-comparison.valid",
+      "to": "pull-request-comparison.error",
+      "label": "Session changed",
+      "kind": "error",
+      "condition": "Session missing or either project disconnected"
+    },
+    {
+      "id": "pull-request-comparison.edge-17",
+      "from": "pull-request-comparison.valid",
+      "to": "pull-request-comparison.none",
+      "label": "Map not valid",
+      "kind": "normal",
+      "condition": "Session active but either snapshot lacks valid status/bundle"
+    },
+    {
+      "id": "pull-request-comparison.edge-18",
+      "from": "pull-request-comparison.valid",
+      "to": "pull-request-comparison.diff",
+      "label": "Both maps valid",
+      "kind": "success",
+      "condition": "Session active and both valid bundles exist"
+    },
+    {
+      "id": "pull-request-comparison.edge-19",
+      "from": "pull-request-comparison.diff",
+      "to": "pull-request-comparison.done",
+      "label": "Changes computed",
+      "kind": "normal"
+    }
+  ]
+}
