@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "project-version-selection",
+  "title": "Open a project version",
+  "purpose": "Load the chosen branch or PR while checking current access and preserving exact navigation.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/Project.tsx"
+      },
+      {
+        "path": "server/app.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Load the chosen branch or PR while checking current access and preserving exact navigation.",
+    "gaps": []
+  },
+  "entryNodeId": "project-version-selection.start",
+  "nodes": [
+    {
+      "id": "project-version-selection.start",
+      "kind": "start",
+      "title": "Open a project URL",
+      "description": "Read repository, ref, PR number, side, trail and node from the hash.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.load",
+      "kind": "action",
+      "title": "Reset previous view and start requests",
+      "description": "Abort stale requests on cleanup. Fetch branch/PR pages and access alongside the requested version.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.mode",
+      "kind": "decision",
+      "title": "Is a PR selected?",
+      "description": "Choose branch snapshot or immutable PR comparison.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.snapshot",
+      "kind": "subprocess",
+      "title": "Load branch snapshot",
+      "description": "Use supplied ref or provider default branch.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "snapshot-loading"
+    },
+    {
+      "id": "project-version-selection.comparison",
+      "kind": "subprocess",
+      "title": "Load PR comparison",
+      "description": "Load base and head independently.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "pull-request-comparison"
+    },
+    {
+      "id": "project-version-selection.ready",
+      "kind": "decision",
+      "title": "Can the exact result be displayed?",
+      "description": "Only show a result matching the current key and an access check verified for the current hash.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.error",
+      "kind": "end",
+      "title": "Show project unavailable",
+      "description": "Discard failed loaded content and offer Retry or Projects.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "project-version-selection.wait",
+      "kind": "wait",
+      "title": "Wait for current access and content",
+      "description": "Do not show another branch/repository while waiting.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.display",
+      "kind": "action",
+      "title": "Display selected version",
+      "description": "Show selected/displayed SHAs, check time, diagnostics, review/coverage and base/head tabs. Save branch preference after non-PR loads.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-version-selection.end",
+      "kind": "end",
+      "title": "Version ready to explore",
+      "description": "Refresh manually or every minute while visible; branch or PR changes clear trail/node, pagination offers more branches/PRs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "project-version-selection.edge-1",
+      "from": "project-version-selection.start",
+      "to": "project-version-selection.load",
+      "label": "Begin requests",
+      "kind": "normal"
+    },
+    {
+      "id": "project-version-selection.edge-2",
+      "from": "project-version-selection.load",
+      "to": "project-version-selection.mode",
+      "label": "Choose source",
+      "kind": "normal"
+    },
+    {
+      "id": "project-version-selection.edge-3",
+      "from": "project-version-selection.mode",
+      "to": "project-version-selection.snapshot",
+      "label": "Branch view",
+      "kind": "normal",
+      "condition": "PR parameter absent"
+    },
+    {
+      "id": "project-version-selection.edge-4",
+      "from": "project-version-selection.mode",
+      "to": "project-version-selection.comparison",
+      "label": "PR view",
+      "kind": "normal",
+      "condition": "PR parameter present"
+    },
+    {
+      "id": "project-version-selection.edge-5",
+      "from": "project-version-selection.snapshot",
+      "to": "project-version-selection.ready",
+      "label": "Branch request finishes",
+      "kind": "normal"
+    },
+    {
+      "id": "project-version-selection.edge-6",
+      "from": "project-version-selection.comparison",
+      "to": "project-version-selection.ready",
+      "label": "Comparison request finishes",
+      "kind": "normal"
+    },
+    {
+      "id": "project-version-selection.edge-7",
+      "from": "project-version-selection.ready",
+      "to": "project-version-selection.error",
+      "label": "Request failed",
+      "kind": "error",
+      "condition": "Content or access request failed"
+    },
+    {
+      "id": "project-version-selection.edge-8",
+      "from": "project-version-selection.ready",
+      "to": "project-version-selection.wait",
+      "label": "Not ready",
+      "kind": "normal",
+      "condition": "No failure but matching content or access verification pending"
+    },
+    {
+      "id": "project-version-selection.edge-9",
+      "from": "project-version-selection.wait",
+      "to": "project-version-selection.ready",
+      "label": "Current request completes",
+      "kind": "normal"
+    },
+    {
+      "id": "project-version-selection.edge-10",
+      "from": "project-version-selection.ready",
+      "to": "project-version-selection.display",
+      "label": "Ready",
+      "kind": "success",
+      "condition": "Matching result exists and verified hash equals current hash"
+    },
+    {
+      "id": "project-version-selection.edge-11",
+      "from": "project-version-selection.display",
+      "to": "project-version-selection.end",
+      "label": "Render view",
+      "kind": "normal"
+    }
+  ]
+}

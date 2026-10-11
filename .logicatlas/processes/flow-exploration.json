@@ -1,0 +1,456 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "flow-exploration",
+  "title": "Explore hierarchical application flows",
+  "purpose": "Navigate overview, shared subprocesses, selected steps, outgoing paths and evidence at the displayed revision.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/Viewer.tsx"
+      },
+      {
+        "path": "web/FlowCanvas.tsx"
+      },
+      {
+        "path": "src/viewer.ts"
+      },
+      {
+        "path": "src/references.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Navigate overview, shared subprocesses, selected steps, outgoing paths and evidence at the displayed revision.",
+    "gaps": []
+  },
+  "entryNodeId": "flow-exploration.start",
+  "nodes": [
+    {
+      "id": "flow-exploration.start",
+      "kind": "start",
+      "title": "Open a map location",
+      "description": "Viewer receives a validated bundle, scope, trail, selected ID and optional immutable source context.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.trail",
+      "kind": "decision",
+      "title": "Which location is requested?",
+      "description": "Check root membership, parent subprocess references, repeated IDs and unavailable process IDs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.missing",
+      "kind": "end",
+      "title": "Show unavailable location",
+      "description": "Offer overview for an invalid process path; never substitute a different version.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "flow-exploration.overview",
+      "kind": "action",
+      "title": "Show main processes",
+      "description": "Display counts, coverage, process cards and declared relationships; independent roots stay separate.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.process",
+      "kind": "action",
+      "title": "Show process context",
+      "description": "Display breadcrumbs, purpose, behavior and coverage gaps. Unreviewed processes have no invented steps.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.size",
+      "kind": "decision",
+      "title": "How is this process presented?",
+      "description": "Choose empty area, full diagram up to 500 nodes, or large-process listing.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.empty",
+      "kind": "end",
+      "title": "Show unreviewed area",
+      "description": "Explain that there are no reviewed steps.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "flow-exploration.canvas",
+      "kind": "action",
+      "title": "Lay out the process",
+      "description": "Dagre creates top-down positions; ReactFlow renders safe text, zoom/pan, colored errors/retries and selected-step adjacency emphasis. Positions/viewports remain bounded memory only.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.large",
+      "kind": "action",
+      "title": "Show a bounded step list",
+      "description": "Show first fifty steps and search access to all; do not attempt an oversized diagram.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.details",
+      "kind": "action",
+      "title": "Show selected step and outgoing paths",
+      "description": "Display description, behavior, outcome, conditions and evidence. Invalid selected IDs get an unavailable-step notice. Subprocess buttons append the child ID; breadcrumbs trim the trail.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.reference",
+      "kind": "decision",
+      "title": "Can an immutable source link be built?",
+      "description": "Require supplied safe snapshot context and a reference path not marked missing; codeReferenceUrl validates repository, path, SHA and line range.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-exploration.link",
+      "kind": "end",
+      "title": "Offer source and navigation links",
+      "description": "Use encoded GitHub blob link at displayed commit. New navigation returns to location handling.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "flow-exploration.plain",
+      "kind": "end",
+      "title": "Show source as plain text",
+      "description": "Without safe context/reference, show path and missing-source warning instead of a link.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Viewer.tsx"
+          },
+          {
+            "path": "web/FlowCanvas.tsx"
+          },
+          {
+            "path": "src/viewer.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "flow-exploration.edge-1",
+      "from": "flow-exploration.start",
+      "to": "flow-exploration.trail",
+      "label": "Resolve location",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-2",
+      "from": "flow-exploration.trail",
+      "to": "flow-exploration.missing",
+      "label": "Invalid path",
+      "kind": "error",
+      "condition": "Nonempty trail invalid, process missing or quarantined"
+    },
+    {
+      "id": "flow-exploration.edge-3",
+      "from": "flow-exploration.trail",
+      "to": "flow-exploration.overview",
+      "label": "Overview",
+      "kind": "normal",
+      "condition": "Trail empty"
+    },
+    {
+      "id": "flow-exploration.edge-4",
+      "from": "flow-exploration.trail",
+      "to": "flow-exploration.process",
+      "label": "Process",
+      "kind": "normal",
+      "condition": "Trail valid and process available"
+    },
+    {
+      "id": "flow-exploration.edge-5",
+      "from": "flow-exploration.overview",
+      "to": "flow-exploration.process",
+      "label": "Open a process",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-6",
+      "from": "flow-exploration.process",
+      "to": "flow-exploration.size",
+      "label": "Choose presentation",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-7",
+      "from": "flow-exploration.size",
+      "to": "flow-exploration.empty",
+      "label": "No nodes",
+      "kind": "normal",
+      "condition": "Process nodes empty"
+    },
+    {
+      "id": "flow-exploration.edge-8",
+      "from": "flow-exploration.size",
+      "to": "flow-exploration.canvas",
+      "label": "Diagram",
+      "kind": "normal",
+      "condition": "Process has between one and 500 nodes"
+    },
+    {
+      "id": "flow-exploration.edge-9",
+      "from": "flow-exploration.size",
+      "to": "flow-exploration.large",
+      "label": "Large process",
+      "kind": "normal",
+      "condition": "Process has more than 500 nodes"
+    },
+    {
+      "id": "flow-exploration.edge-10",
+      "from": "flow-exploration.canvas",
+      "to": "flow-exploration.details",
+      "label": "Select step",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-11",
+      "from": "flow-exploration.large",
+      "to": "flow-exploration.details",
+      "label": "Open a listed or searched step",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-12",
+      "from": "flow-exploration.details",
+      "to": "flow-exploration.reference",
+      "label": "Inspect evidence",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-exploration.edge-13",
+      "from": "flow-exploration.reference",
+      "to": "flow-exploration.link",
+      "label": "Safe source context",
+      "kind": "success",
+      "condition": "Context valid and reference exists safely"
+    },
+    {
+      "id": "flow-exploration.edge-14",
+      "from": "flow-exploration.reference",
+      "to": "flow-exploration.plain",
+      "label": "Unavailable link",
+      "kind": "normal",
+      "condition": "Context missing/invalid or reference unavailable"
+    }
+  ]
+}

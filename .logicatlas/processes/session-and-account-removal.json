@@ -1,0 +1,340 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "session-and-account-removal",
+  "title": "Sign out or delete host account data",
+  "purpose": "Remove host session/account records and private view state without changing GitHub repositories or app installations.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/store.ts"
+      },
+      {
+        "path": "web/App.tsx"
+      },
+      {
+        "path": "web/api.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Remove host session/account records and private view state without changing GitHub repositories or app installations.",
+    "gaps": []
+  },
+  "entryNodeId": "session-and-account-removal.start",
+  "nodes": [
+    {
+      "id": "session-and-account-removal.start",
+      "kind": "start",
+      "title": "Choose sign-out or deletion",
+      "description": "Account deletion opens a confirmation; cancellation closes it. Both mutations use origin/CSRF guard.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-and-account-removal.choice",
+      "kind": "decision",
+      "title": "Which action is confirmed?",
+      "description": "Sign-out posts logout. Confirmed account deletion deletes /account.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-and-account-removal.cancel",
+      "kind": "end",
+      "title": "Keep account data",
+      "description": "User cancels deletion dialog.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      },
+      "outcome": "cancel"
+    },
+    {
+      "id": "session-and-account-removal.logout",
+      "kind": "action",
+      "title": "Delete this host session",
+      "description": "Delete cookie session, clear its snapshot caches and cookie; send Clear-Site-Data cache/storage.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-and-account-removal.session",
+      "kind": "subprocess",
+      "title": "Resolve account identity",
+      "description": "Account deletion resolves current session credentials.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      },
+      "processId": "session-access"
+    },
+    {
+      "id": "session-and-account-removal.delete",
+      "kind": "action",
+      "title": "Delete all sessions and preferences for user",
+      "description": "Delete user session/account rows; clear all private server caches, current cookie and browser cache/storage.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-and-account-removal.ui",
+      "kind": "action",
+      "title": "Clear client view state",
+      "description": "Set anonymous session, navigate Projects, close confirmation and broadcast session-ended to other tabs.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-and-account-removal.done",
+      "kind": "end",
+      "title": "Host data removed",
+      "description": "GitHub files and app installation are unchanged.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "session-and-account-removal.error",
+      "kind": "end",
+      "title": "Removal failed",
+      "description": "Show error; do not claim deletion succeeded.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "web/App.tsx"
+          },
+          {
+            "path": "web/api.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "session-and-account-removal.edge-1",
+      "from": "session-and-account-removal.start",
+      "to": "session-and-account-removal.choice",
+      "label": "Confirm action",
+      "kind": "normal"
+    },
+    {
+      "id": "session-and-account-removal.edge-2",
+      "from": "session-and-account-removal.choice",
+      "to": "session-and-account-removal.cancel",
+      "label": "Cancel deletion",
+      "kind": "cancel",
+      "condition": "User cancels account deletion"
+    },
+    {
+      "id": "session-and-account-removal.edge-3",
+      "from": "session-and-account-removal.choice",
+      "to": "session-and-account-removal.logout",
+      "label": "Sign out",
+      "kind": "normal",
+      "condition": "User requests sign-out"
+    },
+    {
+      "id": "session-and-account-removal.edge-4",
+      "from": "session-and-account-removal.choice",
+      "to": "session-and-account-removal.session",
+      "label": "Delete account data",
+      "kind": "normal",
+      "condition": "User confirms account deletion"
+    },
+    {
+      "id": "session-and-account-removal.edge-5",
+      "from": "session-and-account-removal.logout",
+      "to": "session-and-account-removal.ui",
+      "label": "Sign-out succeeds",
+      "kind": "success",
+      "condition": "Server mutation succeeds"
+    },
+    {
+      "id": "session-and-account-removal.edge-6",
+      "from": "session-and-account-removal.logout",
+      "to": "session-and-account-removal.error",
+      "label": "Request fails",
+      "kind": "error",
+      "condition": "Guard or mutation fails"
+    },
+    {
+      "id": "session-and-account-removal.edge-7",
+      "from": "session-and-account-removal.session",
+      "to": "session-and-account-removal.delete",
+      "label": "Identity valid",
+      "kind": "success",
+      "condition": "Session succeeds"
+    },
+    {
+      "id": "session-and-account-removal.edge-8",
+      "from": "session-and-account-removal.session",
+      "to": "session-and-account-removal.error",
+      "label": "Identity invalid",
+      "kind": "error",
+      "condition": "Session fails"
+    },
+    {
+      "id": "session-and-account-removal.edge-9",
+      "from": "session-and-account-removal.delete",
+      "to": "session-and-account-removal.ui",
+      "label": "Deletion succeeds",
+      "kind": "success",
+      "condition": "Server deletion succeeds"
+    },
+    {
+      "id": "session-and-account-removal.edge-10",
+      "from": "session-and-account-removal.delete",
+      "to": "session-and-account-removal.error",
+      "label": "Deletion fails",
+      "kind": "error",
+      "condition": "Server mutation fails"
+    },
+    {
+      "id": "session-and-account-removal.edge-11",
+      "from": "session-and-account-removal.ui",
+      "to": "session-and-account-removal.done",
+      "label": "End private display",
+      "kind": "normal"
+    }
+  ]
+}

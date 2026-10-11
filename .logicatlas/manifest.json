@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": {
+    "id": "codevista",
+    "name": "CodeVista",
+    "description": "Repository-owned maps of the implemented LogicAtlas host, viewer, portable validation and existing-agent workflow.",
+    "contentLanguage": "en",
+    "repository": {
+      "host": "github.com",
+      "owner": "iamseyedalipro",
+      "name": "CodeVista"
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "All implemented product entry points in server/, web/ and src/: authentication, authorization, project lifecycle, version loading/comparison, viewer/search/demo, local validation and review, host startup and encrypted storage. Synthetic example business flows remain in examples/reference and are not presented as CodeVista product features.",
+    "gaps": [
+      "Live GitHub consent, SSO/installation approval and provider internal behavior are external boundaries, not tested production behavior.",
+      "External coding-agent autonomous maintenance acceptance remains unestablished; setup/recovery documents the host handoff only.",
+      "Styling, static help prose, build/test implementation details and future roadmap functionality are outside these behavioral maps."
+    ]
+  },
+  "rootProcessIds": [
+    "github-sign-in",
+    "api-request-guard",
+    "project-workspace",
+    "project-connections",
+    "project-version-selection",
+    "branch-preference",
+    "pull-request-comparison",
+    "flow-exploration",
+    "flow-search",
+    "agent-map-setup",
+    "local-map-validation",
+    "map-review-recording",
+    "session-and-account-removal",
+    "browser-session-lifecycle",
+    "encrypted-host-storage",
+    "public-demo",
+    "host-startup",
+    "github-provider-request"
+  ],
+  "processes": [
+    {
+      "id": "github-sign-in",
+      "file": "processes/github-sign-in.json"
+    },
+    {
+      "id": "session-access",
+      "file": "processes/session-access.json"
+    },
+    {
+      "id": "repository-access",
+      "file": "processes/repository-access.json"
+    },
+    {
+      "id": "repository-discovery",
+      "file": "processes/repository-discovery.json"
+    },
+    {
+      "id": "api-request-guard",
+      "file": "processes/api-request-guard.json"
+    },
+    {
+      "id": "api-error-response",
+      "file": "processes/api-error-response.json"
+    },
+    {
+      "id": "project-workspace",
+      "file": "processes/project-workspace.json"
+    },
+    {
+      "id": "project-connections",
+      "file": "processes/project-connections.json"
+    },
+    {
+      "id": "project-version-selection",
+      "file": "processes/project-version-selection.json"
+    },
+    {
+      "id": "branch-preference",
+      "file": "processes/branch-preference.json"
+    },
+    {
+      "id": "snapshot-loading",
+      "file": "processes/snapshot-loading.json"
+    },
+    {
+      "id": "immutable-map-read",
+      "file": "processes/immutable-map-read.json"
+    },
+    {
+      "id": "pull-request-comparison",
+      "file": "processes/pull-request-comparison.json"
+    },
+    {
+      "id": "flow-comparison",
+      "file": "processes/flow-comparison.json"
+    },
+    {
+      "id": "flow-exploration",
+      "file": "processes/flow-exploration.json"
+    },
+    {
+      "id": "flow-search",
+      "file": "processes/flow-search.json"
+    },
+    {
+      "id": "agent-map-setup",
+      "file": "processes/agent-map-setup.json"
+    },
+    {
+      "id": "local-map-validation",
+      "file": "processes/local-map-validation.json"
+    },
+    {
+      "id": "flow-validation",
+      "file": "processes/flow-validation.json"
+    },
+    {
+      "id": "map-review-recording",
+      "file": "processes/map-review-recording.json"
+    },
+    {
+      "id": "local-map-read",
+      "file": "processes/local-map-read.json"
+    },
+    {
+      "id": "review-freshness",
+      "file": "processes/review-freshness.json"
+    },
+    {
+      "id": "session-and-account-removal",
+      "file": "processes/session-and-account-removal.json"
+    },
+    {
+      "id": "browser-session-lifecycle",
+      "file": "processes/browser-session-lifecycle.json"
+    },
+    {
+      "id": "encrypted-host-storage",
+      "file": "processes/encrypted-host-storage.json"
+    },
+    {
+      "id": "public-demo",
+      "file": "processes/public-demo.json"
+    },
+    {
+      "id": "host-startup",
+      "file": "processes/host-startup.json"
+    },
+    {
+      "id": "github-provider-request",
+      "file": "processes/github-provider-request.json"
+    }
+  ],
+  "relationships": []
+}

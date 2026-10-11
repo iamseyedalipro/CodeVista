@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "flow-validation",
+  "title": "Validate the flow contract",
+  "purpose": "Check schema, identity, graph, coverage and hierarchy rules without filesystem or network access.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/validate.ts"
+      },
+      {
+        "path": "src/schema.ts"
+      },
+      {
+        "path": "src/references.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Check schema, identity, graph, coverage and hierarchy rules without filesystem or network access.",
+    "gaps": []
+  },
+  "entryNodeId": "flow-validation.start",
+  "nodes": [
+    {
+      "id": "flow-validation.start",
+      "kind": "start",
+      "title": "Validate parsed documents",
+      "description": "Inputs are untrusted parsed values.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.schema",
+      "kind": "action",
+      "title": "Validate bundled schema version and shape",
+      "description": "Only exact 1.0.0 and trusted Ajv 2020 schemas are accepted. Cap schema diagnostics; check process array and total node/edge budgets.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.shape",
+      "kind": "decision",
+      "title": "Can semantic checks proceed?",
+      "description": "Stop if structure or budget checks produced errors.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.ids",
+      "kind": "action",
+      "title": "Check declarations and identities",
+      "description": "Require unique declared/process/node/edge/relationship IDs, matching canonical filenames, defined roots and two distinct root endpoints for relationships.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.graph",
+      "kind": "action",
+      "title": "Check every process graph",
+      "description": "Reviewed processes need one start, local edge endpoints, reachable nodes, valid terminal/start degree, explicit distinct branch conditions and real subprocess targets. Unreviewed areas must have no invented nodes.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.evidence",
+      "kind": "action",
+      "title": "Check evidence and coverage",
+      "description": "Validate safe source paths/line ranges. Warn on uncertain evidence, unknown/planned behavior and partial coverage; prevent complete map claims over incomplete processes and planned/current mixing.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.hierarchy",
+      "kind": "action",
+      "title": "Check containment and overview reachability",
+      "description": "Kahn traversal rejects subprocess cycles; iterative root traversal rejects orphan processes. Real retry cycles in local control flow are allowed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.result",
+      "kind": "decision",
+      "title": "Were any errors found?",
+      "description": "Report at most 200 diagnostics; preserve an error even if warnings filled the report.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flow-validation.error",
+      "kind": "end",
+      "title": "Return invalid result",
+      "description": "Return valid false and bounded diagnostics.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "flow-validation.done",
+      "kind": "end",
+      "title": "Return structural result",
+      "description": "Return valid true with justified warnings; no semantic, source-existence or freshness proof.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/validate.ts"
+          },
+          {
+            "path": "src/schema.ts"
+          },
+          {
+            "path": "src/references.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "flow-validation.edge-1",
+      "from": "flow-validation.start",
+      "to": "flow-validation.schema",
+      "label": "Check trusted schemas",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-2",
+      "from": "flow-validation.schema",
+      "to": "flow-validation.shape",
+      "label": "Inspect basic result",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-3",
+      "from": "flow-validation.shape",
+      "to": "flow-validation.error",
+      "label": "Cannot proceed",
+      "kind": "error",
+      "condition": "Schema/resource checks have errors"
+    },
+    {
+      "id": "flow-validation.edge-4",
+      "from": "flow-validation.shape",
+      "to": "flow-validation.ids",
+      "label": "Proceed",
+      "kind": "normal",
+      "condition": "Basic validation succeeds"
+    },
+    {
+      "id": "flow-validation.edge-5",
+      "from": "flow-validation.ids",
+      "to": "flow-validation.graph",
+      "label": "Check graph identities",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-6",
+      "from": "flow-validation.graph",
+      "to": "flow-validation.evidence",
+      "label": "Check interpretation boundaries",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-7",
+      "from": "flow-validation.evidence",
+      "to": "flow-validation.hierarchy",
+      "label": "Check containment",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-8",
+      "from": "flow-validation.hierarchy",
+      "to": "flow-validation.result",
+      "label": "Finish diagnostics",
+      "kind": "normal"
+    },
+    {
+      "id": "flow-validation.edge-9",
+      "from": "flow-validation.result",
+      "to": "flow-validation.error",
+      "label": "Errors found",
+      "kind": "error",
+      "condition": "At least one structural error"
+    },
+    {
+      "id": "flow-validation.edge-10",
+      "from": "flow-validation.result",
+      "to": "flow-validation.done",
+      "label": "No errors",
+      "kind": "success",
+      "condition": "No structural errors"
+    }
+  ]
+}

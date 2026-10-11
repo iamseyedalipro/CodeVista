@@ -108,3 +108,9 @@ All project-owned content is English. User-authored map content supports Unicode
 and automatic text direction. No private repository data is included in examples.
 The code is licensed under [MIT](LICENSE); third-party dependencies retain their
 own licenses. The agent ZIP includes notices for bundled dependencies.
+
+## Repository application flows
+
+This repository documents its own implemented behavior in `.logicatlas`. See the
+[process index and coverage notes](docs/repository-flows.md) for authentication,
+projects, immutable snapshots, PR comparison, viewer navigation and local tools.

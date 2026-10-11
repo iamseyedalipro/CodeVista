@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "session-access",
+  "title": "Refresh and validate a session",
+  "purpose": "Resolve a host session and refresh an expiring GitHub token before protected work.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "server/store.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Resolve a host session and refresh an expiring GitHub token before protected work.",
+    "gaps": []
+  },
+  "entryNodeId": "session-access.start",
+  "nodes": [
+    {
+      "id": "session-access.start",
+      "kind": "start",
+      "title": "Resolve the session",
+      "description": "Protected routes call sessionFor with request cookies.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.valid",
+      "kind": "decision",
+      "title": "Does a live session exist?",
+      "description": "Store.get rejects malformed IDs, expired rows and undecryptable payloads, deleting unusable rows.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.denied",
+      "kind": "end",
+      "title": "Require sign-in",
+      "description": "Throw 401 SIGN_IN_REQUIRED or REAUTHENTICATE.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "session-access.expires",
+      "kind": "decision",
+      "title": "Will the token expire soon?",
+      "description": "Refresh when tokenExpiresAt is at most now plus sixty seconds.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.pending",
+      "kind": "wait",
+      "title": "Join or start one refresh",
+      "description": "A per-session promise shares concurrent refreshes. A valid refresh token and expiry are required.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.provider",
+      "kind": "external",
+      "title": "Exchange the refresh token",
+      "description": "Request new GitHub OAuth tokens; store them only if the session still exists.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.result",
+      "kind": "decision",
+      "title": "Did refresh finish with a live session?",
+      "description": "Remove the shared promise in finally and reread the session.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "session-access.done",
+      "kind": "end",
+      "title": "Return session context",
+      "description": "Return session ID and decrypted session/account settings.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "server/store.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "session-access.edge-1",
+      "from": "session-access.start",
+      "to": "session-access.valid",
+      "label": "Read cookie",
+      "kind": "normal"
+    },
+    {
+      "id": "session-access.edge-2",
+      "from": "session-access.valid",
+      "to": "session-access.denied",
+      "label": "Missing session",
+      "kind": "error",
+      "condition": "Cookie absent or Store.get returns null"
+    },
+    {
+      "id": "session-access.edge-3",
+      "from": "session-access.valid",
+      "to": "session-access.expires",
+      "label": "Live session",
+      "kind": "normal",
+      "condition": "Session exists"
+    },
+    {
+      "id": "session-access.edge-4",
+      "from": "session-access.expires",
+      "to": "session-access.done",
+      "label": "Token remains usable",
+      "kind": "success",
+      "condition": "Token expires more than sixty seconds from now"
+    },
+    {
+      "id": "session-access.edge-5",
+      "from": "session-access.expires",
+      "to": "session-access.pending",
+      "label": "Refresh required",
+      "kind": "normal",
+      "condition": "Token expires within sixty seconds"
+    },
+    {
+      "id": "session-access.edge-6",
+      "from": "session-access.pending",
+      "to": "session-access.provider",
+      "label": "Perform or await exchange",
+      "kind": "normal"
+    },
+    {
+      "id": "session-access.edge-7",
+      "from": "session-access.provider",
+      "to": "session-access.result",
+      "label": "Refresh completes",
+      "kind": "normal"
+    },
+    {
+      "id": "session-access.edge-8",
+      "from": "session-access.result",
+      "to": "session-access.denied",
+      "label": "Refresh failed",
+      "kind": "error",
+      "condition": "Refresh credentials missing/expired, provider rejects, or session disappeared"
+    },
+    {
+      "id": "session-access.edge-9",
+      "from": "session-access.result",
+      "to": "session-access.done",
+      "label": "Refresh succeeded",
+      "kind": "success",
+      "condition": "New token saved and session still exists"
+    }
+  ]
+}

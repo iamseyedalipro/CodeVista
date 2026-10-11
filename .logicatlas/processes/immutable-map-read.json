@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "immutable-map-read",
+  "title": "Read and validate an immutable map",
+  "purpose": "Safely load declared map content from one authorized Git tree, quarantine localized failures and assess exact review freshness.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/snapshots.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Safely load declared map content from one authorized Git tree, quarantine localized failures and assess exact review freshness.",
+    "gaps": []
+  },
+  "entryNodeId": "immutable-map-read.start",
+  "nodes": [
+    {
+      "id": "immutable-map-read.start",
+      "kind": "start",
+      "title": "Read the revision tree",
+      "description": "Initialize selected/displayed SHA and authorized source context.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.tree",
+      "kind": "external",
+      "title": "Fetch recursive Git tree",
+      "description": "Reject a truncated tree; map documents must be regular blobs, not symlinks/submodules.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.manifest",
+      "kind": "decision",
+      "title": "Is a usable matching manifest present?",
+      "description": "Read UTF-8 JSON under two MiB per file and sixteen MiB total; validate manifest, canonical file names and authorized repository metadata.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.missing",
+      "kind": "end",
+      "title": "Map setup required",
+      "description": "Return status missing when manifest is absent.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "immutable-map-read.invalid",
+      "kind": "end",
+      "title": "Map invalid",
+      "description": "Return diagnostics and no bundle for manifest/global failures.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "immutable-map-read.documents",
+      "kind": "action",
+      "title": "Load declared processes with four workers",
+      "description": "Validate schema and IDs. Replace missing/invalid process documents with unknown unreviewed placeholders; downgrade coverage.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.validate",
+      "kind": "subprocess",
+      "title": "Validate combined graph",
+      "description": "Check structure, IDs, hierarchy and coverage without executing repository content.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "processId": "flow-validation"
+    },
+    {
+      "id": "immutable-map-read.result",
+      "kind": "decision",
+      "title": "Can bundle failures be localized?",
+      "description": "Global/ambiguous errors suppress the whole bundle. Process-local errors quarantine affected processes and retry.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.quarantine",
+      "kind": "action",
+      "title": "Quarantine identified processes",
+      "description": "Preserve stable process IDs and expose unknown placeholders; stop if no additional process can be quarantined.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.references",
+      "kind": "action",
+      "title": "Check reference paths",
+      "description": "Check that referenced paths are regular blobs in this tree; symbols and source semantics are not automatically verified.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "immutable-map-read.freshness",
+      "kind": "subprocess",
+      "title": "Assess the review receipt",
+      "description": "Read optional review.json within budgets and compare exact source/map digests for valid snapshots. Degraded maps stay unverifiable.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "processId": "review-freshness"
+    },
+    {
+      "id": "immutable-map-read.done",
+      "kind": "end",
+      "title": "Return valid or degraded bundle",
+      "description": "Return unavailable IDs and at most 200 diagnostics; preserve gaps and invalid reference warnings.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/snapshots.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    }
+  ],
+  "edges": [
+    {
+      "id": "immutable-map-read.edge-1",
+      "from": "immutable-map-read.start",
+      "to": "immutable-map-read.tree",
+      "label": "Load tree",
+      "kind": "normal"
+    },
+    {
+      "id": "immutable-map-read.edge-2",
+      "from": "immutable-map-read.tree",
+      "to": "immutable-map-read.manifest",
+      "label": "Tree complete",
+      "kind": "success",
+      "condition": "Provider tree is complete"
+    },
+    {
+      "id": "immutable-map-read.edge-3",
+      "from": "immutable-map-read.tree",
+      "to": "immutable-map-read.invalid",
+      "label": "Incomplete tree",
+      "kind": "error",
+      "condition": "Truncated tree throws a 413 error to caller"
+    },
+    {
+      "id": "immutable-map-read.edge-4",
+      "from": "immutable-map-read.manifest",
+      "to": "immutable-map-read.missing",
+      "label": "Absent",
+      "kind": "normal",
+      "condition": "Manifest path absent"
+    },
+    {
+      "id": "immutable-map-read.edge-5",
+      "from": "immutable-map-read.manifest",
+      "to": "immutable-map-read.invalid",
+      "label": "Unusable",
+      "kind": "error",
+      "condition": "Read/schema/repository/canonical declaration check fails"
+    },
+    {
+      "id": "immutable-map-read.edge-6",
+      "from": "immutable-map-read.manifest",
+      "to": "immutable-map-read.documents",
+      "label": "Accepted",
+      "kind": "normal",
+      "condition": "Manifest is valid and matches authorized repository"
+    },
+    {
+      "id": "immutable-map-read.edge-7",
+      "from": "immutable-map-read.documents",
+      "to": "immutable-map-read.validate",
+      "label": "Processes loaded",
+      "kind": "normal"
+    },
+    {
+      "id": "immutable-map-read.edge-8",
+      "from": "immutable-map-read.validate",
+      "to": "immutable-map-read.result",
+      "label": "Inspect bundle diagnostics",
+      "kind": "normal"
+    },
+    {
+      "id": "immutable-map-read.edge-9",
+      "from": "immutable-map-read.result",
+      "to": "immutable-map-read.references",
+      "label": "Bundle valid",
+      "kind": "success",
+      "condition": "validateBundle returns valid"
+    },
+    {
+      "id": "immutable-map-read.edge-10",
+      "from": "immutable-map-read.result",
+      "to": "immutable-map-read.quarantine",
+      "label": "Localized failures",
+      "kind": "normal",
+      "condition": "Every error identifies a process and is not duplicate ID, resource limit or report limit"
+    },
+    {
+      "id": "immutable-map-read.edge-11",
+      "from": "immutable-map-read.result",
+      "to": "immutable-map-read.invalid",
+      "label": "Global failure",
+      "kind": "error",
+      "condition": "Errors ambiguous/global or quarantine cannot progress"
+    },
+    {
+      "id": "immutable-map-read.edge-12",
+      "from": "immutable-map-read.quarantine",
+      "to": "immutable-map-read.validate",
+      "label": "Revalidate placeholders",
+      "kind": "normal"
+    },
+    {
+      "id": "immutable-map-read.edge-13",
+      "from": "immutable-map-read.references",
+      "to": "immutable-map-read.freshness",
+      "label": "Assess current map",
+      "kind": "normal"
+    },
+    {
+      "id": "immutable-map-read.edge-14",
+      "from": "immutable-map-read.freshness",
+      "to": "immutable-map-read.done",
+      "label": "Return state",
+      "kind": "normal"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceDigest": "18ad814f026c3ee8cbbd115e6cc74cf88f3156a14c019f940039c9904a90f248",
+  "mapDigest": "498ef03748d2a4f47fab8f3177b03aa5a21ae9f8676fef67e796209dc5550cef",
+  "reviewedAt": "2026-10-11T10:13:02.763Z",
+  "result": "updated",
+  "note": "Initial source inspection of all implemented CodeVista product entry points: 28 processes covering GitHub sign-in and authorization, project lifecycle, immutable map loading, PR comparison, viewer/search/demo, local validation/review, encrypted storage and host startup. External-provider and agent acceptance gaps remain explicit. npm run check and standalone map validation passed; browser execution was blocked by missing Chromium and an invalid browser download."
+}

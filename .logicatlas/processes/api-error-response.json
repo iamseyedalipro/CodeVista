@@ -1,0 +1,187 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "api-error-response",
+  "title": "Return a safe API error",
+  "purpose": "Translate server exceptions into sanitized error responses and expire unauthorized sessions.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Translate server exceptions into sanitized error responses and expire unauthorized sessions.",
+    "gaps": []
+  },
+  "entryNodeId": "api-error-response.start",
+  "nodes": [
+    {
+      "id": "api-error-response.start",
+      "kind": "start",
+      "title": "Handle an exception",
+      "description": "Fastify error handler receives the route or hook failure.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-error-response.type",
+      "kind": "decision",
+      "title": "Which error occurred?",
+      "description": "Distinguish ApiError, supported malformed request statuses and unexpected errors.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-error-response.auth",
+      "kind": "decision",
+      "title": "Is it an unauthorized API error?",
+      "description": "ApiError status 401 triggers session invalidation.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-error-response.clear",
+      "kind": "action",
+      "title": "End the host session",
+      "description": "Delete the cookie session, clear its private snapshot state and clear the cookie.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "api-error-response.known",
+      "kind": "end",
+      "title": "Return the API error",
+      "description": "Return its status with error code and safe message.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "api-error-response.malformed",
+      "kind": "end",
+      "title": "Return invalid request",
+      "description": "Use 400, 413 or 415 and INVALID_REQUEST for supported parser/content failures.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    },
+    {
+      "id": "api-error-response.unknown",
+      "kind": "end",
+      "title": "Return generic server error",
+      "description": "Return 500 INTERNAL_ERROR without exposing exception details.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "api-error-response.edge-1",
+      "from": "api-error-response.start",
+      "to": "api-error-response.type",
+      "label": "Classify exception",
+      "kind": "normal"
+    },
+    {
+      "id": "api-error-response.edge-2",
+      "from": "api-error-response.type",
+      "to": "api-error-response.auth",
+      "label": "Known API error",
+      "kind": "normal",
+      "condition": "Error is ApiError"
+    },
+    {
+      "id": "api-error-response.edge-3",
+      "from": "api-error-response.type",
+      "to": "api-error-response.malformed",
+      "label": "Malformed request",
+      "kind": "error",
+      "condition": "Non-ApiError statusCode is 400, 413 or 415"
+    },
+    {
+      "id": "api-error-response.edge-4",
+      "from": "api-error-response.type",
+      "to": "api-error-response.unknown",
+      "label": "Unexpected error",
+      "kind": "error",
+      "condition": "Neither recognized category"
+    },
+    {
+      "id": "api-error-response.edge-5",
+      "from": "api-error-response.auth",
+      "to": "api-error-response.clear",
+      "label": "Unauthorized",
+      "kind": "normal",
+      "condition": "ApiError status is 401"
+    },
+    {
+      "id": "api-error-response.edge-6",
+      "from": "api-error-response.auth",
+      "to": "api-error-response.known",
+      "label": "Other API status",
+      "kind": "normal",
+      "condition": "ApiError status is not 401"
+    },
+    {
+      "id": "api-error-response.edge-7",
+      "from": "api-error-response.clear",
+      "to": "api-error-response.known",
+      "label": "Session cleared",
+      "kind": "normal"
+    }
+  ]
+}

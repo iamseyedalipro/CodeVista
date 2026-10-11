@@ -1,0 +1,365 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "agent-map-setup",
+  "title": "Set up or repair a repository map",
+  "purpose": "Provide repository-specific instructions for the existing coding agent without running a paid AI provider.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/app.ts"
+      },
+      {
+        "path": "src/agent.ts"
+      },
+      {
+        "path": "web/Project.tsx"
+      },
+      {
+        "path": "scripts/build-kit.mjs"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "partial",
+    "scope": "Provide repository-specific instructions for the existing coding agent without running a paid AI provider.",
+    "gaps": [
+      "External agent autonomy and fresh-session maintenance acceptance are not established by host prompt generation. No deployed host kit URL was supplied for this mapping task; the installed kit was built from this repository source using scripts/build-kit.mjs."
+    ]
+  },
+  "entryNodeId": "agent-map-setup.start",
+  "nodes": [
+    {
+      "id": "agent-map-setup.start",
+      "kind": "start",
+      "title": "Request setup or recovery help",
+      "description": "Missing map offers setup; invalid/stale/partial maps offer recovery. Select English or Persian.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.access",
+      "kind": "subprocess",
+      "title": "Authorize repository",
+      "description": "Prompt API checks repository access.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      },
+      "processId": "repository-access"
+    },
+    {
+      "id": "agent-map-setup.ref",
+      "kind": "external",
+      "title": "Resolve selected branch",
+      "description": "Validate ref or use default branch; errors do not generate a different target prompt.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.mode",
+      "kind": "decision",
+      "title": "Which prompt is needed?",
+      "description": "Only query mode recovery selects recovery; fa means Persian, all other language values mean English.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.setup",
+      "kind": "action",
+      "title": "Generate setup prompt",
+      "description": "Include exact repository/ref, map language and configured origin agent-kit URL. Ask existing agent to inspect code, preserve IDs and install maintenance rules.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.repair",
+      "kind": "action",
+      "title": "Generate recovery prompt",
+      "description": "Ask existing agent to inspect final source, preserve definitions, repair affected behavior, validate, record review and publish on same branch/PR.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.copy",
+      "kind": "decision",
+      "title": "Can clipboard copy succeed?",
+      "description": "Display a read-only prompt and kit download; clipboard errors instruct manual selection/copy.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-map-setup.copied",
+      "kind": "end",
+      "title": "Hand prompt to the existing agent",
+      "description": "External agent work and publication are outside the host. Only published GitHub changes are visible.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      },
+      "outcome": "handed_off"
+    },
+    {
+      "id": "agent-map-setup.manual",
+      "kind": "end",
+      "title": "Copy prompt manually",
+      "description": "Prompt remains available as text.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      },
+      "outcome": "handed_off"
+    },
+    {
+      "id": "agent-map-setup.error",
+      "kind": "end",
+      "title": "Prompt unavailable",
+      "description": "UI reports request error; no setup is claimed.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/app.ts"
+          },
+          {
+            "path": "src/agent.ts"
+          },
+          {
+            "path": "web/Project.tsx"
+          },
+          {
+            "path": "scripts/build-kit.mjs"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "agent-map-setup.edge-1",
+      "from": "agent-map-setup.start",
+      "to": "agent-map-setup.access",
+      "label": "Authorize",
+      "kind": "normal"
+    },
+    {
+      "id": "agent-map-setup.edge-2",
+      "from": "agent-map-setup.access",
+      "to": "agent-map-setup.ref",
+      "label": "Access accepted",
+      "kind": "success",
+      "condition": "Authorization succeeds"
+    },
+    {
+      "id": "agent-map-setup.edge-3",
+      "from": "agent-map-setup.access",
+      "to": "agent-map-setup.error",
+      "label": "Denied",
+      "kind": "error",
+      "condition": "Authorization throws"
+    },
+    {
+      "id": "agent-map-setup.edge-4",
+      "from": "agent-map-setup.ref",
+      "to": "agent-map-setup.mode",
+      "label": "Ref accepted",
+      "kind": "success",
+      "condition": "Revision resolves"
+    },
+    {
+      "id": "agent-map-setup.edge-5",
+      "from": "agent-map-setup.ref",
+      "to": "agent-map-setup.error",
+      "label": "Ref failure",
+      "kind": "error",
+      "condition": "Revision resolution fails"
+    },
+    {
+      "id": "agent-map-setup.edge-6",
+      "from": "agent-map-setup.mode",
+      "to": "agent-map-setup.setup",
+      "label": "Initial setup",
+      "kind": "normal",
+      "condition": "Mode is not recovery"
+    },
+    {
+      "id": "agent-map-setup.edge-7",
+      "from": "agent-map-setup.mode",
+      "to": "agent-map-setup.repair",
+      "label": "Recovery",
+      "kind": "normal",
+      "condition": "Mode equals recovery"
+    },
+    {
+      "id": "agent-map-setup.edge-8",
+      "from": "agent-map-setup.setup",
+      "to": "agent-map-setup.copy",
+      "label": "Show setup text",
+      "kind": "normal"
+    },
+    {
+      "id": "agent-map-setup.edge-9",
+      "from": "agent-map-setup.repair",
+      "to": "agent-map-setup.copy",
+      "label": "Show recovery text",
+      "kind": "normal"
+    },
+    {
+      "id": "agent-map-setup.edge-10",
+      "from": "agent-map-setup.copy",
+      "to": "agent-map-setup.copied",
+      "label": "Copy succeeds",
+      "kind": "success",
+      "condition": "Clipboard write resolves"
+    },
+    {
+      "id": "agent-map-setup.edge-11",
+      "from": "agent-map-setup.copy",
+      "to": "agent-map-setup.manual",
+      "label": "Copy fails",
+      "kind": "error",
+      "condition": "Clipboard write rejects"
+    }
+  ]
+}

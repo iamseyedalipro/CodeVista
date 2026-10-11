@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "local-map-read",
+  "title": "Read declared local map documents",
+  "purpose": "Safely read a local manifest and its canonical process files for review or library callers.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "src/load.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Safely read a local manifest and its canonical process files for review or library callers.",
+    "gaps": []
+  },
+  "entryNodeId": "local-map-read.start",
+  "nodes": [
+    {
+      "id": "local-map-read.start",
+      "kind": "start",
+      "title": "Select map directory",
+      "description": "Resolve supplied directory; it must be a real directory.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "local-map-read.files",
+      "kind": "action",
+      "title": "Read safe UTF-8 JSON files",
+      "description": "Reject symlinks at root/descendants, nonregular files, bytes above per-file/total budget and malformed UTF-8 JSON; cap each read at budget plus one.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "local-map-read.manifest",
+      "kind": "decision",
+      "title": "Can declared documents be loaded?",
+      "description": "Validate manifest shape, canonical filenames and process IDs; read only declared files.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "local-map-read.validate",
+      "kind": "subprocess",
+      "title": "Check bundle semantics",
+      "description": "Pass parsed documents to core validation.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      },
+      "processId": "flow-validation"
+    },
+    {
+      "id": "local-map-read.result",
+      "kind": "decision",
+      "title": "Did validation pass?",
+      "description": "Return LoadResult with diagnostics.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "local-map-read.done",
+      "kind": "end",
+      "title": "Return valid bundle",
+      "description": "Return manifest and all declared process documents.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "local-map-read.error",
+      "kind": "end",
+      "title": "Return reading/validation failure",
+      "description": "Return safe diagnostics with location, without writing files.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "src/load.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "local-map-read.edge-1",
+      "from": "local-map-read.start",
+      "to": "local-map-read.files",
+      "label": "Inspect directory and manifest",
+      "kind": "normal"
+    },
+    {
+      "id": "local-map-read.edge-2",
+      "from": "local-map-read.files",
+      "to": "local-map-read.manifest",
+      "label": "Safe files read",
+      "kind": "success",
+      "condition": "No file/decode/budget failure"
+    },
+    {
+      "id": "local-map-read.edge-3",
+      "from": "local-map-read.files",
+      "to": "local-map-read.error",
+      "label": "Read failure",
+      "kind": "error",
+      "condition": "Filesystem safety, budget or decode fails"
+    },
+    {
+      "id": "local-map-read.edge-4",
+      "from": "local-map-read.manifest",
+      "to": "local-map-read.validate",
+      "label": "Documents usable",
+      "kind": "normal",
+      "condition": "Manifest/canonical paths/process IDs match"
+    },
+    {
+      "id": "local-map-read.edge-5",
+      "from": "local-map-read.manifest",
+      "to": "local-map-read.error",
+      "label": "Document mismatch",
+      "kind": "error",
+      "condition": "Schema/canonical path/process ID fails"
+    },
+    {
+      "id": "local-map-read.edge-6",
+      "from": "local-map-read.validate",
+      "to": "local-map-read.result",
+      "label": "Inspect result",
+      "kind": "normal"
+    },
+    {
+      "id": "local-map-read.edge-7",
+      "from": "local-map-read.result",
+      "to": "local-map-read.done",
+      "label": "Valid bundle",
+      "kind": "success",
+      "condition": "No structural errors"
+    },
+    {
+      "id": "local-map-read.edge-8",
+      "from": "local-map-read.result",
+      "to": "local-map-read.error",
+      "label": "Invalid bundle",
+      "kind": "error",
+      "condition": "Structural errors present"
+    }
+  ]
+}

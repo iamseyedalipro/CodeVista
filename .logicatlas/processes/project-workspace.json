@@ -1,0 +1,290 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "project-workspace",
+  "title": "List and check projects",
+  "purpose": "Show installed repositories, selected branches, last visits and per-project map status.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "web/Projects.tsx"
+      },
+      {
+        "path": "server/app.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Show installed repositories, selected branches, last visits and per-project map status.",
+    "gaps": []
+  },
+  "entryNodeId": "project-workspace.start",
+  "nodes": [
+    {
+      "id": "project-workspace.start",
+      "kind": "start",
+      "title": "Open Projects",
+      "description": "The Projects page receives session info.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-workspace.signed",
+      "kind": "decision",
+      "title": "Is a user signed in?",
+      "description": "Anonymous users see configured sign-in or host setup guidance and a public demo link.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-workspace.anonymous",
+      "kind": "end",
+      "title": "Offer sign-in or demo",
+      "description": "No private repository list is fetched.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "project-workspace.session",
+      "kind": "subprocess",
+      "title": "Resolve credentials",
+      "description": "The repositories API refreshes session credentials.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "session-access"
+    },
+    {
+      "id": "project-workspace.discover",
+      "kind": "subprocess",
+      "title": "Discover repositories",
+      "description": "Read active installation repositories.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "repository-discovery"
+    },
+    {
+      "id": "project-workspace.display",
+      "kind": "action",
+      "title": "Show project cards",
+      "description": "Decorate with account preferences/disconnected flags, sort recent visits first, initially show twelve cards and expand by twelve.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-workspace.checks",
+      "kind": "wait",
+      "title": "Queue map checks",
+      "description": "At most three client checks run concurrently. Skip disconnected cards; abort abandoned requests.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "project-workspace.snapshot",
+      "kind": "subprocess",
+      "title": "Check each selected map",
+      "description": "Request the card selected branch and interpret snapshot status/freshness.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "processId": "snapshot-loading"
+    },
+    {
+      "id": "project-workspace.done",
+      "kind": "end",
+      "title": "Show project status",
+      "description": "Display setup needed, valid/degraded/invalid/fallback status or check error. User can open, refresh, disconnect or reconnect.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "project-workspace.failure",
+      "kind": "end",
+      "title": "Show repository loading error",
+      "description": "Display the error instead of an authorized list.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "web/Projects.tsx"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "project-workspace.edge-1",
+      "from": "project-workspace.start",
+      "to": "project-workspace.signed",
+      "label": "Inspect session",
+      "kind": "normal"
+    },
+    {
+      "id": "project-workspace.edge-2",
+      "from": "project-workspace.signed",
+      "to": "project-workspace.anonymous",
+      "label": "Anonymous",
+      "kind": "normal",
+      "condition": "Session has no user"
+    },
+    {
+      "id": "project-workspace.edge-3",
+      "from": "project-workspace.signed",
+      "to": "project-workspace.session",
+      "label": "Signed in",
+      "kind": "normal",
+      "condition": "Session has user"
+    },
+    {
+      "id": "project-workspace.edge-4",
+      "from": "project-workspace.session",
+      "to": "project-workspace.discover",
+      "label": "Credentials available",
+      "kind": "success",
+      "condition": "Session succeeds"
+    },
+    {
+      "id": "project-workspace.edge-5",
+      "from": "project-workspace.session",
+      "to": "project-workspace.failure",
+      "label": "Session failure",
+      "kind": "error",
+      "condition": "Session throws"
+    },
+    {
+      "id": "project-workspace.edge-6",
+      "from": "project-workspace.discover",
+      "to": "project-workspace.display",
+      "label": "Enumeration succeeds",
+      "kind": "success",
+      "condition": "Repository discovery succeeds"
+    },
+    {
+      "id": "project-workspace.edge-7",
+      "from": "project-workspace.discover",
+      "to": "project-workspace.failure",
+      "label": "Enumeration fails",
+      "kind": "error",
+      "condition": "Repository discovery throws"
+    },
+    {
+      "id": "project-workspace.edge-8",
+      "from": "project-workspace.display",
+      "to": "project-workspace.checks",
+      "label": "Schedule card checks",
+      "kind": "normal"
+    },
+    {
+      "id": "project-workspace.edge-9",
+      "from": "project-workspace.checks",
+      "to": "project-workspace.snapshot",
+      "label": "A connected card gets a slot",
+      "kind": "normal"
+    },
+    {
+      "id": "project-workspace.edge-10",
+      "from": "project-workspace.snapshot",
+      "to": "project-workspace.done",
+      "label": "Check complete or fails",
+      "kind": "normal"
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:logicatlas:schema:process:1.0.0",
+  "title": "LogicAtlas process 1.0.0",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000,
+      "pattern": "\\S"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000,
+      "pattern": "\\S"
+    },
+    "behavior": {
+      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+    },
+    "evidence": {
+      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+    },
+    "coverage": {
+      "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/coverage"
+    },
+    "entryNodeId": {
+      "anyOf": [
+        {
+          "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000,
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000,
+            "pattern": "\\S"
+          },
+          "kind": {
+            "enum": [
+              "start",
+              "action",
+              "decision",
+              "wait",
+              "external",
+              "subprocess",
+              "end"
+            ]
+          },
+          "behavior": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/behavior"
+          },
+          "evidence": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/evidence"
+          },
+          "processId": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          },
+          "outcome": {
+            "enum": [
+              "success",
+              "error",
+              "cancel",
+              "unknown",
+              "handed_off"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "kind",
+          "behavior",
+          "evidence"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "subprocess"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "processId"
+              ],
+              "properties": {
+                "processId": {}
+              }
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "processId"
+                ],
+                "properties": {
+                  "processId": {}
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "end"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "outcome"
+              ],
+              "properties": {
+                "outcome": {}
+              }
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "outcome"
+                ],
+                "properties": {
+                  "outcome": {}
+                }
+              }
+            }
+          }
+        ]
+      },
+      "maxItems": 10000
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          },
+          "from": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          },
+          "to": {
+            "$ref": "urn:logicatlas:schema:common:1.0.0#/$defs/id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000,
+            "pattern": "\\S"
+          },
+          "kind": {
+            "enum": [
+              "normal",
+              "success",
+              "error",
+              "cancel",
+              "retry",
+              "timeout"
+            ]
+          },
+          "condition": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "id",
+          "from",
+          "to",
+          "label",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 30000
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "title",
+    "purpose",
+    "behavior",
+    "evidence",
+    "coverage",
+    "entryNodeId",
+    "nodes",
+    "edges"
+  ],
+  "additionalProperties": false
+}

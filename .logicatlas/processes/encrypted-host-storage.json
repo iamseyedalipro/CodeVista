@@ -1,0 +1,335 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "encrypted-host-storage",
+  "title": "Persist and expire host identity data",
+  "purpose": "Store encrypted session/OAuth/account payloads and prune expired data with bounded host retention rules.",
+  "behavior": "implemented",
+  "evidence": {
+    "kind": "code",
+    "references": [
+      {
+        "path": "server/store.ts"
+      },
+      {
+        "path": "server/app.ts"
+      }
+    ]
+  },
+  "coverage": {
+    "status": "complete",
+    "scope": "Store encrypted session/OAuth/account payloads and prune expired data with bounded host retention rules.",
+    "gaps": []
+  },
+  "entryNodeId": "encrypted-host-storage.start",
+  "nodes": [
+    {
+      "id": "encrypted-host-storage.start",
+      "kind": "start",
+      "title": "Open the host store",
+      "description": "Create SQLite tables with WAL, secure_delete and busy timeout; non-memory directory/database permissions are 0700/0600.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.prune",
+      "kind": "action",
+      "title": "Prune expired records",
+      "description": "Run at startup, every minute and before session/OAuth creation. Delete expired sessions/OAuth rows.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.accounts",
+      "kind": "decision",
+      "title": "Does an expired account retain disconnected IDs?",
+      "description": "Decrypt expired account payload; invalid data from key rotation cannot be reused.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.retain",
+      "kind": "action",
+      "title": "Preserve disconnect choices only",
+      "description": "Clear preferences, preserve disconnected IDs, reencrypt and extend account retention thirty days.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.delete",
+      "kind": "action",
+      "title": "Delete expired account",
+      "description": "Remove account row when no disconnect choices remain or payload cannot decrypt.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.operation",
+      "kind": "decision",
+      "title": "Which store operation is requested?",
+      "description": "Payload encryption uses AES-256-GCM with random twelve-byte IV; session IDs and OAuth state are stored as SHA-256 hashes.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.create",
+      "kind": "action",
+      "title": "Create encrypted data",
+      "description": "Session/OAuth creation prunes first and rejects 10,000-row capacity; sessions expire in eight hours, OAuth in ten minutes, accounts/preferences in thirty days.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.read",
+      "kind": "action",
+      "title": "Read and merge session settings",
+      "description": "Reject malformed/expired/undecryptable session; valid session merges current account settings. Expired preferences clear while disconnected IDs remain.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.update",
+      "kind": "action",
+      "title": "Save or delete records",
+      "description": "Session updates require live rows; account upsert encrypts preferences/disconnections; OAuth consumption uses one-time DELETE RETURNING and nonce hash verification.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encrypted-host-storage.done",
+      "kind": "end",
+      "title": "Return requested storage result",
+      "description": "Storage contains identity/settings payloads rather than repository source or flow content.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "success"
+    },
+    {
+      "id": "encrypted-host-storage.failure",
+      "kind": "end",
+      "title": "Storage operation failed",
+      "description": "Capacity, encryption, SQL or filesystem failures propagate to the caller; get/consume reject unusable data with null where implemented.",
+      "behavior": "implemented",
+      "evidence": {
+        "kind": "code",
+        "references": [
+          {
+            "path": "server/store.ts"
+          },
+          {
+            "path": "server/app.ts"
+          }
+        ]
+      },
+      "outcome": "error"
+    }
+  ],
+  "edges": [
+    {
+      "id": "encrypted-host-storage.edge-1",
+      "from": "encrypted-host-storage.start",
+      "to": "encrypted-host-storage.prune",
+      "label": "Initialize and expire",
+      "kind": "normal"
+    },
+    {
+      "id": "encrypted-host-storage.edge-2",
+      "from": "encrypted-host-storage.prune",
+      "to": "encrypted-host-storage.accounts",
+      "label": "Inspect expired accounts",
+      "kind": "normal"
+    },
+    {
+      "id": "encrypted-host-storage.edge-3",
+      "from": "encrypted-host-storage.accounts",
+      "to": "encrypted-host-storage.retain",
+      "label": "Disconnects remain",
+      "kind": "normal",
+      "condition": "Expired payload decrypts and disconnected list is nonempty"
+    },
+    {
+      "id": "encrypted-host-storage.edge-4",
+      "from": "encrypted-host-storage.accounts",
+      "to": "encrypted-host-storage.delete",
+      "label": "No retained account state",
+      "kind": "normal",
+      "condition": "No disconnect choices or decryption fails"
+    },
+    {
+      "id": "encrypted-host-storage.edge-5",
+      "from": "encrypted-host-storage.retain",
+      "to": "encrypted-host-storage.operation",
+      "label": "Preserve choices",
+      "kind": "normal"
+    },
+    {
+      "id": "encrypted-host-storage.edge-6",
+      "from": "encrypted-host-storage.delete",
+      "to": "encrypted-host-storage.operation",
+      "label": "Pruning finished",
+      "kind": "normal"
+    },
+    {
+      "id": "encrypted-host-storage.edge-7",
+      "from": "encrypted-host-storage.operation",
+      "to": "encrypted-host-storage.create",
+      "label": "Creation",
+      "kind": "normal",
+      "condition": "Create session or begin OAuth"
+    },
+    {
+      "id": "encrypted-host-storage.edge-8",
+      "from": "encrypted-host-storage.operation",
+      "to": "encrypted-host-storage.read",
+      "label": "Session retrieval",
+      "kind": "normal",
+      "condition": "Store.get requested"
+    },
+    {
+      "id": "encrypted-host-storage.edge-9",
+      "from": "encrypted-host-storage.operation",
+      "to": "encrypted-host-storage.update",
+      "label": "Update/delete/consume",
+      "kind": "normal",
+      "condition": "Other mutation requested"
+    },
+    {
+      "id": "encrypted-host-storage.edge-10",
+      "from": "encrypted-host-storage.create",
+      "to": "encrypted-host-storage.done",
+      "label": "Return created ID",
+      "kind": "normal",
+      "condition": "Creation succeeds"
+    },
+    {
+      "id": "encrypted-host-storage.edge-11",
+      "from": "encrypted-host-storage.read",
+      "to": "encrypted-host-storage.done",
+      "label": "Return merged session or null",
+      "kind": "normal"
+    },
+    {
+      "id": "encrypted-host-storage.edge-12",
+      "from": "encrypted-host-storage.update",
+      "to": "encrypted-host-storage.done",
+      "label": "Return mutation result",
+      "kind": "normal",
+      "condition": "Mutation succeeds or consume returns null"
+    },
+    {
+      "id": "encrypted-host-storage.create-failure",
+      "from": "encrypted-host-storage.create",
+      "to": "encrypted-host-storage.failure",
+      "label": "Operation throws",
+      "kind": "error",
+      "condition": "Capacity, SQL, encryption or filesystem operation throws"
+    },
+    {
+      "id": "encrypted-host-storage.update-failure",
+      "from": "encrypted-host-storage.update",
+      "to": "encrypted-host-storage.failure",
+      "label": "Operation throws",
+      "kind": "error",
+      "condition": "Capacity, SQL, encryption or filesystem operation throws"
+    }
+  ]
+}
