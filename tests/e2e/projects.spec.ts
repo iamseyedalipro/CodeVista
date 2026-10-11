@@ -320,3 +320,87 @@ test("changing the signed-in account remounts private content and checks the new
   ).toBeVisible();
   await expect(page.locator(".viewer")).toHaveCount(0);
 });
+
+test("routine access checks and step navigation preserve the mounted chart", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await mock(page);
+  let snapshots = 0;
+  let checks = 0;
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith("/snapshot")) snapshots++;
+    if (path.endsWith("/access")) checks++;
+  });
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=payment",
+  );
+  await expect(page.locator(".flow-canvas")).toBeVisible();
+  await page
+    .locator(".flow-canvas")
+    .evaluate((canvas) => canvas.setAttribute("data-mount", "original"));
+  await page.clock.fastForward(61000);
+  await expect.poll(() => checks).toBeGreaterThan(1);
+  await expect(page.locator(".flow-canvas")).toHaveAttribute(
+    "data-mount",
+    "original",
+  );
+  expect(snapshots).toBe(1);
+  await page.locator(".react-flow__node strong").first().click();
+  await expect(page.getByLabel("Step details")).toBeVisible();
+  await expect(page.locator(".flow-canvas")).toHaveAttribute(
+    "data-mount",
+    "original",
+  );
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await expect.poll(() => snapshots).toBe(2);
+  await expect(page.locator(".flow-canvas")).toBeVisible();
+  await page.route(
+    "**/api/repositories/private-owner/private-project/access",
+    (route) =>
+      route.fulfill({
+        status: 404,
+        json: { error: { code: "NOT_ACCESSIBLE", message: "Access revoked." } },
+      }),
+  );
+  await page.clock.fastForward(61000);
+  await expect(
+    page.getByRole("heading", { name: "Project view unavailable" }),
+  ).toBeVisible();
+  await expect(page.locator(".viewer")).toHaveCount(0);
+});
+
+test("session channel initialization and received notifications do not echo", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const Original = window.BroadcastChannel;
+    (window as any).sessionMessages = [];
+    window.BroadcastChannel = class extends Original {
+      postMessage(value: unknown) {
+        (window as any).sessionMessages.push(value);
+        super.postMessage(value);
+      }
+    };
+  });
+  await mock(page);
+  await page.goto(
+    "/#/project/private-owner/private-project?ref=develop&trail=payment",
+  );
+  await expect(page.locator(".flow-canvas")).toBeVisible();
+  expect(await page.evaluate(() => (window as any).sessionMessages)).toEqual(
+    [],
+  );
+  const refreshed = page.waitForResponse("**/api/session");
+  await page.evaluate(() => {
+    const channel = new BroadcastChannel("codevista-session");
+    channel.postMessage("identity-changed");
+    channel.close();
+  });
+  await refreshed;
+  await expect(page.locator(".flow-canvas")).toBeVisible();
+  expect(await page.evaluate(() => (window as any).sessionMessages)).toEqual([
+    "identity-changed",
+  ]);
+});

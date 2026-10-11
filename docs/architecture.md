@@ -49,7 +49,10 @@ writes. Provider errors do not return private cached content.
 
 The browser stores no private map data in localStorage, sessionStorage, IndexedDB,
 or a service worker. Search uses only the authorized in-memory map. Navigation
-reauthorizes, and visible pages refresh every minute. Hiding the tab clears the
+reauthorizes without remounting an already authorized version, and visible pages
+recheck session/repository access every minute without reloading map data. Map
+updates require explicit Refresh or version selection. Initial identity discovery
+and received cross-tab notifications never broadcast another notification. Hiding the tab clears the
 private viewer; returning rechecks the session. Sign-out broadcasts to other tabs.
 Already downloaded data cannot be recalled from screenshots, developer tools,
 browser internals, or a malicious client; revocation controls subsequent retrieval.

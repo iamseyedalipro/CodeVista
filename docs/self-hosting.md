@@ -39,8 +39,8 @@ Create an app that you control in GitHub developer settings:
 - Request **Contents: read-only** and **Pull requests: read-only** repository
   permissions. Metadata read access is implicit. No write permissions, user email
   permission, webhook secret, AI credentials, or OAuth `repo` scope are needed.
-- Disable webhooks for this implementation. Updates use explicit refresh and
-  visible-page polling, not webhook events.
+- Disable webhooks for this implementation. Map updates use explicit refresh or version selection.
+  Visible-page polling checks access only; it does not reload maps.
 - Allow installation only on the repositories the owner selects. For organization
   installations, follow the organization's owner approval and SSO policies.
 - Generate a client secret and record the app ID, client ID, and app slug.

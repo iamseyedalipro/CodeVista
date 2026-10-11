@@ -56,7 +56,7 @@
       "id": "browser-session-lifecycle.event",
       "kind": "wait",
       "title": "Wait for lifecycle or refresh event",
-      "description": "A minute timer checks session while visible. Project component also reloads maps every minute while visible.",
+      "description": "A minute timer checks session and repository access while visible without reloading maps. Published map updates require manual refresh or version selection.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -224,7 +224,7 @@
       "id": "browser-session-lifecycle.success",
       "kind": "action",
       "title": "Show current identity",
-      "description": "Clear locks/errors; changed login clears view state and broadcasts identity-changed.",
+      "description": "Clear locks/errors and remember current login. Initial discovery does not broadcast. Later locally observed identity changes clear view state and broadcast once; channel-triggered refreshes never echo notifications.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

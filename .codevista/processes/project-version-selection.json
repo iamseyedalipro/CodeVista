@@ -118,7 +118,7 @@
       "id": "project-version-selection.ready",
       "kind": "decision",
       "title": "Can the exact result be displayed?",
-      "description": "Only show a result matching the current key and an access check verified for the current hash.",
+      "description": "Only show a result matching the current version key and access verified for that version. Step navigation and periodic access checks preserve the authorized diagram while requests run; failures discard private content.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -191,7 +191,7 @@
       "id": "project-version-selection.end",
       "kind": "end",
       "title": "Version ready to explore",
-      "description": "Refresh manually or every minute while visible; branch or PR changes clear trail/node, pagination offers more branches/PRs.",
+      "description": "Refresh maps manually; session/repository access is rechecked every minute while visible. Branch or PR changes clear trail/node, pagination offers more branches/PRs.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",
@@ -281,7 +281,7 @@
       "to": "project-version-selection.display",
       "label": "Ready",
       "kind": "success",
-      "condition": "Matching result exists and verified hash equals current hash"
+      "condition": "Matching result exists and verified version key equals current version key"
     },
     {
       "id": "project-version-selection.edge-11",

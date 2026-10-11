@@ -202,7 +202,7 @@
       "id": "flow-exploration.canvas",
       "kind": "action",
       "title": "Lay out the process",
-      "description": "Dagre creates top-down positions; ReactFlow renders safe text, zoom/pan, colored errors/retries and selected-step adjacency emphasis. Positions/viewports remain bounded memory only.",
+      "description": "Dagre creates top-down positions; ReactFlow renders safe text, zoom/pan, colored errors/retries and selected-step adjacency emphasis. Positions/viewports remain bounded memory only. Expand flowchart fills the browser viewport while retaining chart and details. The button or Escape exits and restores body scrolling; process/scope changes also exit. Escape closes an open search first.",
       "behavior": "implemented",
       "evidence": {
         "kind": "code",

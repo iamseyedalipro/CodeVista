@@ -70,7 +70,7 @@ Open GitHub **Settings → Developer settings → GitHub Apps → New GitHub App
 | Repository Contents permission      | Read-only                                                                    |
 | Repository Pull requests permission | Read-only                                                                    |
 | Metadata                            | Implicit read access                                                         |
-| Webhooks                            | Disabled; this implementation polls/refreshes                                |
+| Webhooks                            | Disabled; manual map refresh and periodic access checks                                |
 | Installation audience               | Any account if serving external users; your account only for a personal host |
 
 Generate a client secret. Record **App ID**, **App slug**, **Client ID**, and

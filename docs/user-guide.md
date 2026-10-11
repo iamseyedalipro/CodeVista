@@ -62,9 +62,16 @@ their existing agent performs repository work.
   the revision actually shown. They differ only in an explicitly labeled older-map
   fallback after a malformed newer map.
 
-Refresh is manual and also runs once a minute on a visible private project. A hidden
-tab clears its private view and rechecks access when resumed. The site never claims
-to observe live progress inside an agent session.
+Use **Refresh** to fetch published map changes. Visible private projects recheck
+session and repository access every minute without reloading the diagram. Step
+navigation keeps the same chart mounted while checking access; a failed check
+removes private content. A hidden tab clears its private view and rechecks access
+when resumed. The site never claims to observe live progress inside an agent session.
+
+Use **Expand flowchart** to fill the browser viewport with the chart and step
+details. Zoom, pan and selection remain available. Choose **Exit fullscreen** or
+press Escape to return. Changing the process exits fullscreen; closing search with
+Escape leaves fullscreen open.
 
 If code changed without a matching receipt, ask the existing agent to inspect the
 change. It may update affected processes or record an exact no-flow-change review.
