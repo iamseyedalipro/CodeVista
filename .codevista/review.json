@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "sourceDigest": "6b5867dd8d6af57a14968ad712360032be481db6b0d8382091366c84314ede48",
+  "sourceDigest": "6aef2163b99bbb94f0097b018e82a11bde32b86199a826ec4df7116d06ab4c1e",
   "mapDigest": "244143d3e16874de741f8e6178b83279b0546b266982ae3de679cec1a9e02c3f",
-  "reviewedAt": "2026-10-11T11:48:25.853Z",
+  "reviewedAt": "2026-10-11T12:06:18.108Z",
   "result": "no-flow-change",
-  "note": "Reviewed Docker packaging, manual publishing and deployment documentation; runtime product flows unchanged, infrastructure outside declared map scope. 106 tests and 17 browser tests passed; Compose validated; Docker runtime and live provider trials pending."
+  "note": "Fixed Docker-only npm cache race: separate locked caches and no destructive shared cache cleanup. Product runtime flows unchanged. npm run check passed 106 tests; map validated. Docker build awaits hosted smoke gate."
 }

@@ -189,3 +189,22 @@ after committing final instructions and documentation, then committed separately
   application runtime behavior changed; deployment/build infrastructure is outside
   the declared product-map scope. Process IDs and definitions are unchanged;
   a no-flow-change receipt binds this review to the committed source.
+
+## Docker npm cache race fix — 2026-10-11
+
+The first manual image publication (run 38137810831) failed before publication.
+Its log shows the production-dependencies stage completing `npm cache clean
+--force` while the build stage was still running `npm ci` against the same shared
+cache. The build then failed with missing npm cache files during rename/extraction.
+
+The Dockerfile now uses separate cache IDs for build and production installation,
+locks each cache against concurrent writers, and does not delete a mounted cache.
+Cache mounts are not runtime image layers, so cache cleaning is unnecessary for
+runtime image size. New cache IDs avoid reusing the affected shared cache.
+
+`npm ci` and `npm run check` passed (106 tests, web build, reference validation).
+Standalone map validation and whitespace checks passed with existing coverage
+warnings. Application flows and browser behavior are unchanged; no browser rerun
+was required. Docker execution remains unavailable locally; the manual workflow's
+container smoke gate must pass before the corrected image is published. No
+successful corrected Docker build or Docker Hub publication is claimed here.
