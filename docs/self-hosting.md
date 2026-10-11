@@ -5,6 +5,8 @@ not contact a central CodeVista service. The static sample viewer works without
 GitHub configuration. Live GitHub App provisioning and a separate operator trial
 are not yet certified; record their results in the acceptance report before release.
 
+For containers, see the [Docker deployment guide](docker-deployment.md).
+
 ## Build and run
 
 Use a maintained Node.js 22.13+ or 24 installation and npm. Node's built-in SQLite

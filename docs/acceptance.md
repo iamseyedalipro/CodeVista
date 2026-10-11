@@ -163,3 +163,29 @@ after committing final instructions and documentation, then committed separately
 - README covers capability-based CLI, IDE and web setup; deployment and migration
   guides are source-reviewed instructions, not evidence of a live deployment.
   No new real-provider, external-agent or independent hosting trial is claimed.
+
+## Docker deployment — 2026-10-11
+
+- Added a multi-stage Node 24 image, production-only installed dependencies,
+  non-root runtime, persistent SQLite volume, health check and restricted app
+  filesystem/capabilities. Compose adds versioned nginx-proxy/acme-companion for
+  domain-driven routing and automated HTTPS issuance/renewal.
+- Added a master-only, manually triggered GitHub-hosted build/push workflow for
+  public Docker Hub ARM64/AMD64 images, pinned actions, serialized publishing,
+  cache, SBOM/provenance, digest summary and a pre-push container smoke gate.
+- `npm run check`: **106 tests passed**, web build and reference validation passed.
+- `npm run test:e2e`: **17 passed** with temporary Chromium 153 from
+  `@sparticuz/chromium`. The matching Playwright browser download failed; this
+  temporary fallback is not a project dependency or browser certification.
+- Compose 2.39.4 parsed the full file successfully with placeholder configuration;
+  YAML parsing, shell syntax and `git diff --check` passed. Standalone map validation
+  passed with the existing two partial-coverage warnings.
+- Docker Engine is unavailable in the editing environment: image build, container
+  smoke, ARM64 execution, actual publication and live ACME issuance remain
+  **unverified here**. The manual publication workflow gates pushes on its Docker
+  smoke test. No server or GitHub App credentials were accessed and no deployment
+  was performed. A real configured GitHub App and hosting trial remain release gates.
+- Reviewed existing maps, including host-startup and encrypted-host-storage. No
+  application runtime behavior changed; deployment/build infrastructure is outside
+  the declared product-map scope. Process IDs and definitions are unchanged;
+  a no-flow-change receipt binds this review to the committed source.
