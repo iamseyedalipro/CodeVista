@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "sourceDigest": "93a26d33376928ad8f876195c46f06b0c5fbbd2c1be31ec2ff4a4a2a00bee6f3",
-  "mapDigest": "96a857831f912b1911e22467d1e022d9fbde7c49b675e048e92ca053c2d5e179",
-  "reviewedAt": "2026-10-11T13:21:08.056Z",
+  "sourceDigest": "21c5515a61ddbff9588444d8f0a72b85cfb4d5ba06f25d0a46c92084836b13ac",
+  "mapDigest": "57d8ca417396fec217f1f43c7acb56542a4914d172443156600509fd7d8d535e",
+  "reviewedAt": "2026-10-11T13:54:15.479Z",
   "result": "updated",
-  "note": "Reviewed map status placement: ordinary review/coverage and recovery details are collapsed below the viewer; fallback and invalid status expands. Updated project-version-selection. 106 core and 27 mocked browser tests passed; live provider behavior remains unverified."
+  "note": "Added public landing routing and reviewed project/session entry behavior; integrated supplied SVG and shared brutalist light/dark theme. 106 core and 31 mocked browser tests passed; live GitHub and deployment not tested."
 }
